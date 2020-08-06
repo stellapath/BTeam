@@ -36,6 +36,9 @@ import static com.example.my46_project_multipart_update.Common.CommonMethod.isNe
 
 public class Sub1Insert extends AppCompatActivity {
 
+    //아무거나
+
+    
     EditText etId , etName;
     DatePicker datePicker;
 

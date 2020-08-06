@@ -24,6 +24,7 @@ import static com.example.my46_project_multipart_update.Common.CommonMethod.isNe
 public class Sub1 extends AppCompatActivity {
     public static MyItem selItem = null;
     // 열이는 개인주의야
+    // 
     //asdasdkjaskjdjaslkdjlksajdlk
     ListSelect listSelect;
 

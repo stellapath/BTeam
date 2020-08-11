@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">project</string>
+    <string name="app_name">Project</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- 새로 추가한 항목 -->
+    <string name="title_alarm">Alarm</string>
+    <string name="title_direction">Direction</string>
+    <string name="title_board">Board</string>
+    <string name="title_settings">Settings</string>
+
 </resources>

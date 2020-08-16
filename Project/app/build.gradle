@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    buildToolsVersion "30"
 
     defaultConfig {
         applicationId "com.hanul.project"
@@ -37,6 +37,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'com.android.support:design:30.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 
     //원형 이미지뷰
     //사용법

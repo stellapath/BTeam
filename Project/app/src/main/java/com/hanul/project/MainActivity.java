@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.view.Menu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,11 +20,23 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
+    /***********************************************************************************************
+     * onCreate();
+     ***********************************************************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        navigationSetting();
+
+    }
+    /***********************************************************************************************
+     * onCreate();
+     ***********************************************************************************************/
+
+    /** 네비게이션 설정 **/
+    private void navigationSetting() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -60,15 +71,9 @@ public class MainActivity extends AppCompatActivity {
                         R.string.navigation_draw_open, R.string.navigation_draw_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
     }
-    /***********************************************************************************************
-     * onCreate();
-     ***********************************************************************************************/
 
-    /**
-     * 상단바 옵션
-     */
+    /** 상단 바 옵션 **/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -76,9 +81,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * 모름
-     */
+    /** 모르겠당 **/
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -86,9 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    /**
-     * 뒤로가기 버튼 눌렀을 때 드로어가 열려있으면 닫기
-     */
+    /** 뒤로가기 버튼을 눌렀을 때 드로어 닫기 **/
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -12,17 +12,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.hanul.project.ui.home.adapter.TripsAdater;
-import com.hanul.project.ui.home.model.Ads;
-import com.hanul.project.ui.home.model.Item;
-import com.hanul.project.ui.home.model.News;
-import com.hanul.project.ui.home.model.Trip;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
      * onCreate();
      ***********************************************************************************************/
 
-    /** 네비게이션 설정 **/
+    /**
+     *  네비게이션 설정
+     */
     private void navigationSetting() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
     }
 
-    /** 상단 바 옵션 **/
+    /**
+     * 상단 바 옵션
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -89,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /** 모르겠당 **/
+    /**
+     * 모르겠당
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -97,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    /** 뒤로가기 버튼을 눌렀을 때 드로어 닫기 **/
+    /**
+     * 뒤로가기 버튼을 눌렀을 때 드로어 닫기
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

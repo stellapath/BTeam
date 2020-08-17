@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    buildToolsVersion "30"
 
     defaultConfig {
         applicationId "com.hanul.project"
@@ -36,4 +36,17 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'com.android.support:design:30.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+
+    //원형 이미지뷰
+    //사용법
+    /*<de.hdodenhof.circleimageview.CircleImageView
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    app:civ_border_width="2dp"
+    app:civ_border_color="#FF000000"
+    android:layout_gravity="center_vertical"
+    android:src="@drawable/jung"/>*/
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 }

@@ -74,6 +74,16 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             text_weather_temperature = itemView.findViewById(R.id.text_weather_temperature);
             text_weather_current = itemView.findViewById(R.id.text_weather_current);
             text_weather_city = itemView.findViewById(R.id.text_weather_city);
+
+            /**
+             * 날씨 클릭하면 화면 이동
+             */
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
 
         void setWeatherData(Weather weather) {

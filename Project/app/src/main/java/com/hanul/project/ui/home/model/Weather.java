@@ -1,5 +1,7 @@
 package com.hanul.project.ui.home.model;
 
+import com.hanul.project.R;
+
 public class Weather {
 
     private int background, icon;
@@ -11,6 +13,16 @@ public class Weather {
         this.temperature = temperature;
         this.current = current;
         this.city = city;
+    }
+
+    public Weather(String temperature, String current, String city) {
+        this.temperature = temperature;
+        this.current = current;
+        this.city = city;
+        if (current.equals("맑음")) {
+            background = R.drawable.ic_weather_clear;
+            icon = R.drawable.ic_day;
+        }
     }
 
     public int getBackground() {

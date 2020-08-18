@@ -1,5 +1,6 @@
 package com.hanul.project.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,11 @@ import com.hanul.project.R;
 import com.hanul.project.ui.home.adapter.HomeAdapter;
 import com.hanul.project.ui.home.model.Item;
 import com.hanul.project.ui.home.model.Weather;
+import com.hanul.project.ui.home.task.WeatherTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
 
@@ -27,9 +30,15 @@ public class HomeFragment extends Fragment {
 
         List<Item> items = new ArrayList<>();
 
-        Weather weather1 = new Weather(R.drawable.gradation, R.drawable.ic_day, "27˚",
-                "조금 흐림", "광주시 서구 농성동");
-        items.add(new Item(0, weather1));
+        WeatherTask weatherTask = new WeatherTask("2914065000");
+        weatherTask.execute();
+        Weather weather = null;
+        try {
+            weather = weatherTask.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        items.add(new Item(0, weather));
 
         recyclerView.setAdapter(new HomeAdapter(items));
 

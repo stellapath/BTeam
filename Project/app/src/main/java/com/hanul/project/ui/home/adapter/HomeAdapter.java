@@ -18,6 +18,7 @@ import java.util.List;
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> items;
+    private OnItemClickListener mListener = null;
 
     public HomeAdapter(List<Item> items) {
         this.items = items;
@@ -60,6 +61,17 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     /**
+     *  커스텀 리스너 인터페이스 & 메소드
+     */
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
+
+    /**
      * 날씨 뷰홀더
      */
     class WeatherViewHolder extends RecyclerView.ViewHolder {
@@ -77,11 +89,17 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             /**
              * 날씨 클릭하면 화면 이동
+             * 아이템 클릭 시 커스텀 이벤트 메소드 호출
              */
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        if (mListener != null) {
+                            mListener.onItemClick(view, position);
+                        }
+                    }
                 }
             });
         }

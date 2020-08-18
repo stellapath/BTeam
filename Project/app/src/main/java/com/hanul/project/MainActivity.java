@@ -8,23 +8,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.hanul.project.ui.home.HomeFragment;
-import com.hanul.project.ui.home.WeatherFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
     /***********************************************************************************************
-     * onCreate();
+     * onCreate()
      ***********************************************************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     /***********************************************************************************************
-     * onCreate();
+     * onCreate()
      ***********************************************************************************************/
 
     /**
@@ -78,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
     }
 
-    /**
-     * 상단 바 옵션
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -88,9 +81,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * 모르겠당
-     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

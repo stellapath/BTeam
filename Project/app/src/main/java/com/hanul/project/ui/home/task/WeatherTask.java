@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,7 +40,6 @@ public class WeatherTask extends AsyncTask<String, Void, Weather> {
             document.getDocumentElement().normalize();
 
             NodeList itemNodeList = document.getElementsByTagName("item");
-
             for (int i = 0; i < itemNodeList.getLength(); i++) {
                 Node node = itemNodeList.item(i);
                 Element element = (Element) node;

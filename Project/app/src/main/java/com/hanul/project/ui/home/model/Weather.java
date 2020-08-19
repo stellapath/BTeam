@@ -2,18 +2,14 @@ package com.hanul.project.ui.home.model;
 
 import com.hanul.project.R;
 
-public class Weather {
+import java.io.Serializable;
+
+public class Weather implements Serializable {
 
     private int background, icon;
     private String temperature, current, city;
 
-    public Weather(int background, int icon, String temperature, String current, String city) {
-        this.background = background;
-        this.icon = icon;
-        this.temperature = temperature;
-        this.current = current;
-        this.city = city;
-    }
+    public Weather() {}
 
     public Weather(String temperature, String current, String city) {
         this.temperature = temperature;

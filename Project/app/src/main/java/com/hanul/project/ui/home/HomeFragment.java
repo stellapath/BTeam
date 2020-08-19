@@ -50,13 +50,14 @@ public class HomeFragment extends Fragment {
         /**
          * HomeAdapter에 전달할 클릭 리스너
          */
+        final Weather finalWeather = weather;
         homeAdapter.setOnItemClickListener(new HomeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if (position == 0) {
                     Toast.makeText(getActivity(), position + "번째 클릭", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    startActivity(intent);
+
                 }
             }
         });

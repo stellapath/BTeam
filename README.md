@@ -1,6 +1,8 @@
 # BTeam
 
-# 멤버 테이블 구성
+# 테이블 구성
+<pre>
+<code>
 CREATE TABLE bUser (
     user_id       VARCHAR2(15)  PRIMARY KEY NOT NULL,
     user_pw       VARCHAR2(15)  NOT NULL,
@@ -11,3 +13,5 @@ CREATE TABLE bUser (
     user_birth    DATE,
     user_key      VARCHAR2(30)
 );
+</code>
+</pre>

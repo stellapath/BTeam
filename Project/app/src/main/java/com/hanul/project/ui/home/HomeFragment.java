@@ -20,6 +20,9 @@ import com.hanul.project.ui.home.task.WeatherTask;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 홈 프래그먼트
+ */
 public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,10 +33,7 @@ public class HomeFragment extends Fragment {
 
         List<Item> items = new ArrayList<>();
 
-        /**
-         * AsyncTask를 통해 날씨를 파싱하여 가져온 뒤
-         * RecyclerView에 추가
-         */
+        // 날씨 불러오기
         WeatherTask weatherTask = new WeatherTask("2914065000");
         weatherTask.execute();
         Weather weather = null;
@@ -47,9 +47,7 @@ public class HomeFragment extends Fragment {
         HomeAdapter homeAdapter = new HomeAdapter(items);
         recyclerView.setAdapter(homeAdapter);
 
-        /**
-         * HomeAdapter에 전달할 클릭 리스너
-         */
+        // 리사이클러뷰 클릭 이벤트
         final Weather finalWeather = weather;
         homeAdapter.setOnItemClickListener(new HomeAdapter.OnItemClickListener() {
             @Override
@@ -57,7 +55,7 @@ public class HomeFragment extends Fragment {
                 if (position == 0) {
                     Toast.makeText(getActivity(), position + "번째 클릭", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), WeatherActivity.class);
-
+                    startActivity(intent);
                 }
             }
         });

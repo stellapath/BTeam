@@ -6,8 +6,9 @@ import android.util.Log;
 import com.hanul.project.CommonMethod;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -26,28 +27,49 @@ public class LogInTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+        URL url = null;
+        HttpURLConnection conn = null;
+        String result = "";
         try {
-            URL url = new URL(CommonMethod.url);
+            // 연결 객체 생성
+            url = new URL(CommonMethod.url);
+            conn = (HttpURLConnection) url.openConnection();
 
-            // URL 연결 객체 생성
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
+            // 설정 단계
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(10000);
 
-            int responseCode = conn.getResponseCode();
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
+            // 파라미터 보내기
+            StringBuffer sb = new StringBuffer();
+            sb.append("/andLogin");
+            sb.append("?user_id=" + user_id + "&user_pw=" + user_pw);
 
-            while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),
+                    "UTF-8"));
+            pw.write(sb.toString());
+            pw.close();
+
+            // 결과를 저장
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),
+                    "UTF-8"));
+            String line;
+            while((line = br.readLine()) != null) {
+                result += line;
             }
             br.close();
 
-            Log.d(TAG, "doInBackground: " + response.toString());
-
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // 연결 종료
+            conn.disconnect();
         }
+
+        Log.d(TAG, "doInBackground: " + result);
+        
         return null;
     }
 

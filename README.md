@@ -1,2 +1,13 @@
 # BTeam
-안드로이드 프로젝트 올리시면 됩니다
+
+# 멤버 테이블 구성
+CREATE TABLE bUser (
+    user_id       VARCHAR2(15)  PRIMARY KEY NOT NULL,
+    user_pw       VARCHAR2(15)  NOT NULL,
+    user_name     VARCHAR2(15),
+    user_nickname VARCHAR2(30),
+    user_email    VARCHAR2(30),
+    user_phone    VARCHAR2(15),
+    user_birth    DATE,
+    user_key      VARCHAR2(30)
+);

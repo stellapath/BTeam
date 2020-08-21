@@ -1,76 +1,63 @@
 package com.hanul.project.ui.user.task;
 
+import android.content.ContentValues;
 import android.os.AsyncTask;
+import android.util.JsonReader;
 import android.util.Log;
 
-import com.hanul.project.CommonMethod;
+import com.hanul.project.network.CommonMethod;
+import com.hanul.project.network.RequestHttpUrlConnection;
+import com.hanul.project.ui.user.LoginActivity;
+import com.hanul.project.ui.user.model.UserDTO;
 
-import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * 로그인 정보를 가져오는 AsyncTask
- */
-public class LogInTask extends AsyncTask<Void, Void, Void> {
-    private static final String TAG = "LogInTask";
+/* 로그인 정보를 가져오는 AsyncTask */
+public class LoginTask extends AsyncTask<Void, Void, String> {
 
-    private String user_id, user_pw;
+    private String url;
+    private ContentValues params;
 
-    public LogInTask(String user_id, String user_pw) {
-        this.user_id = user_id;
-        this.user_pw = user_pw;
+    public LoginTask(String url, ContentValues params) {
+        this.url = url;
+        this.params = params;
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        URL url = null;
-        HttpURLConnection conn = null;
-        String result = "";
-        try {
-            // 연결 객체 생성
-            url = new URL(CommonMethod.url);
-            conn = (HttpURLConnection) url.openConnection();
+    protected String doInBackground(Void... values) {
+        RequestHttpUrlConnection connection = new RequestHttpUrlConnection();
+        String result = connection.request(url, params);
 
-            // 설정 단계
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setRequestMethod("POST");
-            conn.setConnectTimeout(10000);
-
-            // 파라미터 보내기
-            StringBuffer sb = new StringBuffer();
-            sb.append("/andLogin");
-            sb.append("?user_id=" + user_id + "&user_pw=" + user_pw);
-
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),
-                    "UTF-8"));
-            pw.write(sb.toString());
-            pw.close();
-
-            // 결과를 저장
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),
-                    "UTF-8"));
-            String line;
-            while((line = br.readLine()) != null) {
-                result += line;
-            }
-            br.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // 연결 종료
-            conn.disconnect();
-        }
-
-        Log.d(TAG, "doInBackground: " + result);
-        
-        return null;
+        return result;
     }
+/*
+
+    private UserDTO getJson(InputStream is) throws IOException {
+        JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
+        UserDTO dto = new UserDTO();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String key = reader.nextName();
+            if (key.equals("user_id"))            dto.setUser_id(reader.nextString());
+            else if (key.equals("user_pw"))       dto.setUser_pw(reader.nextString());
+            else if (key.equals("user_name"))     dto.setUser_name(reader.nextString());
+            else if (key.equals("user_nickname")) dto.setUser_nickname(reader.nextString());
+            else if (key.equals("user_email"))    dto.setUser_email(reader.nextString());
+            else if (key.equals("user_phone"))    dto.setUser_phone(reader.nextString());
+            else if (key.equals("user_birth"))    dto.setUser_birth(reader.nextString());
+            else if (key.equals("user_key"))      dto.setUser_key(reader.nextString());
+            else reader.skipValue();
+        }
+        reader.endObject();
+
+        return dto;
+    }
+*/
 
 }

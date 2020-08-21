@@ -20,9 +20,7 @@ import com.hanul.project.ui.home.task.WeatherTask;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 홈 프래그먼트
- */
+/* 홈 프래그먼트 */
 public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,

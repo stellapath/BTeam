@@ -4,6 +4,7 @@ import com.hanul.project.R;
 
 import java.io.Serializable;
 
+/* 날씨 정보를 담는 DTO */
 public class Weather implements Serializable {
 
     private int background, icon;

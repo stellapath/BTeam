@@ -18,11 +18,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.hanul.project.ui.user.LogInActivity;
+import com.hanul.project.ui.user.LoginActivity;
 
-/**
- * 메인 액티비티
- */
+/* 메인 액티비티 */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -84,14 +82,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 로그인 상태가 아닐 때
-                if (LogInActivity.logInState == null) {
+                if (LoginActivity.loginState == null) {
                     // 로그인 화면으로 넘기기
-                    Intent intent = new Intent(MainActivity.this, LogInActivity.class);
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                 }
             }
         });
-
 
     }
 

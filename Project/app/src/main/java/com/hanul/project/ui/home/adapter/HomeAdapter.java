@@ -15,6 +15,7 @@ import com.hanul.project.ui.home.model.Weather;
 
 import java.util.List;
 
+/* 홈 리사이클러뷰 어댑터 */
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> items;
@@ -60,9 +61,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return items.get(position).getType();
     }
 
-    /**
-     *  커스텀 리스너 인터페이스 & 메소드
-     */
+    // 커스텀 리스너 인터페이스 & 메소드
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -71,9 +70,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.mListener = listener;
     }
 
-    /**
-     * 날씨 뷰홀더
-     */
+    // 날씨 뷰홀더
     class WeatherViewHolder extends RecyclerView.ViewHolder {
 
         ImageView image_weather_background, image_weather_icon;
@@ -87,10 +84,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             text_weather_current = itemView.findViewById(R.id.text_weather_current);
             text_weather_city = itemView.findViewById(R.id.text_weather_city);
 
-            /**
-             * 날씨 클릭하면 화면 이동
-             * 아이템 클릭 시 커스텀 이벤트 메소드 호출
-             */
+
+            // 날씨 클릭하면 화면 이동
+            // 아이템 클릭 시 커스텀 이벤트 메소드 호출
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

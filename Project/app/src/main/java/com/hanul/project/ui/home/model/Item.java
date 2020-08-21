@@ -1,5 +1,6 @@
 package com.hanul.project.ui.home.model;
 
+/* 홈 리사이클러뷰 아이템을 담는 DTO */
 public class Item {
 
     private int type;

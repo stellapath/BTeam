@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.hanul.project.R;
 
+/* 날씨 액티비티 설정 페이지 */
 public class WeatherSettingFragment extends Fragment {
 
     @Nullable

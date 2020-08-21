@@ -13,6 +13,7 @@ import com.hanul.project.R;
 
 import java.util.ArrayList;
 
+/* 날씨 액티비티 페이저 어댑터 */
 public class WeatherPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes

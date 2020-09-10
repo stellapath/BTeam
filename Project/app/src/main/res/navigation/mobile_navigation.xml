@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.hanul.project.ui.home.HomeFragment"
+        android:name="com.bteam.project.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_alarm"
-        android:name="com.hanul.project.ui.alarm.AlarmFragment"
+        android:name="com.bteam.project.alarm.AlarmFragment"
         android:label="@string/title_alarm"
         tools:layout="@layout/fragment_alarm" />
     <fragment
         android:id="@+id/navigation_direction"
-        android:name="com.hanul.project.ui.direction.DirectionFragment"
+        android:name="com.bteam.project.direction.DirectionFragment"
         android:label="@string/title_direction"
         tools:layout="@layout/fragment_direction" />
     <fragment
         android:id="@+id/navigation_board"
-        android:name="com.hanul.project.ui.board.BoardFragment"
+        android:name="com.bteam.project.board.BoardFragment"
         android:label="@string/title_board"
         tools:layout="@layout/fragment_board" />
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.hanul.project.ui.settings.SettingsFragment"
+        android:name="com.bteam.project.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 

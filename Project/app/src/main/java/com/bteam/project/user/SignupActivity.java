@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -71,10 +72,18 @@ public class SignupActivity extends AppCompatActivity {
                     Snackbar.make(view, "이메일을 입력하세요.", Snackbar.LENGTH_SHORT).show();
                     signup_email.requestFocus();
                     return;
+                }else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
+                    Snackbar.make(view, "유효한 이메일을 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_email.requestFocus();
+                    return;
                 }
-                
+
                 if (signup_pw.getText().toString().length() == 0) {
                     Snackbar.make(view, "비밀번호를 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_pw.requestFocus();
+                    return;
+                }else if(!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{6,15}$", signup_pw.getText())){
+                    Snackbar.make(view, "6~15자리 숫자.영어,특수문자를 사용하세요", Snackbar.LENGTH_SHORT).show();
                     signup_pw.requestFocus();
                     return;
                 }
@@ -84,7 +93,7 @@ public class SignupActivity extends AppCompatActivity {
                     signup_pw2.requestFocus();
                     return;
                 }
-                
+
                 if (!signup_pw.getText().toString().equals(signup_pw2.getText().toString())) {
                     Snackbar.make(view, "비밀번호가 일치하지 않습니다.", Snackbar.LENGTH_SHORT).show();
                     signup_pw.setText("");
@@ -97,6 +106,12 @@ public class SignupActivity extends AppCompatActivity {
                     Snackbar.make(view, "닉네임을 입력하세요.", Snackbar.LENGTH_SHORT).show();
                     signup_nickname.requestFocus();
                     return;
+                } else if (!Pattern.matches("^[가-힣a-zA-Z0-9]{2,6}$", signup_nickname.getText())){
+                    /*닉네임 유효성 검사 한글,영어,숫자 2~6자리로 설정*/
+                    Snackbar.make(view, "한글,영어 2~6자리를 사용하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_nickname.requestFocus();
+                    return;
+
                 }
 
                 UserVO vo = getUserVO();

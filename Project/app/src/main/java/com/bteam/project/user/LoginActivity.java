@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, Common.REQUEST_SIGNUP);
             }
         });
 
@@ -110,14 +110,13 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "로그인 되었습니다.",
                         Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
+                Common.login_info = s;
+                finish();
             } else {
-                Toast.makeText(LoginActivity.this, "로그인에 실패했습니다. 잠시 후에 다시 시도해 주세요.",
+                Toast.makeText(LoginActivity.this, "존재하지 않는 아이디이거나, 비밀번호가 잘못되었습니다.",
                         Toast.LENGTH_SHORT).show();
                 setResult(RESULT_CANCELED);
             }
-            Common.login_info = s;
-
-            finish();
             super.onPostExecute(s);
         }
     }

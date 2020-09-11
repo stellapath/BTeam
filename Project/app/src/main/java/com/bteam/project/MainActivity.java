@@ -1,10 +1,12 @@
 package com.bteam.project;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,7 +19,9 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bteam.project.task.ImageLoadTask;
 import com.bteam.project.user.LoginActivity;
+import com.bteam.project.user.MyPageActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -25,6 +29,9 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+
+    private ImageView drawer_image;
+    private TextView drawer_nickname, drawer_id;
 
     /***********************************************************************************************
      * onCreate()
@@ -45,13 +52,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // 로그인 처리
         if (requestCode == Common.REQUEST_LOGIN) {
+            // 로그인이 완료 되었을 때
             if (resultCode == RESULT_OK) {
-
+                // 프로필 이미지 및 닉네임 변경 처리
+                String user_nickname = Common.login_info.getUser_nickname();
+                String user_email = Common.login_info.getUser_email();
+                drawer_nickname.setText(user_nickname);
+                drawer_id.setText(user_email);
+                ImageLoadTask task = new ImageLoadTask(user_email, drawer_image);
+                task.execute();
             }
         }
     }
-
 
     // 네비게이션 설정
     private void navigationSetting() {
@@ -89,10 +103,12 @@ public class MainActivity extends AppCompatActivity {
         // 사이드 네비게이션 클릭 이벤트
         NavigationView navigationView = findViewById(R.id.side_nav_view);
         View headView = navigationView.getHeaderView(0);
-        ImageView drawer_image = headView.findViewById(R.id.drawer_image);
+        drawer_image = headView.findViewById(R.id.drawer_image);
+        drawer_nickname = headView.findViewById(R.id.drawer_nickname);
+        drawer_id = headView.findViewById(R.id.drawer_id);
 
-        // 사이드 네비게이션 이미지 클릭 시 이벤트
-        drawer_image.setOnClickListener(new View.OnClickListener() {
+        // 사이드 네비게이션 헤더 클릭 시 이벤트
+        headView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Common.login_info == null) {
@@ -101,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, Common.REQUEST_LOGIN);
                 } else {
                     // 로그인 상태이면 마이페이지로 넘기기
+                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                    startActivityForResult(intent, Common.REQUEST_MYPAGE);
                 }
             }
         });

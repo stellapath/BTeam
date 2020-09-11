@@ -2,8 +2,11 @@ package com.bteam.project.user;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -66,26 +69,33 @@ public class SignupActivity extends AppCompatActivity {
                 /* 유효성 검사 */
                 if (signup_email.getText().toString().length() == 0) {
                     Snackbar.make(view, "이메일을 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_email.requestFocus();
                     return;
                 }
                 
                 if (signup_pw.getText().toString().length() == 0) {
                     Snackbar.make(view, "비밀번호를 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_pw.requestFocus();
                     return;
                 }
 
                 if (signup_pw2.getText().toString().length() == 0) {
-                    Snackbar.make(view, "비밀번호를 확인하세요.", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "비밀번호를 확인을 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_pw2.requestFocus();
                     return;
                 }
                 
                 if (!signup_pw.getText().toString().equals(signup_pw2.getText().toString())) {
-                    Snackbar.make(view, "비밀번호를 확인하세요.", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "비밀번호가 일치하지 않습니다.", Snackbar.LENGTH_SHORT).show();
+                    signup_pw.setText("");
+                    signup_pw2.setText("");
+                    signup_pw.requestFocus();
                     return;
                 }
 
                 if (signup_nickname.getText().toString().length() == 0) {
                     Snackbar.make(view, "닉네임을 입력하세요.", Snackbar.LENGTH_SHORT).show();
+                    signup_nickname.requestFocus();
                     return;
                 }
 
@@ -93,6 +103,34 @@ public class SignupActivity extends AppCompatActivity {
                 SignupRequest request = new SignupRequest(vo, getApplicationContext());
                 request.execute();
                 finish();
+
+
+            }
+        });
+
+        /* 비밀번호 확인란에 입력하면서 같은지 실시간 확인*/
+        signup_pw2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String password = signup_pw.getText().toString();
+                String passwordConfirm = signup_pw2.getText().toString();
+                /* 비밀번호가 일치하면 둘다 초록색, 추후 비밀번호 일치하지 않음 글씨로 변경할까? */
+                if(password.equals(passwordConfirm)){
+                    signup_pw.setBackgroundColor(Color.GREEN);
+                    signup_pw2.setBackgroundColor(Color.GREEN);
+                }else{      /* 다르면 비밀번호 확인창 빨강색 */
+                    signup_pw.setBackgroundColor(Color.GREEN);
+                    signup_pw2.setBackgroundColor(Color.RED);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
 

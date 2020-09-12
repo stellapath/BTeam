@@ -43,6 +43,16 @@ public class LoginActivity extends AppCompatActivity {
         login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (login_id.getText().toString().length() == 0) {
+                    Toast.makeText(LoginActivity.this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (login_pw.getText().toString().length() == 0) {
+                    Toast.makeText(LoginActivity.this, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 LoginRequest request = new LoginRequest();
                 request.execute();
             }
@@ -78,6 +88,11 @@ public class LoginActivity extends AppCompatActivity {
                 conn.setConnectTimeout(8000);
                 conn.setReadTimeout(8000);
                 conn.connect();
+
+                // 서버 연결 확인
+                if (conn.getResponseCode() != 200) {
+                    return null;
+                }
 
                 // 파라미터 전달
                 OutputStream out = conn.getOutputStream();

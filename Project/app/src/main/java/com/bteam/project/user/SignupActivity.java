@@ -37,6 +37,8 @@ public class SignupActivity extends AppCompatActivity {
                      signup_zipcode, signup_address, signup_detail, signup_birth;
     private Button signup_andAddress, signup_submit;
 
+    private boolean isChecked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -32,7 +31,8 @@ public class HomeFragment extends Fragment {
         List<Item> items = new ArrayList<>();
 
         // 날씨 불러오기
-        WeatherTask weatherTask = new WeatherTask("2914065000");
+        String zone = "2914065000";
+        WeatherTask weatherTask = new WeatherTask(zone);
         weatherTask.execute();
         Weather weather = null;
         try {
@@ -51,7 +51,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 if (position == 0) {
-                    Toast.makeText(getActivity(), position + "번째 클릭", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), WeatherActivity.class);
                     startActivity(intent);
                 }

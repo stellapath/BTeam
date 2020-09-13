@@ -172,8 +172,8 @@ public class SignupActivity extends AppCompatActivity {
                          + "&user_zipcode=" + vo.getUser_zipcode()
                          + "&user_address=" + vo.getUser_address()
                          + "&detail_address=" + vo.getDetail_address()
-                         + "&user_birth" + vo.getUser_birth()
-                         + "&user_key" + vo.getUser_key() + "";
+                         + "&user_birth=" + vo.getUser_birth()
+                         + "&user_key=" + vo.getUser_key() + "";
             String result = "";
             try {
                 // 서버 연결

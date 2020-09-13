@@ -11,10 +11,11 @@ import com.bteam.project.R;
 import com.bteam.project.home.adapter.WeatherPagerAdapter;
 
 import java.util.ArrayList;
-/*
- 리사이클러뷰의 날씨를 클릭했을 때 나오는
- 날씨 액티비티
-*/
+
+/**
+ * 홈에서 날씨를 터치했을 때
+ * 날씨 상세 액티비티
+ */
 public class WeatherActivity extends AppCompatActivity {
 
     @Override

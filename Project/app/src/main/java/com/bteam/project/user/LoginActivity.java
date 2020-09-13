@@ -23,6 +23,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * 네비게이션 드로어에서 헤더를 터치했을 때
+ * 로그인 액티비티
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";

@@ -1,7 +1,6 @@
 package com.bteam.project.home.task;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.bteam.project.home.model.Weather;
 
@@ -56,6 +55,10 @@ public class WeatherTask extends AsyncTask<String, Void, ArrayList<Weather>> {
                 NodeList hourNodeList = element.getElementsByTagName("hour");
                 String hour = hourNodeList.item(0).getChildNodes().item(0).getNodeValue();
 
+                // 오늘 내일 모레 day
+                NodeList dayNodeList = element.getElementsByTagName("day");
+                String day = dayNodeList.item(0).getChildNodes().item(0).getNodeValue();
+
                 // 온도 Temperature
                 NodeList tempNodeList = element.getElementsByTagName("temp");
                 String temp = tempNodeList.item(0).getChildNodes().item(0).getNodeValue() + "˚";
@@ -64,7 +67,7 @@ public class WeatherTask extends AsyncTask<String, Void, ArrayList<Weather>> {
                 NodeList currNodeList = element.getElementsByTagName("wfKor");
                 String current = currNodeList.item(0).getChildNodes().item(0).getNodeValue();
 
-                list.add(new Weather(hour, temp, current, city));
+                list.add(new Weather(hour, day, temp, current, city));
             }
         } catch (Exception e) {
             e.printStackTrace();

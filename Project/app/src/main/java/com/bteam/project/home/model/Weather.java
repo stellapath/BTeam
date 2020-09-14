@@ -1,13 +1,8 @@
 package com.bteam.project.home.model;
 
-import android.content.Context;
-
 import com.bteam.project.R;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * 날씨 정보 DTO
@@ -15,32 +10,28 @@ import java.util.Date;
 public class Weather implements Serializable {
 
     private int background, icon;
-    private String hour, temperature, current, city;
+    private String hour, day, temperature, current, city;
 
-    public Weather() {}
-
-    public Weather(String hour, String temperature, String current, String city) {
+    public Weather(String hour, String day, String temperature, String current, String city) {
         this.hour = hour;
         this.temperature = temperature;
         this.current = current;
         this.city = city;
         setBackground();
         setIcon();
+        setDayToString(day);
     }
 
-    public void setBackground() {
-        long currentTimeMillis = System.currentTimeMillis();
-        Date date = new Date(currentTimeMillis);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH");
-        int hour = Integer.parseInt(sdf.format(date));
-        if (hour >= 20 || hour <= 6) {
+    private void setBackground() {
+        int hour_x = Integer.parseInt(hour);
+        if (hour_x >= 20 || hour_x <= 6) {
             background = R.drawable.gradation;
         } else {
             background = R.drawable.ic_weather_clear;
         }
     }
 
-    public void setIcon() {
+    private void setIcon() {
         if (current.equals("맑음")) {
             icon = R.drawable.ic_sunny;
         } else if (current.equals("흐림")) {
@@ -49,6 +40,17 @@ public class Weather implements Serializable {
             icon = R.drawable.ic_rainy;
         } else if (current.equals("구름 많음")) {
             icon = R.drawable.ic_many_cloud;
+        }
+    }
+
+    private void setDayToString(String day) {
+        int days = Integer.parseInt(day);
+        if (days == 0) {
+            this.day = "오늘";
+        } else if (days == 1) {
+            this.day = "내일";
+        } else if (days == 2) {
+            this.day = "모레";
         }
     }
 
@@ -74,6 +76,14 @@ public class Weather implements Serializable {
 
     public void setHour(String hour) {
         this.hour = hour;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 
     public String getTemperature() {

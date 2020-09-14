@@ -6,104 +6,205 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.SignupActivity"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <WebView
-        android:id="@+id/signup_webView"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <EditText
-        android:id="@+id/signup_email"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="email"
-        android:inputType="textEmailAddress" />
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/signup_pw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="password"
-        android:inputType="textPassword" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <EditText
-        android:id="@+id/signup_pw2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="confirm password"
-        android:inputType="textPassword" />
+            <TextView
+                android:id="@+id/signup_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="JOIN US"
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
-    <EditText
-        android:id="@+id/signup_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="nickname"
-        android:inputType="textPersonName" />
+            <WebView
+                android:id="@+id/signup_webView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="30sp" />
 
-    <EditText
-        android:id="@+id/signup_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="phone"
-        android:inputType="phone" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+                <EditText
+                    android:id="@+id/signup_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:layout_marginBottom="8dp"
+                    android:ems="10"
+                    android:hint="이메일"
+                    android:padding="12dp"
+                    android:drawableStart="@drawable/ic_email"
+                    android:drawableLeft="@drawable/ic_email"
+                    android:drawablePadding="12dp"
+                    android:background="@drawable/custom_input"
+                    android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/signup_zipcode"
-            android:layout_width="117dp"
-            android:layout_height="46dp"
-            android:ems="10"
-            android:inputType="number"
-            android:enabled="false" />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:layout_marginLeft="8dp"
+                    android:text="중복확인" />
 
-        <Button
-            android:id="@+id/signup_andAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            </LinearLayout>
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/signup_pw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="비밀번호"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawableLeft="@drawable/ic_lock"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/signup_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="address"
-        android:enabled="false" />
+            <EditText
+                android:id="@+id/signup_pw2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="비밀번호 확인"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_encryption"
+                android:drawableLeft="@drawable/ic_encryption"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/signup_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="detail" />
+            <EditText
+                android:id="@+id/signup_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="닉네임"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_smile"
+                android:drawableLeft="@drawable/ic_smile"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/signup_birth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="birth"
-        android:inputType="date" />
+            <EditText
+                android:id="@+id/signup_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="휴대전화"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawableLeft="@drawable/ic_phone"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="phone" />
 
-    <Button
-        android:id="@+id/signup_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="submit" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:weightSum="5">
+
+                <EditText
+                    android:id="@+id/signup_zipcode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:ems="10"
+                    android:hint="우편번호"
+                    android:background="@drawable/custom_input"
+                    android:padding="12dp"
+                    android:drawablePadding="12dp"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawableStart="@drawable/ic_location"
+                    android:inputType="number" />
+
+                <Button
+                    android:id="@+id/signup_andAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:layout_marginLeft="8dp"
+                    android:text="우편번호" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/signup_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:ems="10"
+                android:hint="주소"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_house_fill"
+                android:drawableLeft="@drawable/ic_house_fill"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/signup_detail"
+                android:layout_marginBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="상세주소"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_house_line"
+                android:drawableLeft="@drawable/ic_house_line"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/signup_birth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="생년월일"
+                android:padding="12dp"
+                android:drawableStart="@drawable/ic_date"
+                android:drawableLeft="@drawable/ic_date"
+                android:drawablePadding="12dp"
+                android:background="@drawable/custom_input"
+                android:inputType="date" />
+
+            <Button
+                android:id="@+id/signup_submit"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20sp"
+                android:background="#000000"
+                android:text="가입하기"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

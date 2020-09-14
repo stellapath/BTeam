@@ -9,20 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:weightSum="5">
 
         <EditText
             android:id="@+id/weather_dong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="4"
             android:ems="10"
             android:inputType="textPersonName"
-            android:hint="동을 검색하세요." />
+            android:hint="읍/면/동을 검색할 수 있습니다." />
 
         <Button
             android:id="@+id/weather_dongSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="검색" />
 
     </LinearLayout>

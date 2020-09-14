@@ -3,7 +3,6 @@ package com.bteam.project.home;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +48,15 @@ public class WeatherFragment extends Fragment {
 
         WeatherAdapter adapter = new WeatherAdapter(getWeatherList());
         recyclerView.setAdapter(adapter);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+
+                refreshLayout.setRefreshing(false);
+            }
+        });
 
         return root;
     }

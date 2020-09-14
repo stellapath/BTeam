@@ -44,13 +44,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     class WeatherViewHolder extends RecyclerView.ViewHolder {
 
         ImageView background, icon;
-        TextView hour, temperature, current;
+        TextView hour, day, temperature, current;
 
         public WeatherViewHolder(@NonNull View itemView) {
             super(itemView);
             background = itemView.findViewById(R.id.item_weather_background);
             icon = itemView.findViewById(R.id.item_weather_icon);
             hour = itemView.findViewById(R.id.item_weather_hour);
+            day = itemView.findViewById(R.id.item_weather_day);
             temperature = itemView.findViewById(R.id.item_weather_temperature);
             current = itemView.findViewById(R.id.item_weather_current);
         }
@@ -58,7 +59,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         void setWeather(Weather weather) {
             background.setImageResource(weather.getBackground());
             icon.setImageResource(weather.getIcon());
-            hour.setText(weather.getHour());
+            hour.setText(weather.getHour() + "시");
+            day.setText(weather.getDay());
             temperature.setText(weather.getTemperature());
             current.setText(weather.getCurrent());
         }

@@ -33,7 +33,6 @@ import java.util.ArrayList;
  */
 public class WeatherSettingFragment extends Fragment {
 
-    private ArrayList<City> searchResult;
     private SharedPreferences preferences;
 
     private EditText dong;
@@ -62,7 +61,7 @@ public class WeatherSettingFragment extends Fragment {
                 String searchData = dong.getText().toString();
 
                 if (searchData.length() == 0) {
-                    Toast.makeText(getActivity(), "검색할 동을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "검색할 읍/면/동을 입력하세요.", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (searchData.length() == 1) {
                     Toast.makeText(getActivity(), "두 글자 이상 입력하세요.", Toast.LENGTH_SHORT).show();
@@ -90,7 +89,7 @@ public class WeatherSettingFragment extends Fragment {
                 // 동 검색 결과를 ArrayList로 반환
                 ArrayList<City> searchResult = new ArrayList<>();
                 for (int i = 0; i < cities.length; i++) {
-                    if (cities[i].getDong().equals(searchData)) {
+                    if (cities[i].getDong().contains(searchData)) {
                         searchResult.add(cities[i]);
                     }
                 }

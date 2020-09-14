@@ -13,8 +13,8 @@ import com.bteam.project.home.adapter.WeatherPagerAdapter;
 import java.util.ArrayList;
 
 /**
- * 홈에서 날씨를 터치했을 때
  * 날씨 상세 액티비티
+ * 뷰페이저로 연결 됨
  */
 public class WeatherActivity extends AppCompatActivity {
 
@@ -36,4 +36,5 @@ public class WeatherActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.weather_tabs);
         tabs.setupWithViewPager(viewPager);
     }
+
 }

@@ -1,5 +1,7 @@
 package com.bteam.project.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,17 +33,20 @@ import java.util.ArrayList;
  */
 public class WeatherSettingFragment extends Fragment {
 
+    private ArrayList<City> searchResult;
+    private SharedPreferences preferences;
+
     private EditText dong;
     private Button dongSearch;
     private RecyclerView recyclerView;
-
-    private ArrayList<City> searchResult;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_weather_setting, container, false);
+
+        preferences = getActivity().getSharedPreferences("Weather", Context.MODE_PRIVATE);
 
         dong = root.findViewById(R.id.weather_dong);
         dongSearch = root.findViewById(R.id.weather_dongSearch);
@@ -90,7 +95,7 @@ public class WeatherSettingFragment extends Fragment {
                     }
                 }
 
-                DongAdapter adapter = new DongAdapter(searchResult);
+                DongAdapter adapter = new DongAdapter(searchResult, preferences, getActivity());
                 recyclerView.setAdapter(adapter);
 
             }

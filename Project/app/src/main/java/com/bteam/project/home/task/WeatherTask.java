@@ -12,11 +12,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-public class WeatherTask extends AsyncTask<String, Void, Weather> {
+public class WeatherTask extends AsyncTask<String, Void, ArrayList<Weather>> {
     private static final String TAG = "WeatherTask";
 
     private String zone;
@@ -26,10 +27,11 @@ public class WeatherTask extends AsyncTask<String, Void, Weather> {
     }
 
     @Override
-    protected Weather doInBackground(String... urls) {
+    protected ArrayList<Weather> doInBackground(String... urls) {
         URL url;
         Document document = null;
-        String temp = null, current = null, city = null;
+        ArrayList<Weather> list = new ArrayList<>();
+
         try {
             url = new URL("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=" + zone);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -38,30 +40,37 @@ public class WeatherTask extends AsyncTask<String, Void, Weather> {
             document.getDocumentElement().normalize();
 
             NodeList itemNodeList = document.getElementsByTagName("item");
-            for (int i = 0; i < itemNodeList.getLength(); i++) {
-                Node node = itemNodeList.item(i);
+            Node itemNode = itemNodeList.item(0);
+            Element itemElement = (Element) itemNode;
+
+            // 지역 City
+            NodeList cityNodeList = itemElement.getElementsByTagName("category");
+            String city = cityNodeList.item(0).getChildNodes().item(0).getNodeValue();
+
+            NodeList dataNodeList = document.getElementsByTagName("data");
+            for (int i = 0; i < dataNodeList.getLength(); i++) {
+                Node node = dataNodeList.item(i);
                 Element element = (Element) node;
 
-                // Temperature
+                // 시간 hour
+                NodeList hourNodeList = element.getElementsByTagName("hour");
+                String hour = hourNodeList.item(0).getChildNodes().item(0).getNodeValue();
+
+                // 온도 Temperature
                 NodeList tempNodeList = element.getElementsByTagName("temp");
-                temp = tempNodeList.item(0).getChildNodes().item(0).getNodeValue() + "˚";
-                Log.e(TAG, "onPostExecute: " +  temp);
+                String temp = tempNodeList.item(0).getChildNodes().item(0).getNodeValue() + "˚";
 
-                // Current
+                // 상태 current
                 NodeList currNodeList = element.getElementsByTagName("wfKor");
-                current = currNodeList.item(0).getChildNodes().item(0).getNodeValue();
-                Log.e(TAG, "onPostExecute: " + current);
+                String current = currNodeList.item(0).getChildNodes().item(0).getNodeValue();
 
-                // City
-                NodeList cityNodeList = element.getElementsByTagName("category");
-                city = cityNodeList.item(0).getChildNodes().item(0).getNodeValue();
-                Log.e(TAG, "onPostExecute: " +  city);
+                list.add(new Weather(hour, temp, current, city));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new Weather(temp, current, city);
+        return list;
     }
 
 }

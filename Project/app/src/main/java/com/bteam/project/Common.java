@@ -10,6 +10,9 @@ public class Common {
     /* 로그인 정보가 들어오는 곳 */
     public static UserVO login_info;
 
+    /* Weather RequestCode */
+    public static final int REQUEST_WEATHER = 1;
+
     /* Intent RequestCode */
     public static final int REQUEST_LOGIN = 100;
     public static final int REQUEST_SIGNUP = 101;

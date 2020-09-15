@@ -3,86 +3,208 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:divider="?android:listDivider">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:padding="16dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="300dp"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:divider="?android:listDivider"
+            android:showDividers="middle|end">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="8dp"
-            android:scaleX="1.5"
-            android:scaleY="1.5" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:orientation="horizontal">
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/alarm_recyclerView"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="기상 시간 : %d"
-            android:textSize="19sp" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/alarm_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8dp"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="%d시간 %d분 남았습니다."
-            android:textColor="#b62020" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+                <TextView
+                    android:id="@+id/alarm_wakeUpTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="기상 시간 : %d"
+                    android:drawableLeft="@drawable/ic_alarm"
+                    android:drawablePadding="12dp"
+                    android:textSize="19sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="%d분 간격으로 알람이 울립니다."
-            android:textSize="19sp" />
+                <TextView
+                    android:id="@+id/alarm_wakeUpLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%d시간 %d분 남았습니다."
+                    android:textColor="#b62020" />
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="알람이 %d번 반복됩니다."
-            android:textSize="19sp" />
+                <TextView
+                    android:id="@+id/alarm_interval"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_compare_arrows"
+                    android:drawablePadding="12dp"
+                    android:text="%d분 간격으로 알람이 울립니다."
+                    android:textSize="19sp" />
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" %s"
-            android:textSize="19sp"
-            app:drawableLeftCompat="@drawable/ic_baseline_volume_up_24" />
+                <TextView
+                    android:id="@+id/alarm_repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_repeat"
+                    android:drawablePadding="12dp"
+                    android:text="알람이 %d번 반복됩니다."
+                    android:textSize="19sp" />
 
-    </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/alarm_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_baseline_volume_up_24"
+                    android:drawablePadding="12dp"
+                    android:text="%s"
+                    android:textSize="19sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/alarm_vibration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="진동이 울립니다."
+                    android:drawableLeft="@drawable/ic_vibration"
+                    android:drawablePadding="12dp"
+                    android:textSize="19sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/alarm_memo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_note"
+                    android:drawablePadding="12dp"
+                    android:text="메모가 있습니다."
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/alarm_memoContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/alarm_destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawablePadding="12dp"
+                    android:text="목적지 : %d"
+                    android:textSize="19sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/alarm_view8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/alarm_getOutTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="도착 시간 : %d"
+                    android:drawableLeft="@drawable/ic_bus"
+                    android:drawablePadding="12dp"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/alarm_getOutLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%d시간 %d분 남았습니다."
+                    android:textColor="#b62020" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

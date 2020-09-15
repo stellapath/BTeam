@@ -34,22 +34,23 @@ public class HomeFragment extends Fragment {
     private ImageView background, icon;
     private TextView temperature, current, city;
 
+    private Weather weather;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         preferences = getActivity().getSharedPreferences("Weather", Context.MODE_PRIVATE);
 
-        refreshLayout = root.findViewById(R.id.home_refreshLayout);
-        cardView = root.findViewById(R.id.home_weatherView);
-        background = root.findViewById(R.id.image_weather_background);
-        icon = root.findViewById(R.id.image_weather_icon);
-        temperature = root.findViewById(R.id.text_weather_temperature);
-        current = root.findViewById(R.id.text_weather_current);
-        city = root.findViewById(R.id.text_weather_city);
+        initView(root);
 
-        setWeather(getWeatherList().get(0));
+        // Weather 객체가 null 일때만 불러오도록 해서 로딩시간을 줄인다
+        if (weather == null) {
+            weather = getWeatherList().get(0);
+            setWeather(weather);
+        }
 
+        // 날씨를 클릭하면 날씨 상세 액티비티로 이동
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,13 +63,23 @@ public class HomeFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                // 날씨 새로 불러오기
                 setWeather(getWeatherList().get(0));
-
                 refreshLayout.setRefreshing(false);
             }
         });
 
         return root;
+    }
+
+    private void initView(View root) {
+        refreshLayout = root.findViewById(R.id.home_refreshLayout);
+        cardView = root.findViewById(R.id.home_weatherView);
+        background = root.findViewById(R.id.image_weather_background);
+        icon = root.findViewById(R.id.image_weather_icon);
+        temperature = root.findViewById(R.id.text_weather_temperature);
+        current = root.findViewById(R.id.text_weather_current);
+        city = root.findViewById(R.id.text_weather_city);
     }
 
     // 날씨 불러오기
@@ -85,7 +96,7 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-    // 날씨 붙이기
+    // 날씨 객체의 정보를 뷰에 넣기
     private void setWeather(Weather weather) {
         background.setImageResource(weather.getBackground());
         icon.setImageResource(weather.getIcon());

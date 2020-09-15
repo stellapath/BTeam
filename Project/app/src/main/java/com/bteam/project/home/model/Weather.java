@@ -36,7 +36,7 @@ public class Weather implements Serializable {
             icon = R.drawable.ic_sunny;
         } else if (current.equals("흐림")) {
             icon = R.drawable.ic_cloudy;
-        } else if (current.equals("비")) {
+        } else if (current.equals("비") || current.equals("소나기")) {
             icon = R.drawable.ic_rainy;
         } else if (current.equals("구름 많음")) {
             icon = R.drawable.ic_many_cloud;

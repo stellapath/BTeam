@@ -43,17 +43,12 @@ public class WeatherFragment extends Fragment {
         refreshLayout = root.findViewById(R.id.weather_refreshLayout);
         recyclerView = root.findViewById(R.id.weather_recyclerView);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
-        WeatherAdapter adapter = new WeatherAdapter(getWeatherList());
-        recyclerView.setAdapter(adapter);
+        setWeather();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-
+                setWeather();
                 refreshLayout.setRefreshing(false);
             }
         });
@@ -73,6 +68,14 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
         }
         return list;
+    }
+
+    private void setWeather() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        WeatherAdapter adapter = new WeatherAdapter(getWeatherList());
+        recyclerView.setAdapter(adapter);
     }
 
 }

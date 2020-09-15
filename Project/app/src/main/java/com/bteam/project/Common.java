@@ -19,9 +19,7 @@ public class Common {
     public static final int REQUEST_ADDRESS = 102;
     public static final int REQUEST_MYPAGE = 103;
 
-    /* Alarm RequestCode  */
-    public static final int REQUEST_ALARM_EDIT = 200;
-    public static final int REQUEST_ALARM_ADD = 201;
-    public static final int RESULT_ALARM_CANCEL = 202;
+    /* Alarm RequestCode */
+    public static final int REQUEST_RINGTONE = 200;
 
 }

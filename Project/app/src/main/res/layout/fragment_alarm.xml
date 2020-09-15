@@ -46,14 +46,27 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/alarm_wakeUpTime"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="기상 시간 : %d"
-                    android:drawableLeft="@drawable/ic_alarm"
-                    android:drawablePadding="12dp"
-                    android:textSize="19sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="기상 시간 : "
+                        android:drawableLeft="@drawable/ic_alarm"
+                        android:drawablePadding="12dp"
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/alarm_wakeUpTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%d"
+                        android:textSize="27sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/alarm_wakeUpLeft"
@@ -71,14 +84,32 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/alarm_interval"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_compare_arrows"
-                    android:drawablePadding="12dp"
-                    android:text="%d분 간격으로 알람이 울립니다."
-                    android:textSize="19sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_compare_arrows"
+                        android:drawablePadding="12dp"
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/alarm_interval"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%d"
+                        android:textSize="27sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="분 간격으로 알람이 울립니다."
+                        android:textSize="19sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
             <LinearLayout
@@ -89,14 +120,32 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/alarm_repeat"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_repeat"
-                    android:drawablePadding="12dp"
-                    android:text="알람이 %d번 반복됩니다."
-                    android:textSize="19sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_repeat"
+                        android:drawablePadding="12dp"
+                        android:text="알람이 "
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/alarm_repeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%d"
+                        android:textSize="27sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="번 반복됩니다."
+                        android:textSize="19sp" />
+                </LinearLayout>
 
             </LinearLayout>
             <LinearLayout
@@ -167,14 +216,27 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/alarm_destination"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_location"
-                    android:drawablePadding="12dp"
-                    android:text="목적지 : %d"
-                    android:textSize="19sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_location"
+                        android:drawablePadding="12dp"
+                        android:text="목적지 : "
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/alarm_destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%s"
+                        android:textSize="19sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
             <LinearLayout
@@ -185,17 +247,30 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/alarm_getOutTime"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="도착 시간 : %d"
-                    android:drawableLeft="@drawable/ic_bus"
-                    android:drawablePadding="12dp"
-                    android:textSize="19sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="도착 시간 : "
+                        android:drawableLeft="@drawable/ic_bus"
+                        android:drawablePadding="12dp"
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/alarm_arrivalTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%s"
+                        android:textSize="27sp" />
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/alarm_getOutLeft"
+                    android:id="@+id/alarm_arrivalLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="%d시간 %d분 남았습니다."

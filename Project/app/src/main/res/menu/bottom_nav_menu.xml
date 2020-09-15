@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/navigation_alarm"
-        android:icon="@drawable/alarm"
+        android:icon="@drawable/ic_alarm"
         android:title="@string/title_alarm" />
 
     <item
@@ -18,12 +18,12 @@
 
     <item
         android:id="@+id/navigation_board"
-        android:icon="@drawable/message"
+        android:icon="@drawable/ic_chat"
         android:title="@string/title_board" />
 
     <item
         android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings"
+        android:icon="@drawable/ic_settings"
         android:title="@string/title_settings" />
 
 </menu>

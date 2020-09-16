@@ -13,15 +13,17 @@ import androidx.fragment.app.DialogFragment;
 public class IntervalPickerDialog extends DialogFragment {
 
     private NumberPicker.OnValueChangeListener valueChangeListener;
-    private NumberPicker numberPicker;
+    private int value;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        numberPicker = new NumberPicker(getActivity());
+        final NumberPicker numberPicker = new NumberPicker(getActivity());
 
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(60);
+
+        numberPicker.setValue(value);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("반복 간격 설정");
@@ -55,6 +57,6 @@ public class IntervalPickerDialog extends DialogFragment {
     }
 
     public void setNumberPickerValue(int i) {
-        numberPicker.setValue(i);
+        this.value = i;
     }
 }

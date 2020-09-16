@@ -39,7 +39,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view1"
+                android:id="@+id/alarm_wakeUpView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -77,7 +77,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view2"
+                android:id="@+id/alarm_intervalView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -113,7 +113,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view3"
+                android:id="@+id/alarm_repeatView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -149,7 +149,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view4"
+                android:id="@+id/alarm_ringtoneView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -157,7 +157,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/alarm_sound"
+                    android:id="@+id/alarm_ringtone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_baseline_volume_up_24"
@@ -167,7 +167,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view5"
+                android:id="@+id/alarm_vibrationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -185,7 +185,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view6"
+                android:id="@+id/alarm_memoView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -209,7 +209,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view7"
+                android:id="@+id/alarm_locationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -240,7 +240,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/alarm_view8"
+                android:id="@+id/alarm_arrivalView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"

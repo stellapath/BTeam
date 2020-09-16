@@ -13,15 +13,17 @@ import androidx.fragment.app.DialogFragment;
 public class RepeatPickerDialog extends DialogFragment {
 
     private NumberPicker.OnValueChangeListener valueChangeListener;
-    private NumberPicker numberPicker;
+    private int value;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        numberPicker = new NumberPicker(getActivity());
+        final NumberPicker numberPicker = new NumberPicker(getActivity());
 
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(10);
+
+        numberPicker.setValue(value);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("반복 횟수 설정");
@@ -55,6 +57,6 @@ public class RepeatPickerDialog extends DialogFragment {
     }
 
     public void setNumberPickerValue(int i) {
-        numberPicker.setValue(i);
+        this.value = i;
     }
 }

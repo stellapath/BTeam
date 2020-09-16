@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    tools:context=".alarm.dialog.MemoPopupActivity">
+
+    <EditText
+        android:id="@+id/memo_content"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:gravity="left"
+        android:padding="12dp"
+        android:ems="10"
+        android:inputType="none"
+        android:hint="메모를 입력하세요" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/memo_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알람이 끝나면 메모 읽어주기" />
+
+    <Button
+        android:id="@+id/memo_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="메모 저장"
+        android:textSize="19sp" />
+
+</LinearLayout>

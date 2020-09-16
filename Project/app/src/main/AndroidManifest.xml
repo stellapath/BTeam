@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +20,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <receiver
+            android:name=".alarm.receiver.BootCompletedIntentReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+        <receiver
+            android:name=".alarm.receiver.DismissNotificationReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".alarm.DismissAlarmActivity" />
+
+        <receiver
+            android:name=".alarm.receiver.AlarmBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".alarm.dialog.DestinationPopupActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity
+            android:name=".alarm.dialog.MemoPopupActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
         <activity android:name=".user.MyPageActivity" />
         <activity android:name=".user.AddressActivity" />
         <activity android:name=".user.SignupActivity" />

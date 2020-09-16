@@ -10,8 +10,11 @@ public class Common {
     /* 로그인 정보가 들어오는 곳 */
     public static UserVO login_info;
 
+    /* PERMISSON */
+    public static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 45;
+
     /* Weather RequestCode */
-    public static final int REQUEST_WEATHER = 1;
+    public static final int REQUEST_WEATHER = 10;
 
     /* Intent RequestCode */
     public static final int REQUEST_LOGIN = 100;
@@ -20,6 +23,13 @@ public class Common {
     public static final int REQUEST_MYPAGE = 103;
 
     /* Alarm RequestCode */
-    public static final int REQUEST_RINGTONE = 200;
+    public static final String KEY_IS_ONE_TIME = "onetime";
+    public static final String INTENT_KEY_NOTIFICATION_ID = "notificationId";
+    public static final String CHANNEL_ID = "channel-01";
+    public static final int REQUEST_ALARM = 0;
+    public static final int NOTIFICATION_ID = 1;
+    public static final int REQUEST_RINGTONE = 201;
+    public static final int REQUEST_MEMO = 202;
+    public static final int REQUEST_DESTINATION = 203;
 
 }

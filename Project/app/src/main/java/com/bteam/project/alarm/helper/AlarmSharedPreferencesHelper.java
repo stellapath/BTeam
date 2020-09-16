@@ -2,15 +2,12 @@ package com.bteam.project.alarm.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.util.Log;
 
-import java.sql.Time;
-import java.text.ParseException;
+import com.bteam.project.alarm.model.Alarm;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * 알람에 관한 설정들을 총괄하는 클래스
@@ -25,38 +22,105 @@ public class AlarmSharedPreferencesHelper {
     private Context context;
 
     public AlarmSharedPreferencesHelper(Context context) {
-        this.context = context;
-        this.preferences = context.getSharedPreferences("Alarm", Context.MODE_PRIVATE);
-        this.editor = preferences.edit();
+        context = context;
+        preferences = context.getSharedPreferences("Alarm", Context.MODE_PRIVATE);
+        editor = preferences.edit();
     }
 
+    private final String TURNED_ON = "turnedOn";
     private final String WAKEUP_TIME = "wakeUpTime";
     private final String WAKEUP_HOUR = "wakeUpHour";
     private final String WAKEUP_MINUTE = "wakeUpMinute";
     private final String INTERVAL = "interval";
     private final String REPEAT = "repeat";
     private final String DURATION = "duration";
-    private final String RINGTONE = "ringtone";
+    private final String RINGTONE_NAME = "ringtoneName";
+    private final String RINGTONE_URI = "ringtoneUri";
     private final String ISVIBRATE = "isVibrate";
+    private final String ISRING = "isRing";
+    private final String ISREAD = "isRead";
+    private final String LATITUDE = "latitude";
+    private final String LONGITUDE = "longitude";
+    private final String MEMO = "memo";
+    private final String DESTINATION = "destination";
     private final String ARRIVAL_TIME = "arrivalTime";
     private final String ARRIVAL_HOUR = "arrivalHour";
     private final String ARRIVAL_MINUTE = "arrivalMinute";
 
+    private final boolean DEFAULT_TURNED_ON = false;
     private final int DEFAULT_WAKEUP_TIME = 0;
     private final int DEFAULT_WAKEUP_HOUR = 6;
     private final int DEFAULT_WAKEUP_MINUTE = 0;
     private final int DEFAULT_INTERVAL = 10;
     private final int DEFAULT_REPEAT = 5;
-    private final int DEFAULT_DURATION = 60;
-    private final String DEFAULT_RINGTONE = "";
+    private final int DEFAULT_DURATION = 1;
+    private final String DEFAULT_RINGTONE_NAME = "default";
+    private final String DEFAULT_RINGTONE_URI = "";
     private final boolean DEFAULT_ISVIBRATE = false;
+    private final boolean DEFAULT_ISRING = false;
+    private final boolean DEFAULT_ISREAD = false;
+    private final float DEFAULT_LATITUDE = 0;
+    private final float DEFAULT_LONGITUDE = 0;
+    private final String DEFAULT_MEMO = "";
+    private final String DEFAULT_DESTINATION = "";
     private final int DEFAULT_ARRIVAL_TIME = 0;
     private final int DEFAULT_ARRIVAL_HOUR = 8;
     private final int DEFAULT_ARRIVAL_MINUTE = 0;
 
+    public Alarm getAllParams() {
+        Alarm alarm = new Alarm();
+        alarm.setTurnedOn( isTurnedOn() );
+        alarm.setWakeUpTime( getWakeUpTime() );
+        alarm.setWakeUpHour( getWakeUpHour() );
+        alarm.setWakeUpMinute( getWakeUpMinute() );
+        alarm.setInterval( getInterval() );
+        alarm.setRepeat( getRepeat() );
+        alarm.setDuration( getDuration() );
+        alarm.setRingtoneName( getRingtoneName() );
+        alarm.setRingtoneUri( getRingtoneUri() );
+        alarm.setRing( getIsRing() );
+        alarm.setVibrate( getIsVibrate() );
+        alarm.setMemo( getMemo() );
+        alarm.setRead( getIsRead() );
+        alarm.setDestination( getDestination() );
+        alarm.setLatitude( getLatitude() );
+        alarm.setLongitude( getLongitude() );
+        alarm.setArrivalTime( getArrivalTime() );
+        alarm.setArrivalHour( getArrivalHour() );
+        alarm.setArrivalMinute( getArrivalMinute() );
+        return alarm;
+    }
+
+    public void setAllParams(Alarm alarm) {
+        setTurnedOn( alarm.isTurnedOn() );
+        setWakeUpTime( alarm.getWakeUpTime() );
+        setInterval( alarm.getInterval() );
+        setRepeat( alarm.getRepeat() );
+        setDuration( alarm.getDuration() );
+        setRingtoneName( alarm.getRingtoneName() );
+        setRingtoneUri( alarm.getRingtoneUri() );
+        setIsRing( alarm.isRing() );
+        setIsVibrate( alarm.isVibrate() );
+        setMemo( alarm.getMemo() );
+        setIsRead( alarm.isRead() );
+        setDestination( alarm.getDestination() );
+        setLatitude( alarm.getLatitude() );
+        setLongitude( alarm.getLongitude() );
+        setArrivalTime( alarm.getArrivalTime() );
+    }
+
+    public boolean isTurnedOn() {
+        return preferences.getBoolean(TURNED_ON, DEFAULT_TURNED_ON);
+    }
+
+    public void setTurnedOn(boolean turnedOn) {
+        editor.putBoolean(TURNED_ON, turnedOn).apply();
+    }
+
     public long getWakeUpTime() {
         return preferences.getLong(WAKEUP_TIME, DEFAULT_WAKEUP_TIME);
     }
+
     public void setWakeUpTime(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
@@ -71,45 +135,115 @@ public class AlarmSharedPreferencesHelper {
         editor.putInt(WAKEUP_MINUTE, minute);
         editor.apply();
     }
+
     public int getWakeUpHour() {
         return preferences.getInt(WAKEUP_HOUR, DEFAULT_WAKEUP_HOUR);
     }
+
     public int getWakeUpMinute() {
         return preferences.getInt(WAKEUP_MINUTE, DEFAULT_WAKEUP_MINUTE);
     }
+
     public int getInterval() {
         return preferences.getInt(INTERVAL, DEFAULT_INTERVAL);
     }
+
     public void setInterval(int interval) {
         editor.putInt(INTERVAL, interval).apply();
     }
+
     public int getRepeat() {
         return preferences.getInt(REPEAT, DEFAULT_REPEAT);
     }
+
     public void setRepeat(int repeat) {
         editor.putInt(REPEAT, repeat).apply();
     }
+
     public int getDuration() {
         return preferences.getInt(DURATION, DEFAULT_DURATION);
     }
+
     public void setDuration(int duration) {
         editor.putInt(DURATION, duration).apply();
     }
-    public String getRingtone() {
-        return preferences.getString(RINGTONE, DEFAULT_RINGTONE);
+
+    public String getRingtoneName() {
+        return preferences.getString(RINGTONE_NAME, DEFAULT_RINGTONE_NAME);
     }
-    public void setRingtone(Uri uri) {
-        editor.putString(RINGTONE, uri.toString()).apply();
+
+    public void setRingtoneName(String ringtoneName) {
+        editor.putString(RINGTONE_NAME, ringtoneName).apply();
     }
+
+    public String getRingtoneUri() {
+        return preferences.getString(RINGTONE_URI, DEFAULT_RINGTONE_URI);
+    }
+
+    public void setRingtoneUri(String uri) {
+        editor.putString(RINGTONE_URI, uri).apply();
+    }
+
     public boolean getIsVibrate() {
         return preferences.getBoolean(ISVIBRATE, DEFAULT_ISVIBRATE);
     }
+
     public void setIsVibrate(boolean isVibrate) {
         editor.putBoolean(ISVIBRATE, isVibrate).apply();
     }
+
+    public boolean getIsRing() {
+        return preferences.getBoolean(ISRING, DEFAULT_ISRING);
+    }
+
+    public void setIsRing(boolean isRing) {
+        editor.putBoolean(ISRING, isRing).apply();
+    }
+
+    public boolean getIsRead() {
+        return preferences.getBoolean(ISREAD, DEFAULT_ISREAD);
+    }
+
+    public void setIsRead(boolean isRead) {
+        editor.putBoolean(ISREAD, isRead).apply();
+    }
+
+    public float getLatitude() {
+        return preferences.getFloat(LATITUDE, DEFAULT_LATITUDE);
+    }
+
+    public void setLatitude(float latitude) {
+        editor.putFloat(LATITUDE, latitude).apply();
+    }
+
+    public float getLongitude() {
+        return preferences.getFloat(LONGITUDE, DEFAULT_LONGITUDE);
+    }
+
+    public void setLongitude(float longitude) {
+        editor.putFloat(LONGITUDE, longitude).apply();
+    }
+
+    public String getMemo() {
+        return preferences.getString(MEMO, DEFAULT_MEMO);
+    }
+
+    public void setMemo(String memo) {
+        editor.putString(MEMO, memo).apply();
+    }
+
+    public String getDestination() {
+        return preferences.getString(DESTINATION, DEFAULT_DESTINATION);
+    }
+
+    public void setDestination(String destination) {
+        editor.putString(DESTINATION, destination).apply();
+    }
+
     public long getArrivalTime() {
         return preferences.getLong(ARRIVAL_TIME, DEFAULT_ARRIVAL_TIME);
     }
+
     public void setArrivalTime(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
@@ -124,9 +258,11 @@ public class AlarmSharedPreferencesHelper {
         editor.putInt(ARRIVAL_MINUTE, minute);
         editor.apply();
     }
+
     public int getArrivalHour() {
         return preferences.getInt(ARRIVAL_HOUR, DEFAULT_ARRIVAL_HOUR);
     }
+
     public int getArrivalMinute() {
         return preferences.getInt(ARRIVAL_MINUTE, DEFAULT_ARRIVAL_MINUTE);
     }

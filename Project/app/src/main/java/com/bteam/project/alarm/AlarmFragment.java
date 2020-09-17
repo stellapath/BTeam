@@ -39,6 +39,14 @@ import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.alarm.helper.TimerManager;
 import com.bteam.project.alarm.model.Alarm;
 
+/**
+ * 알람 울리는 순서
+ * 알람 설정 -> 안드로이드 내부 데이터에 설정값 저장
+ * -> new Intent(Context, Receiver.class);
+ * -> PendingIntent.getBroadcast(Context, RequestCode, Intent, Flag);
+ * -> AlarmManager....set=한번알림 setRepeating=반복알림 (AlarmManager.RTC_WAKEUP, Millis, PendingIntent);
+ * -> Receiver : 알람매니저를 통해 알람을 설정하면 리시버가 받는다. 리시버를 통해 다음 동작을 실행한다.
+ */
 public class AlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";
@@ -80,12 +88,12 @@ public class AlarmFragment extends Fragment {
                     checkNotificationPolicy();
                     checkOverlayPermission();
                     // 알람 타이머 시작
-                    timerManager.startSingleAlarmTimer(alarm.getWakeUpTime());
-                    Toast.makeText(context, "알람이 켜졌습니다.", Toast.LENGTH_SHORT).show();
+                    timerManager.startTimer();
+                    showToast("알람이 켜졌습니다.");
                 } else {
                     // 알람 타이머 종료
                     timerManager.cancelTimer();
-                    Toast.makeText(context, "알람이 꺼졌습니다.", Toast.LENGTH_SHORT).show();
+                    showToast("알람이 꺼졌습니다.");
                 }
                 initAlarm();
             }
@@ -311,6 +319,8 @@ public class AlarmFragment extends Fragment {
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
             long millis = helper.timeToMillis(i, i1);
             helper.setWakeUpTime(millis);
+            String msg = helper.millisToMonth(millis) + " 알람이 설정되었습니다.";
+            showToast(msg);
             initAlarm();
         }
     };
@@ -321,6 +331,8 @@ public class AlarmFragment extends Fragment {
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
             long millis = helper.timeToMillis(i, i1);
             helper.setArrivalTime(millis);
+            String msg = helper.millisToMonth(millis) + " 알람이 설정되었습니다.";
+            showToast(msg);
             initAlarm();
         }
     };
@@ -370,7 +382,7 @@ public class AlarmFragment extends Fragment {
             boolean isRead = data.getBooleanExtra("isRead", false);
             helper.setMemo(content);
             helper.setIsRead(isRead);
-            Toast.makeText(context, "메모가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+            showToast("메모가 저장되었습니다.");
             initAlarm();
         }
 
@@ -379,6 +391,10 @@ public class AlarmFragment extends Fragment {
             // TODO 목적지 결과 받아오기
         }
 
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void checkNotificationPolicy() {

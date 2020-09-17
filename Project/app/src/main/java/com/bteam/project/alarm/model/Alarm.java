@@ -7,6 +7,9 @@ public class Alarm implements Serializable {
     // 알람 상태..
     private boolean turnedOn;
 
+    // 이미 울린 알람의 개수 (알람 반복에 필요)
+    private int alreadyRangAlarms;
+
     private long wakeUpTime, arrivalTime;
     private int wakeUpHour, wakeUpMinute, interval, repeat,
                 duration, arrivalHour, arrivalMinute;
@@ -20,6 +23,14 @@ public class Alarm implements Serializable {
 
     public void setTurnedOn(boolean turnedOn) {
         this.turnedOn = turnedOn;
+    }
+
+    public int getAlreadyRangAlarms() {
+        return alreadyRangAlarms;
+    }
+
+    public void setAlreadyRangAlarms(int alreadyRangAlarms) {
+        this.alreadyRangAlarms = alreadyRangAlarms;
     }
 
     public long getWakeUpTime() {

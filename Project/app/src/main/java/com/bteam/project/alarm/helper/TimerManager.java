@@ -6,12 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.bteam.project.Common;
-import com.bteam.project.alarm.model.Alarm;
-import com.bteam.project.alarm.receiver.AlarmBroadcastReceiver;
+import com.bteam.project.alarm.receiver.AlarmReceiver;
 
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
-
+/**
+ * 알람 타이머 관련 클래스
+ */
 public class TimerManager {
 
     private Context context;
@@ -20,43 +19,58 @@ public class TimerManager {
 
     public TimerManager(Context context) {
         this.context = context;
-        this.alarmManager = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
+        this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         this.helper = new AlarmSharedPreferencesHelper(context);
     }
 
-    public void startTimer (long alarmMillis, int intervalMinute) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(alarmMillis);
-
-        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-        intent.putExtra(Common.KEY_IS_ONE_TIME, Boolean.FALSE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmMillis, TimeUnit.MINUTES.toMillis(intervalMinute), pendingIntent);
-    }
-
-    public void startSingleAlarmTimer(long millis) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(millis);
-
-        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-        intent.putExtra(Common.KEY_IS_ONE_TIME, Boolean.FALSE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(millis, pendingIntent), pendingIntent);
-    }
-
-    public void startTimer (Alarm alarm) {
-        startTimer(alarm.getWakeUpTime(), alarm.getInterval());
+    public void startTimer() {
+        startWakeUpTimer();
+        startArrivalTimer();
     }
 
     public void cancelTimer() {
-        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, Common.REQUEST_ALARM, intent, 0);
-        alarmManager.cancel(sender);
+        cancelWakeUpTimer();
+        cancelArrivalTimer();
     }
 
-    // 설정이 변경되었을 때 타이머 다시 실행
-    public void resetSingleAlarmTimer(long millis) {
+    public void resetTimer() {
         cancelTimer();
-        startSingleAlarmTimer(millis);
+        startTimer();
     }
+
+    // 기상 알람 울리기
+    public void startWakeUpTimer() {
+        Intent wakeUpIntent = new Intent(context, AlarmReceiver.class);
+        wakeUpIntent.putExtra("title", "기상 시간");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_WAKEUP_ALARM,
+                wakeUpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, helper.getWakeUpTime(), pendingIntent);
+    }
+
+    // 기상 알람 끄기
+    public void cancelWakeUpTimer() {
+        Intent wakeUpIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_WAKEUP_ALARM,
+                wakeUpIntent, 0);
+        alarmManager.cancel(pendingIntent);
+    }
+
+    // 도착 알람 울리기
+    // TODO 도착알람은 계산이 필요함. 설정한 도착 시간 - ( 목적지까지 걸리는 시간 | 현재 날씨 상황 )
+    public void startArrivalTimer() {
+        Intent arrivalIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_ARRIVAL_ALARM,
+                arrivalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long millis = helper.getArrivalTime(); // TODO 계산이 들어갈 곳
+        alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
+    }
+
+    // 도착 알람 끄기
+    public void cancelArrivalTimer() {
+        Intent arrivalIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Common.REQUEST_ARRIVAL_ALARM,
+                arrivalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+    }
+
 }

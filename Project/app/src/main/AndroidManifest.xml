@@ -20,22 +20,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <receiver
-            android:name=".alarm.receiver.BootCompletedIntentReceiver"
+        <service
+            android:name=".alarm.service.AlarmService"
             android:enabled="true"
-            android:exported="true"></receiver>
-        <receiver
-            android:name=".alarm.receiver.DismissNotificationReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".alarm.DismissAlarmActivity" />
+            android:exported="true"></service>
 
         <receiver
-            android:name=".alarm.receiver.AlarmBroadcastReceiver"
+            android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
+        <activity android:name=".alarm.receiver.DismissAlarmActivity" />
         <activity
             android:name=".alarm.dialog.DestinationPopupActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />

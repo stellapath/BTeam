@@ -1,11 +1,9 @@
 package com.bteam.project.user.task;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.bteam.project.Common;
 import com.bteam.project.user.model.UserVO;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -14,27 +12,29 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginRequest extends AsyncTask<Void, Void, UserVO> {
+public class SignupRequest extends AsyncTask<Void, Void, String> {
 
-    private static final String TAG = "LoginRequest";
+    private UserVO vo;
 
-    private String id, pw;
-
-    public LoginRequest(String id, String pw) {
-        this.id = id;
-        this.pw = pw;
+    public SignupRequest(UserVO vo) {
+        this.vo = vo;
     }
 
     @Override
-    protected UserVO doInBackground(Void... voids) {
-        String param = "user_email=" + id
-                     + "&user_pw=" + pw;
-        Log.d(TAG, "param : " + param);
-        String json = null;
-        UserVO vo = null;
+    protected String doInBackground(Void... voids) {
+        String param = "user_email=" + vo.getUser_email()
+                + "&user_pw=" + vo.getUser_pw()
+                + "&user_nickname=" + vo.getUser_nickname()
+                + "&user_phone=" + vo.getUser_phone()
+                + "&user_zipcode=" + vo.getUser_zipcode()
+                + "&user_address=" + vo.getUser_address()
+                + "&detail_address=" + vo.getDetail_address()
+                + "&user_birth=" + vo.getUser_birth()
+                + "&user_key=" + vo.getUser_key() + "";
+        String result = "";
         try {
             // 서버 연결
-            URL url = new URL(Common.SERVER_URL + "andLogin");
+            URL url = new URL(Common.SERVER_URL + "andSignup");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestMethod("POST");
@@ -58,14 +58,11 @@ public class LoginRequest extends AsyncTask<Void, Void, UserVO> {
             while ((line = br.readLine()) != null) {
                 buffer.append(line);
             }
-            json = buffer.toString().trim();
-            Gson gson = new Gson();
-            vo = gson.fromJson(json, UserVO.class);
-
+            result = buffer.toString().trim();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return vo;
+        return result;
     }
 
 }

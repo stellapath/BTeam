@@ -3,11 +3,9 @@ package com.bteam.project.user;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,21 +16,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.user.model.UserVO;
+import com.bteam.project.user.task.SignupRequest;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private static final String TAG = "SignupActivity"; 
-    
+    private static final String TAG = "SignupActivity";
+
+    private Context context;
+
     private EditText signup_email, signup_pw, signup_pw2, signup_nickname, signup_phone,
                      signup_zipcode, signup_address, signup_detail, signup_birth;
     private Button signup_andAddress, signup_submit;
@@ -43,6 +39,8 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        context = getApplicationContext();
 
         signup_email = findViewById(R.id.signup_email);
         signup_pw = findViewById(R.id.signup_pw);
@@ -117,11 +115,15 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 UserVO vo = getUserVO();
-                SignupRequest request = new SignupRequest(vo, getApplicationContext());
+                SignupRequest request = new SignupRequest(vo);
                 request.execute();
-                finish();
-
-
+                String result = "";
+                try {
+                    result = request.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                onPostExcute(result);
             }
         });
 
@@ -153,72 +155,13 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
-    private class SignupRequest extends AsyncTask<Void, Void, String> {
-
-        private UserVO vo;
-        private Context mContext;
-
-        public SignupRequest(UserVO vo, Context context) {
-            this.vo = vo;
-            this.mContext = context;
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            String param = "user_email=" + vo.getUser_email()
-                         + "&user_pw=" + vo.getUser_pw()
-                         + "&user_nickname=" + vo.getUser_nickname()
-                         + "&user_phone=" + vo.getUser_phone()
-                         + "&user_zipcode=" + vo.getUser_zipcode()
-                         + "&user_address=" + vo.getUser_address()
-                         + "&detail_address=" + vo.getDetail_address()
-                         + "&user_birth=" + vo.getUser_birth()
-                         + "&user_key=" + vo.getUser_key() + "";
-            String result = "";
-            try {
-                // 서버 연결
-                URL url = new URL(Common.SERVER_URL + "andSignup");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setConnectTimeout(8000);
-                conn.setReadTimeout(8000);
-                conn.connect();
-
-                // 파라미터 전달
-                OutputStream out = conn.getOutputStream();
-                out.write(param.getBytes("UTF-8"));
-                out.flush();
-                out.close();
-                
-                // 결과 가져오기
-                InputStream is = conn.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line = null;
-                StringBuffer buffer = new StringBuffer();
-                while ((line = br.readLine()) != null) {
-                    buffer.append(line);
-                }
-                result = buffer.toString().trim();
-                Log.d(TAG, "doInBackground: result=" + result);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if (s.contains("1")) {
-                Toast.makeText(mContext, "회원가입이 완료되었습니다.",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(mContext, "회원가입에 실패했습니다. 잠시 후에 다시 시도해 주세요.",
-                        Toast.LENGTH_SHORT).show();
-            }
-            super.onPostExecute(s);
+    public void onPostExcute(String s) {
+        if (s.contains("1")) {
+            Toast.makeText(context, "회원가입이 완료되었습니다.",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "회원가입에 실패했습니다. 잠시 후에 다시 시도해 주세요.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

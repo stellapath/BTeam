@@ -1,4 +1,4 @@
-package com.bteam.project.alarm;
+package com.bteam.project.alarm.receiver;
 
 import android.os.Bundle;
 

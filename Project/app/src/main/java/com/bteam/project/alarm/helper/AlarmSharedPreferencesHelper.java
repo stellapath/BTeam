@@ -28,6 +28,7 @@ public class AlarmSharedPreferencesHelper {
     }
 
     private final String TURNED_ON = "turnedOn";
+    private final String ALREADY_RANG_ALARMS = "AlreadyRangAlarms";
     private final String WAKEUP_TIME = "wakeUpTime";
     private final String WAKEUP_HOUR = "wakeUpHour";
     private final String WAKEUP_MINUTE = "wakeUpMinute";
@@ -48,6 +49,7 @@ public class AlarmSharedPreferencesHelper {
     private final String ARRIVAL_MINUTE = "arrivalMinute";
 
     private final boolean DEFAULT_TURNED_ON = false;
+    private final int DEFAULT_ALREADY_RANG_ALARMS = 0;
     private final int DEFAULT_WAKEUP_TIME = 0;
     private final int DEFAULT_WAKEUP_HOUR = 6;
     private final int DEFAULT_WAKEUP_MINUTE = 0;
@@ -70,6 +72,7 @@ public class AlarmSharedPreferencesHelper {
     public Alarm getAllParams() {
         Alarm alarm = new Alarm();
         alarm.setTurnedOn( isTurnedOn() );
+        alarm.setAlreadyRangAlarms( getAlreadyRangAlarms() );
         alarm.setWakeUpTime( getWakeUpTime() );
         alarm.setWakeUpHour( getWakeUpHour() );
         alarm.setWakeUpMinute( getWakeUpMinute() );
@@ -91,30 +94,20 @@ public class AlarmSharedPreferencesHelper {
         return alarm;
     }
 
-    public void setAllParams(Alarm alarm) {
-        setTurnedOn( alarm.isTurnedOn() );
-        setWakeUpTime( alarm.getWakeUpTime() );
-        setInterval( alarm.getInterval() );
-        setRepeat( alarm.getRepeat() );
-        setDuration( alarm.getDuration() );
-        setRingtoneName( alarm.getRingtoneName() );
-        setRingtoneUri( alarm.getRingtoneUri() );
-        setIsRing( alarm.isRing() );
-        setIsVibrate( alarm.isVibrate() );
-        setMemo( alarm.getMemo() );
-        setIsRead( alarm.isRead() );
-        setDestination( alarm.getDestination() );
-        setLatitude( alarm.getLatitude() );
-        setLongitude( alarm.getLongitude() );
-        setArrivalTime( alarm.getArrivalTime() );
-    }
-
     public boolean isTurnedOn() {
         return preferences.getBoolean(TURNED_ON, DEFAULT_TURNED_ON);
     }
 
     public void setTurnedOn(boolean turnedOn) {
         editor.putBoolean(TURNED_ON, turnedOn).apply();
+    }
+
+    public int getAlreadyRangAlarms() {
+        return preferences.getInt(ALREADY_RANG_ALARMS, DEFAULT_ALREADY_RANG_ALARMS);
+    }
+
+    public void setAlreadyRangAlarms(int i) {
+        editor.putInt(ALREADY_RANG_ALARMS, i).apply();
     }
 
     public long getWakeUpTime() {
@@ -272,6 +265,7 @@ public class AlarmSharedPreferencesHelper {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
+        // 지정한 시간이 이미 지났다면 하루를 더한다
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }

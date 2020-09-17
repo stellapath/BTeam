@@ -46,8 +46,9 @@ public class HomeFragment extends Fragment {
 
         // Weather 객체가 null 일때만 불러오도록 해서 로딩시간을 줄인다
         if (weather == null) {
-            weather = getWeatherList().get(0);
-            setWeather(weather);
+            if ( (weather = getWeatherList().get(0)) != null ) {
+                setWeather(weather);
+            }
         }
 
         // 날씨를 클릭하면 날씨 상세 액티비티로 이동

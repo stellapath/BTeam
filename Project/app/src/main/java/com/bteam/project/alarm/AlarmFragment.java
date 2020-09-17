@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bteam.project.Common;
@@ -35,13 +36,17 @@ import com.bteam.project.alarm.dialog.IntervalPickerDialog;
 import com.bteam.project.alarm.dialog.MemoPopupActivity;
 import com.bteam.project.alarm.dialog.RepeatPickerDialog;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
+import com.bteam.project.alarm.helper.TimerManager;
 import com.bteam.project.alarm.model.Alarm;
 
 public class AlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";
 
+    private Context context;
+    private FragmentManager fragmentManager;
     private AlarmSharedPreferencesHelper helper;
+    private TimerManager timerManager;
 
     private LinearLayout wakeUpView, intervalView, repeatView, durationView, ringtoneView, vibrationView, memoView, locationView, arrivalView;
     private RecyclerView recyclerView;
@@ -57,7 +62,10 @@ public class AlarmFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_alarm, container, false);
 
-        helper = new AlarmSharedPreferencesHelper(getActivity());
+        context = getActivity();
+        fragmentManager = getActivity().getSupportFragmentManager();
+        helper = new AlarmSharedPreferencesHelper(context);
+        timerManager = new TimerManager(context);
 
         initView(root);
         initAlarm();
@@ -68,10 +76,18 @@ public class AlarmFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 helper.setTurnedOn(isChecked);
                 if (isChecked) {
+                    // 권한 체크
                     checkNotificationPolicy();
                     checkOverlayPermission();
-
+                    // 알람 타이머 시작
+                    timerManager.startSingleAlarmTimer(alarm.getWakeUpTime());
+                    Toast.makeText(context, "알람이 켜졌습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 알람 타이머 종료
+                    timerManager.cancelTimer();
+                    Toast.makeText(context, "알람이 꺼졌습니다.", Toast.LENGTH_SHORT).show();
                 }
+                initAlarm();
             }
         });
 
@@ -81,7 +97,7 @@ public class AlarmFragment extends Fragment {
             public void onClick(View view) {
                 int hour = alarm.getWakeUpHour();
                 int minute = alarm.getWakeUpMinute();
-                TimePickerDialog dialog = new TimePickerDialog(getActivity(), wakeUpListener, hour, minute, false);
+                TimePickerDialog dialog = new TimePickerDialog(context, wakeUpListener, hour, minute, false);
                 dialog.show();
             }
         });
@@ -93,7 +109,7 @@ public class AlarmFragment extends Fragment {
                 IntervalPickerDialog dialog = new IntervalPickerDialog();
                 dialog.setValueChangeListener(intervalListener);
                 dialog.setNumberPickerValue(alarm.getInterval());
-                dialog.show(getActivity().getSupportFragmentManager(), "intervalPicker");
+                dialog.show(fragmentManager, "intervalPicker");
             }
         });
 
@@ -104,7 +120,7 @@ public class AlarmFragment extends Fragment {
                 RepeatPickerDialog dialog = new RepeatPickerDialog();
                 dialog.setValueChangeListener(repeatListener);
                 dialog.setNumberPickerValue(alarm.getRepeat());
-                dialog.show(getActivity().getSupportFragmentManager(), "repeatPicker");
+                dialog.show(fragmentManager, "repeatPicker");
             }
         });
 
@@ -115,7 +131,7 @@ public class AlarmFragment extends Fragment {
                 DurationPickerDialog dialog = new DurationPickerDialog();
                 dialog.setValueChangeListener(durationListener);
                 dialog.setNumberPickerValue(alarm.getDuration());
-                dialog.show(getActivity().getSupportFragmentManager(), "durationPicker");
+                dialog.show(fragmentManager, "durationPicker");
             }
         });
 
@@ -152,7 +168,9 @@ public class AlarmFragment extends Fragment {
         memoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MemoPopupActivity.class);
+                Intent intent = new Intent(context, MemoPopupActivity.class);
+                intent.putExtra("memoContent", alarm.getMemo());
+                intent.putExtra("isRead", alarm.isRead());
                 startActivityForResult(intent, Common.REQUEST_MEMO);
             }
         });
@@ -161,7 +179,7 @@ public class AlarmFragment extends Fragment {
         locationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), DestinationPopupActivity.class);
+                Intent intent = new Intent(context, DestinationPopupActivity.class);
                 startActivityForResult(intent, Common.REQUEST_DESTINATION);
             }
         });
@@ -172,7 +190,7 @@ public class AlarmFragment extends Fragment {
             public void onClick(View view) {
                 int hour = alarm.getArrivalHour();
                 int minute = alarm.getArrivalMinute();
-                TimePickerDialog dialog = new TimePickerDialog(getActivity(), arrivalListener, hour, minute, false);
+                TimePickerDialog dialog = new TimePickerDialog(context, arrivalListener, hour, minute, false);
                 dialog.show();
             }
         });
@@ -234,12 +252,12 @@ public class AlarmFragment extends Fragment {
         else                    vibration.setText("진동이 꺼져있습니다.");
 
         // 메모 가져오기
-        if (alarm.getMemo() == "") memo.setText("메모가 있습니다.");
-        else                       memo.setText("메모가 없습니다.");
+        if (!alarm.getMemo().equals("")) memo.setText("메모가 있습니다.");
+        else                             memo.setText("메모가 없습니다.");
         memoContent.setText( alarm.getMemo() );
 
         // 목적지 가져오기
-        if (alarm.getDestination() == "") {
+        if (alarm.getDestination().equals("")) {
             destination.setText("없음");
         } else {
             destination.setText( alarm.getDestination() );
@@ -340,7 +358,7 @@ public class AlarmFragment extends Fragment {
         // 벨소리 결과 받아오기
         if (requestCode == Common.REQUEST_RINGTONE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            String ringtoneName = RingtoneManager.getRingtone(getActivity(), uri).getTitle(getActivity());
+            String ringtoneName = RingtoneManager.getRingtone(context, uri).getTitle(context);
             helper.setRingtoneUri(uri.toString());
             helper.setRingtoneName(ringtoneName);
             initAlarm();
@@ -352,7 +370,7 @@ public class AlarmFragment extends Fragment {
             boolean isRead = data.getBooleanExtra("isRead", false);
             helper.setMemo(content);
             helper.setIsRead(isRead);
-            Toast.makeText(getActivity(), "메모가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "메모가 저장되었습니다.", Toast.LENGTH_SHORT).show();
             initAlarm();
         }
 
@@ -365,7 +383,7 @@ public class AlarmFragment extends Fragment {
 
     private void checkNotificationPolicy() {
         NotificationManager notificationManager =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && !notificationManager.isNotificationPolicyAccessGranted()) {
@@ -378,9 +396,9 @@ public class AlarmFragment extends Fragment {
 
     private void checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P) && (!Settings.canDrawOverlays(getActivity()))) {
+            if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P) && (!Settings.canDrawOverlays(context))) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getActivity().getPackageName()));
+                        Uri.parse("package:" + context.getPackageName()));
                 startActivityForResult(intent, Common.ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }

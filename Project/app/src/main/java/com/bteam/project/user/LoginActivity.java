@@ -1,9 +1,7 @@
 package com.bteam.project.user;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,14 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.user.model.UserVO;
-import com.google.gson.Gson;
+import com.bteam.project.user.task.LoginRequest;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 네비게이션 드로어에서 헤더를 터치했을 때
@@ -48,17 +41,24 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (login_id.getText().toString().length() == 0) {
-                    Toast.makeText(LoginActivity.this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
-                    return;
+                    showToast("아이디를 입력하세요.");
                 }
-
                 if (login_pw.getText().toString().length() == 0) {
-                    Toast.makeText(LoginActivity.this, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
-                    return;
+                    showToast("비밀번호를 입력하세요");
                 }
 
-                LoginRequest request = new LoginRequest();
+                String id = login_id.getText().toString();
+                String pw = login_pw.getText().toString();
+
+                LoginRequest request = new LoginRequest(id, pw);
                 request.execute();
+                UserVO vo = null;
+                try {
+                    vo = request.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                onPostExcute(vo);
             }
         });
 
@@ -72,71 +72,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private class LoginRequest extends AsyncTask<Void, Void, UserVO> {
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
-        @Override
-        protected UserVO doInBackground(Void... voids) {
-
-            String param = "user_email=" + login_id.getText().toString()
-                         + "&user_pw=" + login_pw.getText().toString() + "";
-            String json = null;
-            UserVO vo = null;
-            try {
-                // 서버 연결
-                URL url = new URL(Common.SERVER_URL + "andLogin");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setConnectTimeout(8000);
-                conn.setReadTimeout(8000);
-                conn.connect();
-
-                // 서버 연결 확인
-                if (conn.getResponseCode() != 200) {
-                    return null;
-                }
-
-                // 파라미터 전달
-                OutputStream out = conn.getOutputStream();
-                out.write(param.getBytes("UTF-8"));
-                out.flush();
-                out.close();
-
-                // 결과 가져오기
-                InputStream is = conn.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line = null;
-                StringBuffer buffer = new StringBuffer();
-                while ((line = br.readLine()) != null) {
-                    buffer.append(line);
-                }
-                json = buffer.toString().trim();
-                Log.d(TAG, "doInBackground: json=" + json);
-                Gson gson = new Gson();
-                vo = gson.fromJson(json, UserVO.class);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return vo;
-        }
-
-        @Override
-        protected void onPostExecute(UserVO s) {
-            if (s != null) {
-                Toast.makeText(LoginActivity.this, "로그인 되었습니다.",
-                        Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                Common.login_info = s;
-                finish();
-            } else {
-                Toast.makeText(LoginActivity.this, "존재하지 않는 아이디이거나, 비밀번호가 잘못되었습니다.",
-                        Toast.LENGTH_SHORT).show();
-                setResult(RESULT_CANCELED);
-            }
-            super.onPostExecute(s);
+    public void onPostExcute(UserVO s) {
+        if (s != null) {
+            Toast.makeText(LoginActivity.this, "로그인 되었습니다.",
+                    Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            Common.login_info = s;
+            finish();
+        } else {
+            Toast.makeText(LoginActivity.this, "존재하지 않는 아이디이거나, 비밀번호가 잘못되었습니다.",
+                    Toast.LENGTH_SHORT).show();
+            setResult(RESULT_CANCELED);
         }
     }
 }

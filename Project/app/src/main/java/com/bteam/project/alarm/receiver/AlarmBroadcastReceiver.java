@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.bteam.project.alarm.DismissAlarmActivity;
-import com.bteam.project.alarm.dialog.DismissAlarmNotificationController;
 
 /**
  * 알람 설정 시 호출됨

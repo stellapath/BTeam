@@ -1,4 +1,4 @@
-package com.bteam.project.alarm.dialog;
+package com.bteam.project.alarm.receiver;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

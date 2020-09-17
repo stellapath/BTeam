@@ -1,4 +1,4 @@
-package com.bteam.project.task;
+package com.bteam.project.user.task;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

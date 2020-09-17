@@ -13,5 +13,6 @@ public class DestinationPopupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_destination_popup);
 
+
     }
 }

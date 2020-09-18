@@ -27,7 +27,7 @@ public class TimerManager {
     public void startWakeUpTimer(long wakeUpTimeMillis) {
         Intent wakeUpIntent = new Intent(context, AlarmReceiver.class);
         wakeUpIntent.putExtra("title", "기상 시간");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, wakeUpIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, wakeUpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTimeMillis, pendingIntent);
     }
 
@@ -49,7 +49,7 @@ public class TimerManager {
     public void startArrivalTimer(long arrivalTimeMillis) {
         Intent arrivalIntent = new Intent(context, AlarmReceiver.class);
         arrivalIntent.putExtra("title", "출근 시간");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, arrivalIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, arrivalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         long millis = arrivalTimeMillis; // TODO 계산이 들어갈 곳
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
     }

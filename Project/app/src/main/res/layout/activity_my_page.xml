@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/led"
-            android:text="LED 관리"
+            android:text="정보 수정"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:textSize="18dp"

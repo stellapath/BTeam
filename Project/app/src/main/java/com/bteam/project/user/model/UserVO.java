@@ -5,6 +5,7 @@ public class UserVO {
 	private String user_email, user_pw, user_nickname, user_phone, user_zipcode,
 				    user_address, detail_address, user_birth, user_key, user_image, user_imagepath;
 
+
 	public String getUser_email() {
 		return user_email;
 	}

@@ -18,6 +18,8 @@ import com.bteam.project.R;
 import com.bteam.project.user.model.UserVO;
 import com.bteam.project.user.task.LoginRequest;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -54,8 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                 String id = login_id.getText().toString();
                 String pw = login_pw.getText().toString();
 
-                // 로그인 처리전 서버 연결확인
-
                 LoginRequest request = new LoginRequest(id, pw);
                 request.execute();
                 UserVO vo = null;
@@ -64,7 +64,19 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
-                onPostExcute(vo);
+
+                // 로그인 처리전 서버 연결확인
+                try {
+                    URL url = new URL(Common.SERVER_URL + "andLogin");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    if(conn.getAllowUserInteraction() == true) {
+                        onPostExcute(vo);
+                    }else{
+                        Toast.makeText(LoginActivity.this, "서버와 연결을 확인하세요.",Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

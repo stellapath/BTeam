@@ -55,25 +55,16 @@ public class LoginActivity extends AppCompatActivity {
                 String pw = login_pw.getText().toString();
 
                 // 로그인 처리전 서버 연결확인
-                // int 값 반환받으며 (연결실패 0,와이파이 = 1, 데이터 = 2)
-                int status = isNetworkConnected(getApplicationContext());
-                if(status == 1){
-                    // 로그인 처리
-                    LoginRequest request = new LoginRequest(id, pw);
-                    request.execute();
-                    UserVO vo = null;
-                    try {
-                        vo = request.get();
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    onPostExcute(vo);
-                    Toast.makeText(LoginActivity.this, "와이파이 연결 확인",Toast.LENGTH_SHORT).show();
-                }else if(status == 2){
-                    Toast.makeText(LoginActivity.this, "모바일 연결 확인",Toast.LENGTH_SHORT).show();
-                }else if(status == 0){
-                    Toast.makeText(LoginActivity.this, "연결x 연결 확인",Toast.LENGTH_SHORT).show();
+
+                LoginRequest request = new LoginRequest(id, pw);
+                request.execute();
+                UserVO vo = null;
+                try {
+                    vo = request.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
+                onPostExcute(vo);
             }
         });
 
@@ -105,27 +96,5 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public int isNetworkConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo info = cm.getActiveNetworkInfo();
-
-        if (info != null) {
-            int type = info.getType();
-            if (type == ConnectivityManager.TYPE_WIFI) {
-                Toast.makeText(LoginActivity.this, "와이파이로 연결", Toast.LENGTH_SHORT).show();
-                return 1;
-            } else if (type == ConnectivityManager.TYPE_MOBILE) {
-                Toast.makeText(LoginActivity.this, "모바일로 연결", Toast.LENGTH_SHORT).show();
-                return 2;
-            }else {
-                Toast.makeText(LoginActivity.this, "모르는 인터넷 연결", Toast.LENGTH_SHORT).show();
-                return 5;
-            }
-        } else {
-            Log.d("isconnected : ", "False => 데이터 통신 불가!!!");
-            return 0;
-        }
-    }
 
 }

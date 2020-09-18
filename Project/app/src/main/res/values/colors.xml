@@ -2,7 +2,10 @@
 <resources>
     <color name="colorPrimary">#BCE0FD</color>
     <color name="colorPrimaryDark">#2699FB</color>
+    <color name="primary">#b62020</color>
     <color name="colorAccent">#E91E63</color>
     <color name="colorBackground">#FAFAFA</color>
     <color name="main_textcolor">#777777</color>
+    <color name="dismiss_activity_background">#000000</color>
+    <color name="dismiss_activity_textcolor">#ffffff</color>
 </resources>

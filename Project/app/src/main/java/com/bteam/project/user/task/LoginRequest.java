@@ -40,8 +40,8 @@ public class LoginRequest extends AsyncTask<Void, Void, UserVO> {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setConnectTimeout(8000);
-            conn.setReadTimeout(8000);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
             conn.connect();
 
             // 파라미터 전달

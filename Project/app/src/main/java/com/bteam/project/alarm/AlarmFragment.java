@@ -88,11 +88,16 @@ public class AlarmFragment extends Fragment {
                     checkNotificationPolicy();
                     checkOverlayPermission();
                     // 알람 타이머 시작
-                    timerManager.startTimer();
+                    long wakeUpTimeMillis = alarm.getWakeUpTime();
+                    long arrivalTimeMillis = alarm.getArrivalTime();
+                    timerManager.startWakeUpTimer(wakeUpTimeMillis);
+                    timerManager.startArrivalTimer(arrivalTimeMillis);
                     showToast("알람이 켜졌습니다.");
+                    helper.setAlreadyRangAlarms(0);
                 } else {
                     // 알람 타이머 종료
-                    timerManager.cancelTimer();
+                    timerManager.cancelWakeUpTimer();
+                    timerManager.cancelArrivalTimer();
                     showToast("알람이 꺼졌습니다.");
                 }
                 initAlarm();
@@ -319,6 +324,7 @@ public class AlarmFragment extends Fragment {
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
             long millis = helper.timeToMillis(i, i1);
             helper.setWakeUpTime(millis);
+            helper.setAlreadyRangAlarms(0);
             String msg = helper.millisToMonth(millis) + " 알람이 설정되었습니다.";
             showToast(msg);
             initAlarm();

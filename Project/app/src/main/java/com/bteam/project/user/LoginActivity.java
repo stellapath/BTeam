@@ -1,7 +1,11 @@
 package com.bteam.project.user;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
                 String id = login_id.getText().toString();
                 String pw = login_pw.getText().toString();
 
+                // 로그인 처리전 서버 연결확인
+
                 LoginRequest request = new LoginRequest(id, pw);
                 request.execute();
                 UserVO vo = null;
@@ -89,4 +95,6 @@ public class LoginActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
         }
     }
+
+
 }

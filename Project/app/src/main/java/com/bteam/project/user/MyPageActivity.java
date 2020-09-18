@@ -65,7 +65,7 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
-        // LED 관리 페이지
+        // 개인정보 수정
         led.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

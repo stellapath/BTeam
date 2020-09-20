@@ -4,14 +4,16 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
-import com.bteam.project.Common;
 import com.bteam.project.alarm.receiver.AlarmReceiver;
 
 /**
  * 알람 타이머 관련 클래스
  */
 public class TimerManager {
+
+    private static final String TAG = "TimerManager";
 
     private Context context;
     private AlarmManager alarmManager;
@@ -25,10 +27,13 @@ public class TimerManager {
 
     // 기상 알람 울리기
     public void startWakeUpTimer(long wakeUpTimeMillis) {
+        Log.d(TAG, "기상알람 시작: " + helper.millisToMonth(wakeUpTimeMillis) );
+
         Intent wakeUpIntent = new Intent(context, AlarmReceiver.class);
         wakeUpIntent.putExtra("title", "기상 시간");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, wakeUpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTimeMillis, pendingIntent);
+        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(wakeUpTimeMillis, pendingIntent);
+        alarmManager.setAlarmClock(info, pendingIntent);
     }
 
     // 기상 알람 끄기
@@ -47,17 +52,20 @@ public class TimerManager {
     // 도착 알람 울리기
     // TODO 도착알람은 계산이 필요함. 설정한 도착 시간 - ( 목적지까지 걸리는 시간 | 현재 날씨 상황 )
     public void startArrivalTimer(long arrivalTimeMillis) {
+        Log.d(TAG, "도착알람 시작 : " + helper.millisToMonth(arrivalTimeMillis));
+
         Intent arrivalIntent = new Intent(context, AlarmReceiver.class);
         arrivalIntent.putExtra("title", "출근 시간");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, arrivalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, arrivalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         long millis = arrivalTimeMillis; // TODO 계산이 들어갈 곳
-        alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
+        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(millis, pendingIntent);
+        alarmManager.setAlarmClock(info, pendingIntent);
     }
 
     // 도착 알람 끄기
     public void cancelArrivalTimer() {
         Intent arrivalIntent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, arrivalIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, arrivalIntent, 0);
         alarmManager.cancel(pendingIntent);
     }
 

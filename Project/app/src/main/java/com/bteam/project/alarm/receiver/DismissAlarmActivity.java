@@ -1,7 +1,6 @@
 package com.bteam.project.alarm.receiver;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,10 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bteam.project.R;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.alarm.helper.TimerManager;
-import com.bteam.project.alarm.model.Alarm;
 import com.bteam.project.alarm.service.RingtonePlayer;
 
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
@@ -29,7 +26,7 @@ public class DismissAlarmActivity extends AppCompatActivity implements RingtoneP
     AlarmSharedPreferencesHelper sharPrefHelper;
     int numberOfAlreadyRangAlarms;
     TimerManager timerManager;
-    DismissAlarmNotificationController dismissAlarmNotificationController;
+    AlarmNotificationController notificationController;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,15 +35,15 @@ public class DismissAlarmActivity extends AppCompatActivity implements RingtoneP
         showOnLockedScreen();
 
         // 알림 종료
-        dismissAlarmNotificationController = new DismissAlarmNotificationController(DismissAlarmActivity.this, "");
-        dismissAlarmNotificationController.cancelNotification();
+        notificationController = new AlarmNotificationController(DismissAlarmActivity.this);
+        notificationController.cancel();
 
         ringtonePlayer = new RingtonePlayer(DismissAlarmActivity.this);
         sharPrefHelper = new AlarmSharedPreferencesHelper(DismissAlarmActivity.this);
         timerManager = new TimerManager(DismissAlarmActivity.this);
 
         View layout = findViewById(R.id.dismissLayout);
-
+        
         layout.setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -68,8 +65,7 @@ public class DismissAlarmActivity extends AppCompatActivity implements RingtoneP
         ringtonePlayer.start();
 
         // 알람 스위치가 켜진 상태로 모든 알람이 끝나면 다음날로 알람 설정.
-        Alarm alarm = sharPrefHelper.getAllParams();
-        if (numberOfAlreadyRangAlarms >= alarm.getRepeat()) {
+        if (numberOfAlreadyRangAlarms >= sharPrefHelper.getRepeat()) {
             long wakeUpTimeMillis = sharPrefHelper.getWakeUpTime() + TimeUnit.DAYS.toMillis(1);
             long arrivalTimeMillis = sharPrefHelper.getArrivalTime() + TimeUnit.DAYS.toMillis(1);
             timerManager.resetWakeUpTimer(wakeUpTimeMillis);

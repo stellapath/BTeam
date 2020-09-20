@@ -28,6 +28,7 @@ public class RingtonePlayer {
     public RingtonePlayer(Context context) {
         this.context = context;
         this.helper = new AlarmSharedPreferencesHelper(context);
+        this.onFinishListener = (OnFinishListener) context;
     }
 
     private int initialRingerMode;

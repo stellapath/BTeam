@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="176dp"
-    android:background="@drawable/side_nav_bar"
+    android:background="@color/colorPrimary"
     android:gravity="bottom"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -25,14 +25,15 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:text="안녕하슈"
+        android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="#000000" />
+        android:textColor="#fff" />
 
     <TextView
         android:id="@+id/drawer_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="bteammmm"
-        android:textColor="#000000" />
+        android:textColor="#fff" />
 
 </LinearLayout>

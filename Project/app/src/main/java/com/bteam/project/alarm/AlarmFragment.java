@@ -37,7 +37,6 @@ import com.bteam.project.alarm.dialog.MemoPopupActivity;
 import com.bteam.project.alarm.dialog.RepeatPickerDialog;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.alarm.helper.TimerManager;
-import com.bteam.project.alarm.model.Alarm;
 
 /**
  * 알람 울리는 순서
@@ -63,8 +62,6 @@ public class AlarmFragment extends Fragment {
             destination, arrivalTime, arrivalLeft;
     private CountDownTimer wakeUpTimer, arrivalTimer;
 
-    private Alarm alarm;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -84,17 +81,22 @@ public class AlarmFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 helper.setTurnedOn(isChecked);
                 if (isChecked) {
+                    // 스위치가 켜지면
                     // 권한 체크
                     checkNotificationPolicy();
                     checkOverlayPermission();
+                    // 만약 과거의 알람일 경우 현재 시간에 맞춤
+                    long wakeUpTime = helper.getReplacedTime( helper.getWakeUpTime() );
+                    long arrivalTime = helper.getReplacedTime( helper.getArrivalTime() );
+                    helper.setWakeUpTime(wakeUpTime);
+                    helper.setArrivalTime(arrivalTime);
                     // 알람 타이머 시작
-                    long wakeUpTimeMillis = alarm.getWakeUpTime();
-                    long arrivalTimeMillis = alarm.getArrivalTime();
-                    timerManager.startWakeUpTimer(wakeUpTimeMillis);
-                    timerManager.startArrivalTimer(arrivalTimeMillis);
+                    timerManager.startWakeUpTimer(helper.getWakeUpTime());
+                    timerManager.startArrivalTimer(helper.getArrivalTime());
                     showToast("알람이 켜졌습니다.");
                     helper.setAlreadyRangAlarms(0);
                 } else {
+                    // 스위치가 꺼지면
                     // 알람 타이머 종료
                     timerManager.cancelWakeUpTimer();
                     timerManager.cancelArrivalTimer();
@@ -108,8 +110,8 @@ public class AlarmFragment extends Fragment {
         wakeUpView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int hour = alarm.getWakeUpHour();
-                int minute = alarm.getWakeUpMinute();
+                int hour = helper.getWakeUpHour();
+                int minute = helper.getWakeUpMinute();
                 TimePickerDialog dialog = new TimePickerDialog(context, wakeUpListener, hour, minute, false);
                 dialog.show();
             }
@@ -121,7 +123,7 @@ public class AlarmFragment extends Fragment {
             public void onClick(View view) {
                 IntervalPickerDialog dialog = new IntervalPickerDialog();
                 dialog.setValueChangeListener(intervalListener);
-                dialog.setNumberPickerValue(alarm.getInterval());
+                dialog.setNumberPickerValue(helper.getInterval());
                 dialog.show(fragmentManager, "intervalPicker");
             }
         });
@@ -132,7 +134,7 @@ public class AlarmFragment extends Fragment {
             public void onClick(View view) {
                 RepeatPickerDialog dialog = new RepeatPickerDialog();
                 dialog.setValueChangeListener(repeatListener);
-                dialog.setNumberPickerValue(alarm.getRepeat());
+                dialog.setNumberPickerValue(helper.getRepeat());
                 dialog.show(fragmentManager, "repeatPicker");
             }
         });
@@ -143,7 +145,7 @@ public class AlarmFragment extends Fragment {
             public void onClick(View view) {
                 DurationPickerDialog dialog = new DurationPickerDialog();
                 dialog.setValueChangeListener(durationListener);
-                dialog.setNumberPickerValue(alarm.getDuration());
+                dialog.setNumberPickerValue(helper.getDuration());
                 dialog.show(fragmentManager, "durationPicker");
             }
         });
@@ -166,11 +168,9 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // 토글
-                if (alarm.isVibrate()) {
-                    alarm.setVibrate(false);
+                if (helper.getIsVibrate()) {
                     helper.setIsVibrate(false);
                 } else {
-                    alarm.setVibrate(true);
                     helper.setIsVibrate(true);
                 }
                 initAlarm();
@@ -182,8 +182,8 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, MemoPopupActivity.class);
-                intent.putExtra("memoContent", alarm.getMemo());
-                intent.putExtra("isRead", alarm.isRead());
+                intent.putExtra("memoContent", helper.getMemo());
+                intent.putExtra("isRead", helper.getIsRead());
                 startActivityForResult(intent, Common.REQUEST_MEMO);
             }
         });
@@ -201,8 +201,8 @@ public class AlarmFragment extends Fragment {
         arrivalView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int hour = alarm.getArrivalHour();
-                int minute = alarm.getArrivalMinute();
+                int hour = helper.getArrivalHour();
+                int minute = helper.getArrivalMinute();
                 TimePickerDialog dialog = new TimePickerDialog(context, arrivalListener, hour, minute, false);
                 dialog.show();
             }
@@ -211,6 +211,7 @@ public class AlarmFragment extends Fragment {
         return root;
     }
 
+    // 뷰 찾기
     private void initView(View v) {
         aSwitch = v.findViewById(R.id.alarm_switch);
         recyclerView = v.findViewById(R.id.alarm_recyclerView);
@@ -241,44 +242,44 @@ public class AlarmFragment extends Fragment {
 
     // 알람 화면 불러오기 (저장된 정보 가져오기) -- 정보가 변경되었을 때 호출해야 함.
     private void initAlarm() {
-        // 알람 객체 가져오기
-        alarm = helper.getAllParams();
+        // 스위치가 켜졌는지 꺼졌는디
+        aSwitch.setChecked( helper.isTurnedOn() );
 
         // 기상 시간 가져오기
-        wakeUpTime.setText( helper.millisToHour(alarm.getWakeUpTime()) );
-        startWakeUpTimer( alarm.getWakeUpTime(), wakeUpLeft );
+        wakeUpTime.setText( helper.millisToHour(helper.getWakeUpTime()) );
+        startWakeUpTimer( helper.getWakeUpTime(), wakeUpLeft );
 
         // 알람 간격 가져오기
-        interval.setText( alarm.getInterval() + "" );
+        interval.setText( helper.getInterval() + "" );
 
         // 반복 횟수 가져오기
-        repeat.setText( alarm.getRepeat() + "" );
+        repeat.setText( helper.getRepeat() + "" );
 
         // 벨소리 재생 시간 가져오기
-        duration.setText( alarm.getDuration() + "" );
+        duration.setText( helper.getDuration() + "" );
 
         // 벨소리 이름 가져오기
-        ringtone.setText( alarm.getRingtoneName() );
+        ringtone.setText( helper.getRingtoneName() );
 
         // 진동 여부 가져오기
-        if (alarm.isVibrate())  vibration.setText("진동이 켜져있습니다.");
-        else                    vibration.setText("진동이 꺼져있습니다.");
+        if (helper.getIsVibrate())  vibration.setText("진동이 켜져있습니다.");
+        else                        vibration.setText("진동이 꺼져있습니다.");
 
         // 메모 가져오기
-        if (!alarm.getMemo().equals("")) memo.setText("메모가 있습니다.");
-        else                             memo.setText("메모가 없습니다.");
-        memoContent.setText( alarm.getMemo() );
+        if (!helper.getMemo().equals("")) memo.setText("메모가 있습니다.");
+        else                              memo.setText("메모가 없습니다.");
+        memoContent.setText( helper.getMemo() );
 
         // 목적지 가져오기
-        if (alarm.getDestination().equals("")) {
+        if (helper.getDestination().equals("")) {
             destination.setText("없음");
         } else {
-            destination.setText( alarm.getDestination() );
+            destination.setText( helper.getDestination() );
         }
 
         // 도착 시간 가져오기
-        arrivalTime.setText( helper.millisToHour(alarm.getArrivalTime()) );
-        startArrivalTimer( alarm.getArrivalTime(), arrivalLeft );
+        arrivalTime.setText( helper.millisToHour(helper.getArrivalTime()) );
+        startArrivalTimer( helper.getArrivalTime(), arrivalLeft );
 
     }
 

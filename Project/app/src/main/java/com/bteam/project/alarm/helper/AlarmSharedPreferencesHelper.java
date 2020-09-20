@@ -3,8 +3,6 @@ package com.bteam.project.alarm.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.bteam.project.alarm.model.Alarm;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,31 +66,6 @@ public class AlarmSharedPreferencesHelper {
     private final int DEFAULT_ARRIVAL_TIME = 0;
     private final int DEFAULT_ARRIVAL_HOUR = 8;
     private final int DEFAULT_ARRIVAL_MINUTE = 0;
-
-    public Alarm getAllParams() {
-        Alarm alarm = new Alarm();
-        alarm.setTurnedOn( isTurnedOn() );
-        alarm.setAlreadyRangAlarms( getAlreadyRangAlarms() );
-        alarm.setWakeUpTime( getWakeUpTime() );
-        alarm.setWakeUpHour( getWakeUpHour() );
-        alarm.setWakeUpMinute( getWakeUpMinute() );
-        alarm.setInterval( getInterval() );
-        alarm.setRepeat( getRepeat() );
-        alarm.setDuration( getDuration() );
-        alarm.setRingtoneName( getRingtoneName() );
-        alarm.setRingtoneUri( getRingtoneUri() );
-        alarm.setRing( getIsRing() );
-        alarm.setVibrate( getIsVibrate() );
-        alarm.setMemo( getMemo() );
-        alarm.setRead( getIsRead() );
-        alarm.setDestination( getDestination() );
-        alarm.setLatitude( getLatitude() );
-        alarm.setLongitude( getLongitude() );
-        alarm.setArrivalTime( getArrivalTime() );
-        alarm.setArrivalHour( getArrivalHour() );
-        alarm.setArrivalMinute( getArrivalMinute() );
-        return alarm;
-    }
 
     public boolean isTurnedOn() {
         return preferences.getBoolean(TURNED_ON, DEFAULT_TURNED_ON);
@@ -296,6 +269,7 @@ public class AlarmSharedPreferencesHelper {
         return sdf.format(date);
     }
 
+    // 카운트다운 타이머용
     public String millisToString(long millis) {
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;
@@ -326,6 +300,27 @@ public class AlarmSharedPreferencesHelper {
         }
 
         return elapsedDays + "일 " + elapsedHours + "시간 " + elapsedMinutes + "분 " + elapsedSeconds + "초";
+    }
+
+    // 과거의 시간일 경우 현재 시간으로 맞춰서 return
+    public long getReplacedTime(long millis) {
+        if (millis < System.currentTimeMillis()) {
+            Calendar pastCalendar = Calendar.getInstance();
+            pastCalendar.setTimeInMillis(millis);
+            int pastHour = pastCalendar.get(Calendar.HOUR_OF_DAY);
+            int pastMinute = pastCalendar.get(Calendar.MINUTE);
+
+            Calendar newCalendar = Calendar.getInstance();
+            newCalendar.set(Calendar.HOUR_OF_DAY, pastHour);
+            newCalendar.set(Calendar.MINUTE, pastMinute);
+
+            if (newCalendar.before(Calendar.getInstance())) {
+                newCalendar.add(Calendar.DATE, 1);
+            }
+
+            return newCalendar.getTimeInMillis();
+        }
+        return millis;
     }
 
 }

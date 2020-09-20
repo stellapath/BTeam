@@ -5,7 +5,7 @@ import com.bteam.project.user.model.UserVO;
 public class Common {
 
     /* Spring URL */
-    public static final String SERVER_URL = "http://192.168.0.165/bteam/";
+    public static final String SERVER_URL = "http://192.168.29.100/bteam/";
 
     /* 로그인 정보가 들어오는 곳 */
     public static UserVO login_info;

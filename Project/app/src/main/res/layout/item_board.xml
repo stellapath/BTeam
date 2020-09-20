@@ -1,6 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/emailthread_item_vertical_margin"
+    android:layout_marginEnd="4dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="@dimen/emailthread_item_vertical_margin"
+    android:background="@color/email_thread_background"
+    android:stateListAnimator="@animator/thread_elevation_stateanimator"
+    android:paddingBottom="16dp"
+    android:paddingEnd="14dp"
+    android:paddingStart="14dp"
+    android:paddingTop="18dp"
+    tools:ignore="UselessParent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/board_writer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/board_writer_image"
+        android:textColor="#3C4D54"
+        android:textSize="13sp"
+        tools:text="Google Express - 15 mins ago" />
+
+    <TextView
+        android:id="@+id/board_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/board_writer"
+        android:layout_alignStart="@+id/board_writer"
+        android:layout_below="@+id/board_writer"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/worksans_bold"
+        android:textColor="#1D2C2F"
+        android:textSize="@dimen/emailthread_subject_textize_without_photo_attachments"
+        tools:text="Package shipped!" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/board_writer_image"
+        style="@style/Expand.SenderAvatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:layout_marginStart="16dp"
+        tools:ignore="ContentDescription"
+        tools:src="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/board_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/board_title"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="7dp"
+        android:drawablePadding="16dp"
+        android:drawableStart="@drawable/ic_attachment_24dp"
+        android:drawableTint="#45676E"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="#3A4A51"
+        tools:text="I'll be in your neighborhood doing errands..." />
+
+</RelativeLayout>

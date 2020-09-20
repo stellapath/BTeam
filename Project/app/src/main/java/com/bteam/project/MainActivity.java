@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,18 +20,19 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.bteam.project.user.task.ImageLoadTask;
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /* 메인 액티비티 */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private ImageView drawer_image;
+    private CircleImageView drawer_image;
     private TextView drawer_nickname, drawer_id;
 
     /***********************************************************************************************
@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                ImageLoadTask task = new ImageLoadTask(user_email, drawer_image);
-                task.execute();
+                // ImageLoadTask task = new ImageLoadTask(user_email, drawer_image);
+                // task.execute();
             }
         }
     }

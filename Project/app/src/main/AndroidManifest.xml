@@ -20,11 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <service
-            android:name=".alarm.service.AlarmService"
+        <receiver
+            android:name=".alarm.receiver.AlarmNotificationReceiver"
             android:enabled="true"
-            android:exported="true"></service>
-
+            android:exported="true"></receiver>
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"

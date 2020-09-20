@@ -13,14 +13,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.user.model.UserVO;
-import com.bteam.project.user.task.SignupRequest;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
@@ -115,15 +123,7 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 UserVO vo = getUserVO();
-                SignupRequest request = new SignupRequest(vo);
-                request.execute();
-                String result = "";
-                try {
-                    result = request.get();
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-                onPostExcute(result);
+
             }
         });
 
@@ -155,13 +155,54 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    private void sendSignupRequest(final UserVO vo) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = Common.SERVER_URL + "andSignup";
+
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        onPostExcute(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "서버와의 연결이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_email", vo.getUser_email());
+                params.put("user_pw", vo.getUser_pw());
+                params.put("user_phone", vo.getUser_phone());
+                params.put("user_zipcode", vo.getUser_zipcode());
+                params.put("user_address", vo.getUser_address());
+                params.put("detail_address", vo.getDetail_address());
+                params.put("user_birth", vo.getUser_birth());
+                params.put("user_key", vo.getUser_key());
+                return params;
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(stringRequest);
+    }
+
     public void onPostExcute(String s) {
         if (s.contains("1")) {
             Toast.makeText(context, "회원가입이 완료되었습니다.",
                     Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
         } else {
             Toast.makeText(context, "회원가입에 실패했습니다. 잠시 후에 다시 시도해 주세요.",
                     Toast.LENGTH_SHORT).show();
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
@@ -208,5 +249,4 @@ public class SignupActivity extends AppCompatActivity {
         this.size = size;
         return randomKey();
     }
-
 }

@@ -1,11 +1,7 @@
 package com.bteam.project.user;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,14 +9,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.user.model.UserVO;
-import com.bteam.project.user.task.LoginRequest;
+import com.google.gson.Gson;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 네비게이션 드로어에서 헤더를 터치했을 때
@@ -46,37 +49,18 @@ public class LoginActivity extends AppCompatActivity {
         login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (login_id.getText().toString().length() == 0) {
+                final String id = login_id.getText().toString();
+                final String pw = login_pw.getText().toString();
+
+                if (id.length() == 0) {
                     showToast("아이디를 입력하세요.");
                 }
-                if (login_pw.getText().toString().length() == 0) {
+                if (pw.length() == 0) {
                     showToast("비밀번호를 입력하세요");
                 }
 
-                String id = login_id.getText().toString();
-                String pw = login_pw.getText().toString();
+                sendLoginRequest(id, pw);
 
-                LoginRequest request = new LoginRequest(id, pw);
-                request.execute();
-                UserVO vo = null;
-                try {
-                    vo = request.get();
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                // 로그인 처리전 서버 연결확인
-                try {
-                    URL url = new URL(Common.SERVER_URL + "andLogin");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    if(conn.getAllowUserInteraction() == true) {
-                        onPostExcute(vo);
-                    }else{
-                        Toast.makeText(LoginActivity.this, "서버와 연결을 확인하세요.",Toast.LENGTH_SHORT).show();
-                    }
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -88,6 +72,39 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void sendLoginRequest(final String id, final String pw) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = Common.SERVER_URL + "andLogin";
+
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Gson gson = new Gson();
+                        UserVO vo = gson.fromJson(response.trim(), UserVO.class);
+                        onPostExcute(vo);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                showToast("서버와의 연결이 원활하지 않습니다.");
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_email", id);
+                params.put("user_pw", pw);
+                return params;
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(stringRequest);
     }
 
     public void showToast(String msg) {
@@ -107,6 +124,4 @@ public class LoginActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
         }
     }
-
-
 }

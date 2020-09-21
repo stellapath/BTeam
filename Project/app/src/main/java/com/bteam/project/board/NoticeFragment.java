@@ -35,7 +35,7 @@ public class NoticeFragment extends Fragment {
 
     private static final String TAG = "NoticeFragment";
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -63,7 +63,7 @@ public class NoticeFragment extends Fragment {
                 BoardVO[] vo = gson.fromJson(response.trim(), BoardVO[].class);
                 List<BoardVO> list = Arrays.asList(vo);
                 Log.d(TAG, "listsize : " + list.size());
-                onPostExcute(list);
+                onPostExecute(list);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -85,7 +85,7 @@ public class NoticeFragment extends Fragment {
         Singleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
     }
 
-    private void onPostExcute(List<BoardVO> list) {
+    private void onPostExecute(List<BoardVO> list) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new NoticeRecyclerViewAdapter(list, getActivity()));

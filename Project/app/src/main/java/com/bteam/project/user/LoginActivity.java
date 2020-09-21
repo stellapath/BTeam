@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Gson gson = new Gson();
                         UserVO vo = gson.fromJson(response.trim(), UserVO.class);
-                        onPostExcute(vo);
+                        onPostExecute(vo);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void onPostExcute(UserVO s) {
+    public void onPostExecute(UserVO s) {
         if (s != null) {
             Toast.makeText(LoginActivity.this, "로그인 되었습니다.",
                     Toast.LENGTH_SHORT).show();

@@ -122,6 +122,7 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 UserVO vo = getUserVO();
+                sendSignupRequest(vo);
 
             }
         });
@@ -160,7 +161,7 @@ public class SignupActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        onPostExcute(response);
+                        onPostExecute(response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -189,7 +190,7 @@ public class SignupActivity extends AppCompatActivity {
         Singleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
-    public void onPostExcute(String s) {
+    public void onPostExecute(String s) {
         if (s.contains("1")) {
             Toast.makeText(context, "회원가입이 완료되었습니다.",
                     Toast.LENGTH_SHORT).show();

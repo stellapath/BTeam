@@ -9,5 +9,6 @@
     <color name="dismiss_activity_background">#000000</color>
     <color name="dismiss_activity_textcolor">#ffffff</color>
     <color name="email_thread_background">#FEFEFE</color>
-
+    <color name="window_background">#EEF0F2</color>
+    <color name="color_accent">#F8AA34</color>
 </resources>

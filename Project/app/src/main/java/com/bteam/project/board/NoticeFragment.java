@@ -46,20 +46,16 @@ public class NoticeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_board_recyclerview, container, false);
-    }
+        View root = inflater.inflate(R.layout.fragment_board_recyclerview, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        recyclerView = root.findViewById(R.id.board_recyclerView);
 
-        recyclerView = view.findViewById(R.id.board_recyclerView);
-
-        // 공지사항 정보를 불러와 BoardVO list를 만듦
         sendBoardListRequest();
 
+        return root;
     }
 
+    // 공지사항 정보를 불러와 BoardVO list를 만듦
     private void sendBoardListRequest() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Common.SERVER_URL + "andBoardList";
@@ -99,6 +95,6 @@ public class NoticeFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
-        recyclerView.setAdapter(new NoticeRecyclerViewAdapter(list));
+        recyclerView.setAdapter(new NoticeRecyclerViewAdapter(list, getActivity()));
     }
 }

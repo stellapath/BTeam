@@ -19,7 +19,7 @@
         android:id="@+id/board_writer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/board_writer_image"
+        android:layout_toStartOf="@+id/board_profile"
         android:textColor="#3C4D54"
         android:textSize="13sp"
         tools:text="Google Express - 15 mins ago" />
@@ -38,7 +38,7 @@
         tools:text="Package shipped!" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/board_writer_image"
+        android:id="@+id/board_profile"
         style="@style/Expand.SenderAvatar"
         android:layout_width="40dp"
         android:layout_height="40dp"

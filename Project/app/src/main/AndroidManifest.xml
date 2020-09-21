@@ -20,10 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".board.BoardDetailActivity"></activity>
+
         <receiver
             android:name=".alarm.receiver.AlarmNotificationReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
         <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"

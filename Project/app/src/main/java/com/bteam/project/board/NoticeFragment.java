@@ -16,16 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.adapter.NoticeRecyclerViewAdapter;
 import com.bteam.project.board.model.BoardVO;
-import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
+import com.bteam.project.network.Singleton;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -37,10 +35,6 @@ public class NoticeFragment extends Fragment {
 
     private static final String TAG = "NoticeFragment";
 
-    public static NoticeFragment newInstance() {
-        return new NoticeFragment();
-    }
-
     RecyclerView recyclerView;
 
     @Nullable
@@ -48,18 +42,19 @@ public class NoticeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_board_recyclerview, container, false);
 
-        recyclerView = root.findViewById(R.id.board_recyclerView);
-
-        sendBoardListRequest();
-
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView = view.findViewById(R.id.board_recyclerView);
+        sendBoardListRequest();
     }
 
     // 공지사항 정보를 불러와 BoardVO list를 만듦
     private void sendBoardListRequest() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Common.SERVER_URL + "andBoardList";
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
         new Response.Listener<String>() {
             @Override
@@ -87,14 +82,12 @@ public class NoticeFragment extends Fragment {
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(stringRequest);
+        Singleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
     }
 
     private void onPostExcute(List<BoardVO> list) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-
-        recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         recyclerView.setAdapter(new NoticeRecyclerViewAdapter(list, getActivity()));
     }
 }

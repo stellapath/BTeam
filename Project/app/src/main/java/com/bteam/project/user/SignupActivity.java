@@ -16,13 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bteam.project.Common;
 import com.bteam.project.R;
+import com.bteam.project.network.Singleton;
 import com.bteam.project.user.model.UserVO;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -156,9 +155,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void sendSignupRequest(final UserVO vo) {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String url = Common.SERVER_URL + "andSignup";
-
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -189,7 +186,7 @@ public class SignupActivity extends AppCompatActivity {
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(stringRequest);
+        Singleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
     public void onPostExcute(String s) {

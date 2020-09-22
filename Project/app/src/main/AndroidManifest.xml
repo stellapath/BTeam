@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".board.BoardDetailActivity"></activity>
+        <activity android:name=".board.BoardInsertActivity"></activity>
+        <activity android:name=".board.BoardDetailActivity" />
 
         <receiver
             android:name=".alarm.receiver.AlarmNotificationReceiver"

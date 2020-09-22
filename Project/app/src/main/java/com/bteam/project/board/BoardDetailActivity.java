@@ -24,8 +24,6 @@ import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +53,13 @@ public class BoardDetailActivity extends AppCompatActivity {
         }
 
         sendBoardDetailRequest(board_num, category);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
     }
 

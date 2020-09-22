@@ -1,10 +1,12 @@
 package com.bteam.project.board;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,10 +28,16 @@ import com.bteam.project.board.model.BoardVO;
 import com.bteam.project.network.Singleton;
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class NoticeFragment extends Fragment {
 
@@ -41,31 +49,25 @@ public class NoticeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_board_recyclerview, container, false);
-
-        return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        recyclerView = view.findViewById(R.id.board_recyclerView);
+        recyclerView = root.findViewById(R.id.board_recyclerView);
         sendBoardListRequest();
+        return root;
     }
 
     // 공지사항 정보를 불러와 BoardVO list를 만듦
     private void sendBoardListRequest() {
         String url = Common.SERVER_URL + "andBoardList";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-        new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Gson gson = new Gson();
-                BoardVO[] vo = gson.fromJson(response.trim(), BoardVO[].class);
-                List<BoardVO> list = Arrays.asList(vo);
-                Log.d(TAG, "listsize : " + list.size());
-                onPostExecute(list);
-            }
-        }, new Response.ErrorListener() {
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Gson gson = new Gson();
+                        BoardVO[] vo = gson.fromJson(response.trim(), BoardVO[].class);
+                        List<BoardVO> list = Arrays.asList(vo);
+                        Log.d(TAG, "listsize : " + list.size());
+                        onPostExecute(list);
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getActivity(), "서버와의 연결이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
@@ -87,7 +89,6 @@ public class NoticeFragment extends Fragment {
 
     private void onPostExecute(List<BoardVO> list) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new NoticeRecyclerViewAdapter(list, getActivity()));
     }
 }

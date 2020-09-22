@@ -29,4 +29,7 @@ public class Common {
     public static final int REQUEST_MEMO = 202;
     public static final int REQUEST_DESTINATION = 203;
 
+    /* Board RequestCode */
+    public static final int REQUEST_BOARD_INSERT = 300;
+
 }

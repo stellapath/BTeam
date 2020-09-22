@@ -29,8 +29,10 @@
                 android:layout_toStartOf="@+id/board_insert_close"
                 android:fontFamily="@font/worksans_bold"
                 android:textColor="#132629"
-                android:textSize="40sp"
-                tools:text="제목" />
+                android:textSize="28sp"
+                android:padding="8dp"
+                android:background="#EEF0F2"
+                tools:hint="제목을 입력하세요" />
 
             <ImageButton
                 android:id="@+id/board_insert_close"
@@ -53,7 +55,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:textColor="#414344"
-                tools:text="revor — 12 hrs ago" />
+                tools:text="작성자" />
 
             <TextView
                 android:id="@+id/board_insert_date"
@@ -64,7 +66,7 @@
                 android:layout_marginStart="16dp"
                 android:textColor="#657D78"
                 android:textSize="12sp"
-                tools:text="To me" />
+                tools:text="날짜" />
 
             <EditText
                 android:id="@+id/board_insert_content"
@@ -77,7 +79,11 @@
                 android:lineSpacingExtra="8dp"
                 android:textColor="#3C4242"
                 android:textSize="16sp"
-                tools:hint="내용을 입력하세요." />
+                android:minHeight="200dp"
+                android:gravity="left"
+                android:padding="8dp"
+                android:background="#EEF0F2"
+                tools:hint="내용을 입력하세요" />
 
             <LinearLayout android:id="@+id/board_insert_attachment"
                 style="@style/Expand.FakeClickable"
@@ -128,6 +134,19 @@
                         tools:ignore="HardcodedText" />
                 </LinearLayout>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/board_insert_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/board_insert_attachment"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/color_accent"
+                android:textSize="16sp"
+                style="?android:borderlessButtonStyle"
+                android:text="게시글 작성" />
+
 
         </RelativeLayout>
     </FrameLayout>

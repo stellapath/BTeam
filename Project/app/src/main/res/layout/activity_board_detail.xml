@@ -26,14 +26,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_toStartOf="@+id/board_detail_close"
+                android:layout_toStartOf="@+id/board_detail_option"
                 android:fontFamily="@font/worksans_bold"
                 android:textColor="#132629"
                 android:textSize="40sp"
                 tools:text="High school reunion" />
 
             <ImageButton
-                android:id="@+id/board_detail_close"
+                android:id="@+id/board_detail_option"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // 서버 통신
     private void sendLoginRequest(final String id, final String pw) {
         String url = Common.SERVER_URL + "andLogin";
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-    // 날씨 객체의 정보를 뷰에 넣기
+    // 날씨 객체의 정보를 화면에 표시
     private void setWeather(Weather weather) {
         background.setImageResource(weather.getBackground());
         icon.setImageResource(weather.getIcon());

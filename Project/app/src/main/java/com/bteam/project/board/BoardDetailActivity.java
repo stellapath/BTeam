@@ -1,15 +1,14 @@
 package com.bteam.project.board;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -32,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class BoardDetailActivity extends AppCompatActivity {
 
     TextView title, writer, date, content, filename, filesize;
-    ImageButton close;
+    ImageButton optionButton;
     CircleImageView profile;
     LinearLayout attachment;
 
@@ -54,10 +53,10 @@ public class BoardDetailActivity extends AppCompatActivity {
 
         sendBoardDetailRequest(board_num, category);
 
-        close.setOnClickListener(new View.OnClickListener() {
+        optionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                // TODO 메뉴가 열리게 하기..
             }
         });
 
@@ -70,11 +69,12 @@ public class BoardDetailActivity extends AppCompatActivity {
         content = findViewById(R.id.board_detail_content);
         filename = findViewById(R.id.board_detail_file_name);
         filesize = findViewById(R.id.board_detail_file_size);
-        close = findViewById(R.id.board_detail_close);
+        optionButton = findViewById(R.id.board_detail_option);
         profile = findViewById(R.id.board_detail_profile);
         attachment = findViewById(R.id.board_detail_attachment);
     }
 
+    // 서버와 연결해서 글 목록을 가져온다
     private void sendBoardDetailRequest(final int board_num, final int category) {
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         String url = Common.SERVER_URL + "andBoardView";
@@ -106,6 +106,7 @@ public class BoardDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    // 서버 통신이 완료되면 화면에 표시
     private void onPostExcute(BoardVO vo) {
         title.setText( vo.getBoard_title() );
         writer.setText( vo.getBoard_nickname() );

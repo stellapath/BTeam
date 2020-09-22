@@ -155,6 +155,7 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    // 서버 통신
     private void sendSignupRequest(final UserVO vo) {
         String url = Common.SERVER_URL + "andSignup";
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

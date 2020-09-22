@@ -5,24 +5,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-
 public class BoardFragment extends Fragment {
 
     private static final String TAG = "BoardFragment";
 
     private Fragment noticeFragment;
+    private int page = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -45,6 +44,7 @@ public class BoardFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
+                page = position;
                 if (position == 0) changeFragment(noticeFragment);
             }
 
@@ -64,8 +64,16 @@ public class BoardFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Common.login_info == null) {
+                    Toast.makeText(getActivity(), "게시글을 작성하려면 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (page == 0 && !Common.login_info.getUser_email().equals("admin")) {
+                    Toast.makeText(getActivity(), "공지사항은 관리자만 작성할 수 있습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), BoardInsertActivity.class);
-                // intent.putExtra("category", page);
+                intent.putExtra("category", page);
                 startActivityForResult(intent, Common.REQUEST_BOARD_INSERT);
             }
         });
@@ -73,6 +81,7 @@ public class BoardFragment extends Fragment {
         return root;
     }
 
+    // 프래그먼트 전환
     private void changeFragment(Fragment fragment) {
         getChildFragmentManager().beginTransaction().replace(R.id.board_frameLayout, fragment).commit();
     }

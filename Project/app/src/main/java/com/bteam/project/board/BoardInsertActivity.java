@@ -1,17 +1,30 @@
 package com.bteam.project.board;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bteam.project.R;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import org.w3c.dom.Text;
+import com.bteam.project.Common;
+import com.bteam.project.R;
+import com.bteam.project.board.model.BoardVO;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BoardInsertActivity extends AppCompatActivity {
 
@@ -21,6 +34,10 @@ public class BoardInsertActivity extends AppCompatActivity {
     private ImageButton close;
     private TextView writer, date, filename, filesize;
     private LinearLayout attachment;
+    private Button insertButton;
+
+    private Uri fileUri;
+    private File fileAttachment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +52,64 @@ public class BoardInsertActivity extends AppCompatActivity {
             category = intent.getIntExtra("category", 0);
         }
 
+        // 작성자는 로그인 정보에서 가져온다
+        writer.setText(Common.login_info.getUser_nickname());
+
+        // 날짜는 현재 시간으로 자동 생성한다
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 a hh시 mm분");
+        writer.setText(sdf.format(date));
+
+        // 파일 첨부 클릭 시
+        attachment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 외부저장소 접근 권한 체크
+                checkPermission();
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                // intent.setType("image/*"); <---- 이미지만 선택 가능
+                intent.setType("*/*"); // <---- 모든파일 선택가능
+                /* setType을 하지 않으면 예외 발생 */
+                startActivityForResult(intent, Common.REQUEST_BOARD_FILE);
+            }
+        });
+
+        // TODO 파일 삭제 버튼
+
         // 작성 버튼 클릭 시
-        // 글 작성 요청
+        insertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO 글 작성 요청
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 파일 선택 후 파일 정보를 받는 곳
+        if (requestCode == Common.REQUEST_BOARD_FILE && resultCode == RESULT_OK) {
+            fileUri = data.getData();
+            fileAttachment = getFileFromUri(fileUri);
+            // ↓ 비트맵으로 받는 방법 ↓
+            /*
+            try {
+                InputStream in = getContentResolver().openInputStream(data.getData());
+                Bitmap image = BitmapFactory.decodeStream(in);
+                imgVwSelected.setImageBitmap(image);
+                in.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+            */
+            // 파일 선택 후 파일 이름 변경
+            filename.setText(fileUri.getLastPathSegment());
+            filesize.setText(fileAttachment.length() / 1024 + "KB");
+        }
 
     }
 
@@ -49,5 +122,32 @@ public class BoardInsertActivity extends AppCompatActivity {
         filename = findViewById(R.id.board_insert_file_name);
         filesize = findViewById(R.id.board_insert_file_size);
         attachment = findViewById(R.id.board_insert_attachment);
+        insertButton = findViewById(R.id.board_insert_button);
+    }
+
+    // 작성한 글의 정보들을 객체에 넣는다
+    private BoardVO getBoardVO() {
+        BoardVO vo = new BoardVO();
+        vo.setBoard_category(category);
+        vo.setBoard_title(title.getText().toString());
+        vo.setBoard_content(content.getText().toString());
+        vo.setBoard_email(Common.login_info.getUser_email());
+        vo.setBoard_nickname(Common.login_info.getUser_nickname());
+        return vo;
+    }
+
+    // Uri로 파일 찾기
+    private File getFileFromUri(Uri uri) {
+        return new File(uri.getPath());
+    }
+
+    public void checkPermission() {
+        String temp = "";
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            temp += Manifest.permission.READ_EXTERNAL_STORAGE + " ";
+        }
+        if (TextUtils.isEmpty(temp) == false) { // 권한 요청
+            ActivityCompat.requestPermissions(this, temp.trim().split(" "), 1);
+        }
     }
 }

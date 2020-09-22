@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
                 // ImageLoadTask task = new ImageLoadTask(user_email, drawer_image);
-                // task.execute();
+                // task.execute(); TODO Volley로 처리하는게 편할듯..
             }
         }
     }

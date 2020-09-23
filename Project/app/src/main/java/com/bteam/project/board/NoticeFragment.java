@@ -1,12 +1,10 @@
 package com.bteam.project.board;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,19 +23,13 @@ import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.adapter.NoticeRecyclerViewAdapter;
 import com.bteam.project.board.model.BoardVO;
-import com.bteam.project.network.Singleton;
+import com.bteam.project.network.VolleySingleton;
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class NoticeFragment extends Fragment {
 
@@ -84,7 +76,7 @@ public class NoticeFragment extends Fragment {
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Singleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
     }
 
     private void onPostExecute(List<BoardVO> list) {

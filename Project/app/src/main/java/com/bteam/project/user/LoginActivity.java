@@ -17,7 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bteam.project.Common;
 import com.bteam.project.R;
-import com.bteam.project.network.Singleton;
+import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.user.model.UserVO;
 import com.google.gson.Gson;
 
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Singleton.getInstance(this).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
     public void showToast(String msg) {

@@ -1,5 +1,6 @@
 package com.bteam.project.board;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -79,6 +80,15 @@ public class BoardFragment extends Fragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 글 작성 완료 시
+        if (requestCode == Common.REQUEST_BOARD_INSERT && resultCode == Activity.RESULT_OK) {
+            // TODO 글 목록 새로고침
+        }
     }
 
     // 프래그먼트 전환

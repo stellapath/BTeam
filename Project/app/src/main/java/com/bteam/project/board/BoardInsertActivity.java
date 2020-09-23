@@ -3,8 +3,11 @@ package com.bteam.project.board;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +26,13 @@ import com.bteam.project.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,7 +47,6 @@ public class BoardInsertActivity extends AppCompatActivity {
     private Button insertButton;
 
     private Uri fileUri;
-    private File fileAttachment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +90,9 @@ public class BoardInsertActivity extends AppCompatActivity {
         insertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO 글 작성 요청
-
+                // 글 작성 요청
+                SendBoardInsertRequest request = new SendBoardInsertRequest(getBoardVO(), fileUri);
+                request.execute();
             }
         });
 
@@ -94,7 +104,6 @@ public class BoardInsertActivity extends AppCompatActivity {
         // 파일 선택 후 파일 정보를 받는 곳
         if (requestCode == Common.REQUEST_BOARD_FILE && resultCode == RESULT_OK) {
             fileUri = data.getData();
-            fileAttachment = getFileFromUri(fileUri);
             // ↓ 비트맵으로 받는 방법 ↓
             /*
             try {
@@ -107,8 +116,8 @@ public class BoardInsertActivity extends AppCompatActivity {
             }
             */
             // 파일 선택 후 파일 이름 변경
-            filename.setText(fileUri.getLastPathSegment());
-            filesize.setText(fileAttachment.length() / 1024 + "KB");
+            filename.setText(getFileName(fileUri));
+            // TODO 파일크기 구하기
         }
 
     }
@@ -136,9 +145,152 @@ public class BoardInsertActivity extends AppCompatActivity {
         return vo;
     }
 
+    // 게시글 작성 요청 보내기
+    private class SendBoardInsertRequest extends AsyncTask<Void, Void, String> {
+
+        BoardVO vo;
+        Uri fileUri;
+
+        public SendBoardInsertRequest(BoardVO vo, Uri fileUri) {
+            this.vo = vo;
+            this.fileUri = fileUri;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            String result = null;
+
+            // Multipart 전송시에 필요한 값 준비
+            String twoHyphens = "--";
+            String lineEnd = "\r\n";
+            String boundary = "****" + System.currentTimeMillis() + "****";
+
+            // 파라미터 준비
+            String[] data = {
+                    vo.getBoard_category() + "",
+                    vo.getBoard_nickname(),
+                    vo.getBoard_title(),
+                    vo.getBoard_content(),
+                    vo.getBoard_email()
+            };
+            String[] dataName = {
+                    "board_category",
+                    "board_nickname",
+                    "board_title",
+                    "board_content",
+                    "board_email"
+            };
+
+            try {
+                byte[] buffer;
+                int maxBufferSize = 5 * 1024 * 1024;
+
+                // 서버 연결
+                URL url = new URL(Common.SERVER_URL + "andBoardInsert");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setReadTimeout(3000);
+                conn.setConnectTimeout(3000);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+                // 파라미터
+                String delimiter = twoHyphens + boundary + lineEnd;
+                StringBuffer postDataBuilder = new StringBuffer();
+
+                // 문자열 데이터
+                for (int i = -1; i < data.length; i++) {
+                    postDataBuilder.append(delimiter);
+                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + dataName[i] +"\""+lineEnd+lineEnd+data[i]+lineEnd);
+                }
+
+                // 파일이 존재할 때에만 생성
+                if (fileUri != null) {
+                    postDataBuilder.append(delimiter);
+                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + "file" + "\";filename=\"" + getFileName(fileUri) +"\"" + lineEnd);
+                }
+
+                // 파라미터 및 파일 전송
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                dos.write(postDataBuilder.toString().getBytes());
+
+                if (fileUri != null) {
+                    dos.writeBytes(lineEnd);
+                    FileInputStream fileInputStream = new FileInputStream(getFileFromUri(fileUri));
+                    buffer = new byte[maxBufferSize];
+                    int length = -1;
+                    while ((length = fileInputStream.read(buffer)) != -1) {
+                        dos.write(buffer, 0, length);
+                    }
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                    fileInputStream.close();
+                } else {
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                }
+                dos.flush();
+                dos.close();
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line = "";
+                StringBuffer sb = new StringBuffer();
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+                result = sb.toString();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s.contains("0")) {
+                Toast.makeText(BoardInsertActivity.this, "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+            } else {
+                Toast.makeText(BoardInsertActivity.this, "게시글 작성에 실패했습니다. 잠시 후에 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_CANCELED);
+            }
+            finish();
+
+            super.onPostExecute(s);
+        }
+    }
+
     // Uri로 파일 찾기
     private File getFileFromUri(Uri uri) {
         return new File(uri.getPath());
+    }
+
+    // Uri로 파일 이름 구하기
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     public void checkPermission() {

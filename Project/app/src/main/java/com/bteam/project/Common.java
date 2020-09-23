@@ -31,5 +31,6 @@ public class Common {
 
     /* Board RequestCode */
     public static final int REQUEST_BOARD_INSERT = 300;
+    public static final int REQUEST_BOARD_FILE = 301;
 
 }

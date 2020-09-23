@@ -148,8 +148,8 @@ public class BoardInsertActivity extends AppCompatActivity {
     // 게시글 작성 요청 보내기
     private class SendBoardInsertRequest extends AsyncTask<Void, Void, String> {
 
-        BoardVO vo;
-        Uri fileUri;
+        private BoardVO vo;
+        private Uri fileUri;
 
         public SendBoardInsertRequest(BoardVO vo, Uri fileUri) {
             this.vo = vo;
@@ -159,76 +159,79 @@ public class BoardInsertActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... voids) {
 
-            String result = null;
-
-            // Multipart 전송시에 필요한 값 준비
             String twoHyphens = "--";
-            String lineEnd = "\r\n";
             String boundary = "****" + System.currentTimeMillis() + "****";
+            String lineEnd = "\r\n";
 
-            // 파라미터 준비
-            String[] data = {
-                    vo.getBoard_category() + "",
-                    vo.getBoard_nickname(),
-                    vo.getBoard_title(),
-                    vo.getBoard_content(),
-                    vo.getBoard_email()
-            };
-            String[] dataName = {
+            String[] names = {
                     "board_category",
-                    "board_nickname",
                     "board_title",
                     "board_content",
-                    "board_email"
+                    "board_email",
+                    "board_nickname"
             };
+            
+            String[] values = {
+                    vo.getBoard_category() + "",
+                    vo.getBoard_title(),
+                    vo.getBoard_content(),
+                    vo.getBoard_email(),
+                    vo.getBoard_nickname()
+            };
+            
+            String result = "";
+
+            File file = null;
+            if (fileUri != null) {
+                file = new File(fileUri.getPath());
+            }
+
+            byte[] buffer;
+            int maxBufferSize = 1 * 1024 * 1024;
 
             try {
-                byte[] buffer;
-                int maxBufferSize = 5 * 1024 * 1024;
-
-                // 서버 연결
                 URL url = new URL(Common.SERVER_URL + "andBoardInsert");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setReadTimeout(3000);
                 conn.setConnectTimeout(3000);
-                conn.setDoInput(true);
                 conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setUseCaches(false);
                 conn.setRequestProperty("ENCTYPE", "multipart/form-data");
                 conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
-                // 파라미터
+                // 파라미터 보내기
                 String delimiter = twoHyphens + boundary + lineEnd;
                 StringBuffer postDataBuilder = new StringBuffer();
-
-                // 문자열 데이터
-                for (int i = -1; i < data.length; i++) {
+                for (int i = 0; i < names.length; i++) {
                     postDataBuilder.append(delimiter);
-                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + dataName[i] +"\""+lineEnd+lineEnd+data[i]+lineEnd);
+                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + names[i] + "\"" + lineEnd);
+                    postDataBuilder.append(lineEnd + values[i] + lineEnd);
                 }
 
-                // 파일이 존재할 때에만 생성
+                // 파일이 존재하면 파일 보내기
                 if (fileUri != null) {
                     postDataBuilder.append(delimiter);
-                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + "file" + "\";filename=\"" + getFileName(fileUri) +"\"" + lineEnd);
+                    postDataBuilder.append("Content-Disposition: form-data; name=\"file\";");
+                    postDataBuilder.append("filename=\"" + getFileName(fileUri) + "\"" + lineEnd);
                 }
 
-                // 파라미터 및 파일 전송
                 DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
                 dos.write(postDataBuilder.toString().getBytes());
 
                 if (fileUri != null) {
                     dos.writeBytes(lineEnd);
-                    FileInputStream fileInputStream = new FileInputStream(getFileFromUri(fileUri));
+                    FileInputStream fis = new FileInputStream(file);
                     buffer = new byte[maxBufferSize];
                     int length = -1;
-                    while ((length = fileInputStream.read(buffer)) != -1) {
+                    while ((length = fis.read(buffer)) != -1) {
                         dos.write(buffer, 0, length);
                     }
                     dos.writeBytes(lineEnd);
                     dos.writeBytes(lineEnd);
                     dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                    fileInputStream.close();
+                    fis.close();
                 } else {
                     dos.writeBytes(lineEnd);
                     dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
@@ -247,12 +250,13 @@ public class BoardInsertActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return result;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if (s.contains("0")) {
+            if (s.contains("1")) {
                 Toast.makeText(BoardInsertActivity.this, "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
             } else {
@@ -263,11 +267,6 @@ public class BoardInsertActivity extends AppCompatActivity {
 
             super.onPostExecute(s);
         }
-    }
-
-    // Uri로 파일 찾기
-    private File getFileFromUri(Uri uri) {
-        return new File(uri.getPath());
     }
 
     // Uri로 파일 이름 구하기

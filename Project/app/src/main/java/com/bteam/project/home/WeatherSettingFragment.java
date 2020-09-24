@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bteam.project.R;
 import com.bteam.project.home.adapter.DongAdapter;
 import com.bteam.project.home.model.City;
+import com.bteam.project.util.MyMotionToast;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -61,10 +62,10 @@ public class WeatherSettingFragment extends Fragment {
                 String searchData = dong.getText().toString();
 
                 if (searchData.length() == 0) {
-                    Toast.makeText(getActivity(), "검색할 읍/면/동을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    MyMotionToast.warningToast(getActivity(), "검색할 읍/면/동을 입력하세요.");
                     return;
                 } else if (searchData.length() == 1) {
-                    Toast.makeText(getActivity(), "두 글자 이상 입력하세요.", Toast.LENGTH_SHORT).show();
+                    MyMotionToast.warningToast(getActivity(), "두 글자 이상 입력하세요.");
                     return;
                 }
 

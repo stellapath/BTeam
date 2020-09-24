@@ -22,9 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bteam.project.Common;
+import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
+import com.bteam.project.util.MyMotionToast;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -257,10 +258,10 @@ public class BoardInsertActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             if (s.contains("1")) {
-                Toast.makeText(BoardInsertActivity.this, "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
+                MyMotionToast.successToast(BoardInsertActivity.this, "게시글이 작성되었습니다.");
                 setResult(RESULT_OK);
             } else {
-                Toast.makeText(BoardInsertActivity.this, "게시글 작성에 실패했습니다. 잠시 후에 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                MyMotionToast.errorToast(BoardInsertActivity.this, "게시글 작성에 실패했습니다.\n잠시 후에 다시 시도해 주세요.");
                 setResult(RESULT_CANCELED);
             }
             finish();

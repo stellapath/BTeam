@@ -12,8 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bteam.project.Common;
+import com.bteam.project.util.Common;
 import com.bteam.project.R;
+import com.bteam.project.util.MyMotionToast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -66,11 +67,11 @@ public class BoardFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (Common.login_info == null) {
-                    Toast.makeText(getActivity(), "게시글을 작성하려면 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                    MyMotionToast.warningToast(getActivity(), "게시글 작성은 로그인이 필요합니다.");
                     return;
                 }
                 if (page == 0 && !Common.login_info.getUser_email().equals("admin")) {
-                    Toast.makeText(getActivity(), "공지사항은 관리자만 작성할 수 있습니다.", Toast.LENGTH_SHORT).show();
+                    MyMotionToast.warningToast(getActivity(), "공지사항은 관리자만 작성할 수 있습니다.");
                     return;
                 }
                 Intent intent = new Intent(getActivity(), BoardInsertActivity.class);

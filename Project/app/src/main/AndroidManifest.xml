@@ -3,6 +3,7 @@
     package="com.bteam.project">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -24,15 +25,10 @@
         <activity android:name=".board.BoardDetailActivity" />
 
         <receiver
-            android:name=".alarm.receiver.AlarmNotificationReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
             android:name=".alarm.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".alarm.receiver.DismissAlarmActivity" />
         <activity
             android:name=".alarm.dialog.DestinationPopupActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />

@@ -1,10 +1,12 @@
 package com.bteam.project.home.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bteam.project.R;
 import com.bteam.project.home.model.City;
+import com.bteam.project.util.MyMotionToast;
 
 import java.util.ArrayList;
 
@@ -69,8 +72,10 @@ public class DongAdapter extends RecyclerView.Adapter<DongAdapter.DongViewHolder
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         preferences.edit().putString("zone", cities.get(position).getCode()).commit();
-                        Toast.makeText(mContext, "날씨 지역이 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                        MyMotionToast.successToast((Activity) mContext, "날씨 지역이 변경되었습니다.");
                     }
+                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             });
         }

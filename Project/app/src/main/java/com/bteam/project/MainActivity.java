@@ -22,6 +22,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
+import com.bteam.project.util.Common;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 

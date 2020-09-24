@@ -2,6 +2,7 @@ package com.bteam.project.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,10 +16,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bteam.project.Common;
+import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.user.model.UserVO;
+import com.bteam.project.util.MyMotionToast;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -52,10 +54,10 @@ public class LoginActivity extends AppCompatActivity {
                 final String pw = login_pw.getText().toString();
 
                 if (id.length() == 0) {
-                    showToast("아이디를 입력하세요.");
+                    MyMotionToast.warningToast(LoginActivity.this, "아이디를 입력하세요.");
                 }
                 if (pw.length() == 0) {
-                    showToast("비밀번호를 입력하세요");
+                    MyMotionToast.errorToast(LoginActivity.this, "비밀번호를 입력하세요.");
                 }
 
                 sendLoginRequest(id, pw);
@@ -87,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                showToast("서버와의 연결이 원활하지 않습니다.");
+                MyMotionToast.errorToast(LoginActivity.this, "서버와의 연결이 원활하지 않습니다.");
             }
         }) {
             @Override
@@ -105,20 +107,14 @@ public class LoginActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
     public void onPostExecute(UserVO s) {
         if (s != null) {
-            Toast.makeText(LoginActivity.this, "로그인 되었습니다.",
-                    Toast.LENGTH_SHORT).show();
+            MyMotionToast.successToast(LoginActivity.this, "로그인 되었습니다.");
             setResult(RESULT_OK);
             Common.login_info = s;
             finish();
         } else {
-            Toast.makeText(LoginActivity.this, "존재하지 않는 아이디이거나, 비밀번호가 잘못되었습니다.",
-                    Toast.LENGTH_SHORT).show();
+            MyMotionToast.warningToast(LoginActivity.this, "존재하지 않는 아이디이거나, 비밀번호를 잘못 입력하셨습니다.");
             setResult(RESULT_CANCELED);
         }
     }

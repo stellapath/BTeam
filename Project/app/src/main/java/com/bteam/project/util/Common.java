@@ -1,4 +1,4 @@
-package com.bteam.project;
+package com.bteam.project.util;
 
 import com.bteam.project.user.model.UserVO;
 

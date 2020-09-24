@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bteam.project.Common;
+import com.bteam.project.util.Common;
 import com.bteam.project.R;
 
 public class AddressActivity extends AppCompatActivity {

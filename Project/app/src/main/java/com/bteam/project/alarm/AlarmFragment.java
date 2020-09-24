@@ -181,7 +181,12 @@ public class AlarmFragment extends Fragment {
 
     // 알람 재시작
     private void resetAlarm() {
-        // 알람 재설정
+        if ( !sharPrefHelper.isTurnedOn() ) return;
+        // 기상시간 재설정
+        alarmManager.reset(sharPrefHelper.getWakeUpMillis(), Common.REQUEST_WAKEUP_ALARM);
+
+        // 도착시간 재설정
+
         // 울리고 있는 진동 / 알람 끄기.. <-- 이건 나중에 알림창이나 화면 끄면 되도록
     }
 
@@ -227,8 +232,8 @@ public class AlarmFragment extends Fragment {
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
             long wakeUpMillis = timeCalc.getMillis(i, i1);
             sharPrefHelper.setWakeUpMillis( timeCalc.isBefore(wakeUpMillis) );
-            alarmManager.reset(wakeUpMillis, Common.REQUEST_WAKEUP_ALARM);
             sharPrefHelper.setTurnedOn(true);
+            resetAlarm();
             initAlarm();
         }
     };

@@ -16,7 +16,15 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
 
+
+
+        // 벨소리 & 진동 울리기
         RingtonePlayer ringtonePlayer = new RingtonePlayer(context);
         ringtonePlayer.start();
+
+        // 알림 울리기
+        MyNotificationManager notificationManager = new MyNotificationManager(context);
+        notificationManager.show();
+
     }
 }

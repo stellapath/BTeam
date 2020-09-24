@@ -25,6 +25,7 @@ public class Common {
     /* Alarm RequestCode */
     public static final int REQUEST_WAKEUP_ALARM = 0;
     public static final int REQUEST_ARRIVAL_ALARM = 1;
+    public static final int REQUEST_NOTIFICATION_ALARM = 2;
     public static final int REQUEST_RINGTONE = 201;
     public static final int REQUEST_MEMO = 202;
     public static final int REQUEST_DESTINATION = 203;

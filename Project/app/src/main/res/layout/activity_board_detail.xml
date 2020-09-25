@@ -131,7 +131,7 @@
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/worksans_bold"
                         android:text="workspace_zen.pdf"
-                        android:textColor="@color/black_opacity_75"
+                        android:textColor="#BF000000"
                         android:textSize="16sp"
                         tools:ignore="HardcodedText" />
 

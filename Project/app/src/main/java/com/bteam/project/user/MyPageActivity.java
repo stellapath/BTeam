@@ -1,9 +1,13 @@
 package com.bteam.project.user;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,68 +15,69 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bteam.project.R;
+import com.bteam.project.util.Common;
+import com.bteam.project.util.MyMotionToast;
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ReturnMode;
+import com.esafirm.imagepicker.model.Image;
+
+import java.util.List;
 
 public class MyPageActivity extends AppCompatActivity {
 
-    Button noticeBtn, myWritten, battery, led;
-    ImageView myImg;
-    TextView myNick, myId;
+    private ImageView profileImage;
+    private TextView name, email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
-        noticeBtn = findViewById(R.id.noticeBtn);
-        myWritten = findViewById(R.id.myWritten);
-        battery = findViewById(R.id.battery);
-        led = findViewById(R.id.led);
-        myImg = findViewById(R.id.myImg);
-        myNick = findViewById(R.id.myNick);
-        myId = findViewById(R.id.myId);
+        initView();
+        initProfile();
 
-        // 로그인시 프로필,닉네임,아이디 받아와서 다시 쓰기
-//        myImg.setimage();
-//        myNick.setText(.getInfo_nickname());
-//        myId.setText(.getInfo_email());
-
-
-
-
-        // 공지사항 클릭 메소드
-        noticeBtn.setOnClickListener(new View.OnClickListener() {
+        // 프로필 이미지 클릭 시
+        profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 공지사항 클릭시 이동
-                // Intent intent = new Intent(get(), .class);
-
+                // TODO 프로필 이미지 수정
+                ImagePicker.create(MyPageActivity.this)
+                        .returnMode(ReturnMode.ALL)
+                        .folderMode(true)
+                        .toolbarFolderTitle("폴더")
+                        .toolbarImageTitle("이미지 선택")
+                        .toolbarArrowColor(Color.BLACK)
+                        .includeVideo(false)
+                        .single()
+                        .showCamera(true)
+                        .start();
             }
         });
 
-        // 내가 쓴글 검색해서 보여주는 페이지 이동
-        myWritten.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
 
-            }
-        });
+    private void initView() {
+        profileImage = findViewById(R.id.profile_image);
+        name = findViewById(R.id.profile_name);
+        email = findViewById(R.id.profile_email);
+    }
 
-        // 배터리 관리 페이지
-        battery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    private void initProfile() {
+        if (Common.login_info == null) {
+            MyMotionToast.errorToast(MyPageActivity.this, "로그인 정보를 불러오는 데 실패했습니다.");
+            finish();
+        }
+        profileImage.setImageBitmap(Common.login_info.getProfile_image());
+        name.setText(Common.login_info.getUser_nickname());
+        email.setText(Common.login_info.getUser_email());
+    }
 
-            }
-        });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+            Image image = ImagePicker.getFirstImageOrNull(data);
 
-        // 개인정보 수정
-        led.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-
+        }
     }
 }

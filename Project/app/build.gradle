@@ -72,6 +72,11 @@ dependencies {
 
     // RingtonePicker
     implementation 'com.kevalpatel2106:ringtonepicker:1.2'
+
+    // imagePicker
+    implementation 'com.github.esafirm.android-image-picker:imagepicker:2.3.0'
+    implementation 'com.github.esafirm.android-image-picker:rximagepicker:2.3.0'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
 }
 repositories {
     mavenCentral()

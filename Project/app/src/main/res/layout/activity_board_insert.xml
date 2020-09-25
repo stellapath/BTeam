@@ -122,7 +122,7 @@
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/worksans_bold"
                         android:text="파일 첨부"
-                        android:textColor="@color/black_opacity_75"
+                        android:textColor="#BF000000"
                         android:textSize="16sp"
                         tools:ignore="HardcodedText" />
 

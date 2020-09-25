@@ -11,6 +11,11 @@
     <color name="email_thread_background">#FEFEFE</color>
     <color name="window_background">#EEF0F2</color>
     <color name="color_accent">#F8AA34</color>
-
+    <color name="white">#ffffff</color>
+    <color name="grey">#E9EAEE</color>
+    <color name="yellow">#F8BA0F</color>
+    <color name="goodgrey">#535353</color>
+    <color name="blue">#293859</color>
+    <color name="lightgrey">#EEEEEE</color>
     <color name="black_overlay">#66000000</color>
 </resources>

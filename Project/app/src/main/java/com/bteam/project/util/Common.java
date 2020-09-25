@@ -1,5 +1,9 @@
 package com.bteam.project.util;
 
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
+
 import com.bteam.project.user.model.UserVO;
 
 public class Common {

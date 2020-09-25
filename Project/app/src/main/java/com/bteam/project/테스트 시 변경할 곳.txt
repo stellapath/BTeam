@@ -1,1 +1,0 @@
-Common Class의 SERVER_URL 을 변경한 뒤 테스트 할 것.

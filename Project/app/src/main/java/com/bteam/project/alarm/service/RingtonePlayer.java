@@ -1,4 +1,4 @@
-package com.bteam.project.alarm.receiver;
+package com.bteam.project.alarm.service;
 
 import android.content.Context;
 import android.media.Ringtone;
@@ -17,6 +17,7 @@ public class RingtonePlayer {
 
     private Context context;
     private Vibrator vibrator;
+    private Ringtone ringtone;
     private CountDownTimer countDownTimer;
     private AlarmSharedPreferencesHelper sharPrefHelper;
 
@@ -26,13 +27,12 @@ public class RingtonePlayer {
         this.sharPrefHelper = new AlarmSharedPreferencesHelper(context);
     }
 
-
     public void start() {
 
         long durationMinute = sharPrefHelper.getDuration();
         long durationMillis = TimeUnit.MINUTES.toMillis(durationMinute);
 
-        countDownTimer = new CountDownTimer(durationMillis, 1000 ) {
+        countDownTimer = new CountDownTimer(durationMillis, 1000) {
             @Override
             public void onTick(long l) {
 
@@ -56,7 +56,7 @@ public class RingtonePlayer {
         // 벨소리
         if (!sharPrefHelper.getRingtone().equals("")) {
             Uri uri = Uri.parse(sharPrefHelper.getRingtone());
-            Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
+            ringtone = RingtoneManager.getRingtone(context, uri);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ringtone.setLooping(true);
             }

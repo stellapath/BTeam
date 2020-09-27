@@ -1,9 +1,5 @@
 package com.bteam.project.util;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.OpenableColumns;
-
 import com.bteam.project.user.model.UserVO;
 
 public class Common {
@@ -37,5 +33,10 @@ public class Common {
     /* Board RequestCode */
     public static final int REQUEST_BOARD_INSERT = 300;
     public static final int REQUEST_BOARD_FILE = 301;
+
+    /* Permission */
+    public static final int REQUEST_OVERRAY_PERMISSION = 2323;
+    public static final int REQUEST_EXTERNAL_STORAGE_PERMISSION = 2424;
+
 
 }

@@ -2,9 +2,7 @@ package com.bteam.project.alarm;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
@@ -13,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,25 +19,24 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bteam.project.alarm.dialog.DurationPickerDialog;
-import com.bteam.project.alarm.helper.TimeCalculator;
-import com.bteam.project.util.Common;
 import com.bteam.project.R;
+import com.bteam.project.alarm.dialog.DurationPickerDialog;
+import com.bteam.project.alarm.dialog.IntervalPickerDialog;
+import com.bteam.project.alarm.dialog.MemoPopupActivity;
+import com.bteam.project.alarm.dialog.RepeatPickerDialog;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.alarm.helper.MyAlarmManager;
-import com.kevalpatel.ringtonepicker.RingtonePickerDialog;
-import com.kevalpatel.ringtonepicker.RingtonePickerListener;
+import com.bteam.project.alarm.helper.TimeCalculator;
+import com.bteam.project.util.Common;
+import com.bteam.project.util.MyMotionToast;
 
 /**
  * 알람 울리는 순서
@@ -87,13 +83,12 @@ public class AlarmFragment extends Fragment {
                 sharPrefHelper.setTurnedOn( isChecked );
                 if (isChecked) {
                     // 체크가 되었을 때
-                    // 알람을 켠다
-                    long wakeUpTimeMillis = sharPrefHelper.getWakeUpMillis();
-                    alarmManager.start(wakeUpTimeMillis, Common.REQUEST_WAKEUP_ALARM);
+                    requestOverlayPermission();
+                    startAlarm();
                 } else {
                     // 체크를 해제했을 때
                     // 알람을 끈다
-                    alarmManager.stop(Common.REQUEST_WAKEUP_ALARM);
+                    stopAlarm();
                 }
                 initAlarm();
             }
@@ -107,6 +102,28 @@ public class AlarmFragment extends Fragment {
                 int minute = timeCalc.getMinute( sharPrefHelper.getWakeUpMillis() );
                 TimePickerDialog dialog = new TimePickerDialog(getActivity(), wakeUpListener, hour, minute, false);
                 dialog.show();
+            }
+        });
+
+        // 반복 간격 클릭 이벤트
+        intervalView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntervalPickerDialog dialog = new IntervalPickerDialog();
+                dialog.setValueChangeListener(intervalListener);
+                dialog.setNumberPickerValue( sharPrefHelper.getInterval() );
+                dialog.show(fragmentManager, "intervalPicker");
+            }
+        });
+
+        // 반복 횟수 클릭 이벤트
+        repeatView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RepeatPickerDialog dialog = new RepeatPickerDialog();
+                dialog.setValueChangeListener(repeatListener);
+                dialog.setNumberPickerValue( sharPrefHelper.getNumberOfAlarms() );
+                dialog.show(fragmentManager, "numberOfAlarmsPicker");
             }
         });
 
@@ -125,29 +142,13 @@ public class AlarmFragment extends Fragment {
         ringtoneView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RingtonePickerDialog.Builder ringtonePickerBuilder
-                        = new RingtonePickerDialog.Builder(getActivity(), getChildFragmentManager())
-                        .setTitle("알람음 선택")
-                        .setCurrentRingtoneUri( Uri.parse(sharPrefHelper.getRingtone()) )
-                        .displayDefaultRingtone(true)
-                        .displaySilentRingtone(true)
-                        .setPositiveButtonText("확인")
-                        .setCancelButtonText("취소")
-                        .setPlaySampleWhileSelection(true)
-                        .setListener(new RingtonePickerListener() {
-                            @Override
-                            public void OnRingtoneSelected(@NonNull String ringtoneName, @Nullable Uri ringtoneUri) {
-                                sharPrefHelper.setRingtone( ringtoneUri.toString() );
-                                Log.d(TAG, "OnRingtoneSelected: " + ringtoneUri.toString());
-                            }
-                        });
-
-                ringtonePickerBuilder.addRingtoneType(RingtonePickerDialog.Builder.TYPE_MUSIC);
-                ringtonePickerBuilder.addRingtoneType(RingtonePickerDialog.Builder.TYPE_NOTIFICATION);
-                ringtonePickerBuilder.addRingtoneType(RingtonePickerDialog.Builder.TYPE_RINGTONE);
-                ringtonePickerBuilder.addRingtoneType(RingtonePickerDialog.Builder.TYPE_ALARM);
-
-                ringtonePickerBuilder.show();
+                Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "알람 벨소리를 선택하세요.");
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(sharPrefHelper.getRingtone()));
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+                startActivityForResult(intent, Common.REQUEST_RINGTONE);
             }
         });
 
@@ -161,6 +162,26 @@ public class AlarmFragment extends Fragment {
                     sharPrefHelper.setVibrate(true);
                 }
                 initAlarm();
+            }
+        });
+
+        // 메모 클릭 이벤트
+        memoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MemoPopupActivity.class);
+                intent.putExtra("memoContent", sharPrefHelper.getMemo());
+                intent.putExtra("isRead", sharPrefHelper.isRead());
+                startActivityForResult(intent, Common.REQUEST_MEMO);
+            }
+        });
+
+
+        // 도착시간 클릭 이벤트
+        arrivalView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -198,7 +219,7 @@ public class AlarmFragment extends Fragment {
     // 알람 화면 불러오기 (저장된 정보 가져오기)
     private void initAlarm() {
 
-        // 알람 다시 불러오기
+        // 알람 재설정
         resetAlarm();
 
         // 스위치가 켜졌는지 꺼졌는지
@@ -214,30 +235,54 @@ public class AlarmFragment extends Fragment {
             if (wakeUpTimer != null) wakeUpTimer.cancel();
         }
 
+        // 반복 간격 가져오기
+        interval.setText( sharPrefHelper.getInterval() + "" );
+
+        // 반복 횟수 가져오기
+        repeat.setText( sharPrefHelper.getNumberOfAlarms() + "" );
+
         // 벨소리 재생시간 가져오기
         duration.setText( sharPrefHelper.getDuration() + "" );
 
-        // Ringtone Name 가져오기
+        // Ringtone 이름 가져오기
         if (sharPrefHelper.getRingtone().equals("")) {
-            sharPrefHelper.setRingtone(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString());
+            ringtone.setText("무음");
+        } else {
+            String ringtoneName = RingtoneManager.getRingtone(getActivity(),
+                    Uri.parse(sharPrefHelper.getRingtone())).getTitle(getActivity());
+            ringtone.setText(ringtoneName);
         }
-        Uri ringtoneUri = Uri.parse(sharPrefHelper.getRingtone());
-        ringtone.setText( ringtoneUri.toString() );
 
         // 진동 여부 가져오기
         if ( sharPrefHelper.isVibrate() ) vibration.setText("진동이 울립니다.");
         else vibration.setText("진동이 울리지 않습니다.");
 
+        // 메모 가져오기
+        if (sharPrefHelper.getMemo().equals("")) {
+            memo.setText("메모가 없습니다.");
+        } else {
+            memo.setText("메모가 있습니다.");
+        }
+        memoContent.setText(sharPrefHelper.getMemo());
+    }
+
+    // 알람 시작
+    private void startAlarm() {
+        long wakeUpTimeMillis = sharPrefHelper.getWakeUpMillis();
+        alarmManager.start(wakeUpTimeMillis, Common.REQUEST_WAKEUP_ALARM);
+        sharPrefHelper.setAlreadyRangAlarms(0);
+        sharPrefHelper.setArrivalRang(false);
+    }
+
+    // 알람 종료
+    private void stopAlarm() {
+        alarmManager.stop(Common.REQUEST_WAKEUP_ALARM);
     }
 
     // 알람 재시작
     private void resetAlarm() {
         if ( !sharPrefHelper.isTurnedOn() ) return;
-        // 기상시간 재설정 alarmManager.reset(sharPrefHelper.getWakeUpMillis(), Common.REQUEST_WAKEUP_ALARM);
-
-        // 도착시간 재설정
-
-        // 울리고 있는 진동 / 알람 끄기.. <-- 이건 나중에 알림창이나 화면 끄면 되도록
+        alarmManager.reset(sharPrefHelper.getWakeUpMillis(), Common.REQUEST_WAKEUP_ALARM);
     }
 
     // 기상 타이머 시작
@@ -283,6 +328,7 @@ public class AlarmFragment extends Fragment {
             long wakeUpMillis = timeCalc.getMillis(i, i1);
             sharPrefHelper.setWakeUpMillis( timeCalc.isBefore(wakeUpMillis) );
             sharPrefHelper.setTurnedOn(true);
+            MyMotionToast.infoToast(getActivity(), "기상시간이 설정되었습니다.");
             initAlarm();
         }
     };
@@ -291,7 +337,15 @@ public class AlarmFragment extends Fragment {
     private TimePickerDialog.OnTimeSetListener arrivalListener = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
-
+            long arrivalMillis = timeCalc.getMillis(i, i1);
+            if (arrivalMillis <= sharPrefHelper.getWakeUpMillis()) {
+                MyMotionToast.warningToast(getActivity(), "도착시간은 기상시간보다 더 늦은 시간으로 설정해야 합니다.");
+                return;
+            }
+            sharPrefHelper.setArrivalMillis(arrivalMillis);
+            sharPrefHelper.setTurnedOn(true);
+            MyMotionToast.infoToast(getActivity(), "도착시간이 설정되었습니다.");
+            initAlarm();
         }
     };
 
@@ -299,7 +353,9 @@ public class AlarmFragment extends Fragment {
     private NumberPicker.OnValueChangeListener intervalListener = new NumberPicker.OnValueChangeListener() {
         @Override
         public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-
+            sharPrefHelper.setInterval(i);
+            MyMotionToast.infoToast(getActivity(), "설정이 변경되었습니다.");
+            initAlarm();
         }
     };
 
@@ -307,7 +363,9 @@ public class AlarmFragment extends Fragment {
     private NumberPicker.OnValueChangeListener repeatListener = new NumberPicker.OnValueChangeListener() {
         @Override
         public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-
+            sharPrefHelper.setNumberOfAlarms(i);
+            MyMotionToast.infoToast(getActivity(), "설정이 변경되었습니다.");
+            initAlarm();
         }
     };
 
@@ -316,6 +374,7 @@ public class AlarmFragment extends Fragment {
         @Override
         public void onValueChange(NumberPicker numberPicker, int i, int i1) {
             sharPrefHelper.setDuration(i);
+            MyMotionToast.infoToast(getActivity(), "설정이 변경되었습니다.");
             initAlarm();
         }
     };
@@ -323,14 +382,50 @@ public class AlarmFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Common.REQUEST_RINGTONE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Common.REQUEST_RINGTONE) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            if (uri != null) {
+            if (uri == null) {
+                sharPrefHelper.setRingtone("");
+            } else {
                 sharPrefHelper.setRingtone(uri.toString());
-                Log.d(TAG, "ringtone uri: " + uri.toString()); // TODO 무음 선택시 뭐가 들어오는지 보기
-                initAlarm();
+            }
+            MyMotionToast.infoToast(getActivity(), "설정이 변경되었습니다.");
+            initAlarm();
+        }
+
+        if (requestCode == Common.REQUEST_MEMO && resultCode == Activity.RESULT_OK) {
+            String memoContent = data.getStringExtra("memoContent");
+            boolean isRead = data.getBooleanExtra("isRead", false);
+            sharPrefHelper.setMemo(memoContent);
+            sharPrefHelper.setRead(isRead);
+            MyMotionToast.infoToast(getActivity(), "메모가 설정되었습니다.");
+            initAlarm();
+        }
+
+        if (requestCode == Common.REQUEST_OVERRAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(getContext())) {
+                    MyMotionToast.errorToast(getActivity(), "권한 거부됨.");
+                }
             }
         }
     }
 
+    private void requestOverlayPermission() { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P) && (!Settings.canDrawOverlays(getActivity()))) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getActivity().getPackageName()));
+                startActivityForResult(intent, Common.REQUEST_OVERRAY_PERMISSION);
+            }
+        }
+    }
+
+    private void requestExternalStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        Common.REQUEST_EXTERNAL_STORAGE_PERMISSION);
+            }
+        }
+    }
 }

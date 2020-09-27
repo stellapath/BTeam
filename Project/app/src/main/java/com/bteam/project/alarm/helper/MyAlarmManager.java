@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.bteam.project.alarm.receiver.AlarmReceiver;
-import com.bteam.project.util.Common;
 
 /**
  * 알람 타이머 관련 클래스
@@ -29,9 +28,11 @@ public class MyAlarmManager {
     }
 
     public void start(long millis, int requestCode) {
-        Log.d(TAG, "start");
+        Log.i(TAG, "start");
 
         long alarmTimeMillis = timeCalc.isBefore(millis);
+        Log.i(TAG, "alarmTime: " + timeCalc.toString(millis, 0));
+
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -40,7 +41,7 @@ public class MyAlarmManager {
     }
 
     public void stop(int requestCode) {
-        Log.d(TAG, "stop");
+        Log.i(TAG, "stop");
 
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
@@ -49,7 +50,7 @@ public class MyAlarmManager {
     }
 
     public void reset(long millis, int requestCode) {
-        Log.d(TAG, "reset");
+        Log.i(TAG, "reset");
 
         stop(requestCode);
         start(millis, requestCode);

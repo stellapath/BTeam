@@ -3,12 +3,6 @@ package com.bteam.project.alarm.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.bteam.project.home.model.Weather;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * 알람에 관한 설정들을 총괄하는 클래스
  * 데이터 읽기, 쓰기 등
@@ -29,11 +23,16 @@ public class AlarmSharedPreferencesHelper {
     private final String TURNED_ON = "turnedOn";
     private final String WAKEUP_TIME = "wakeUpTime";
     private final String INTERVAL = "interval";
-
+    private final String NUMBER_OF_ALARMS = "numberOfAlarms";
+    private final String ALREALDY_RANG_ALARMS = "alreadyRangAlarms";
     private final String DURATION = "duration";
-
     private final String VIBRATE = "vibrate";
     private final String RINGTONE = "ringtone";
+    private final String MEMO = "memo";
+    private final String READ = "read";
+
+    private final String ARRIVAL_TIME = "arrivalTime";
+    private final String ARRIVAL_RANG = "arrivalRang";
 
     public void setTurnedOn(boolean turnedOn) {
         editor.putBoolean(TURNED_ON, turnedOn).apply();
@@ -48,7 +47,7 @@ public class AlarmSharedPreferencesHelper {
     }
 
     public long getWakeUpMillis() {
-        return preferences.getLong(WAKEUP_TIME, 0);
+        return preferences.getLong(WAKEUP_TIME, System.currentTimeMillis());
     }
 
     public void setInterval(int interval) {
@@ -56,10 +55,24 @@ public class AlarmSharedPreferencesHelper {
     }
 
     public int getInterval() {
-        return preferences.getInt(INTERVAL, 0);
+        return preferences.getInt(INTERVAL, 5);
     }
 
+    public void setNumberOfAlarms(int i) {
+        editor.putInt(NUMBER_OF_ALARMS, i).apply();
+    }
 
+    public int getNumberOfAlarms() {
+        return preferences.getInt(NUMBER_OF_ALARMS, 0);
+    }
+
+    public void setAlreadyRangAlarms(int i) {
+        editor.putInt(ALREALDY_RANG_ALARMS, i).apply();
+    }
+
+    public int getAlreadyRangAlarms() {
+        return preferences.getInt(ALREALDY_RANG_ALARMS, 0);
+    }
 
     public void setDuration(int duration) {
         editor.putInt(DURATION, duration).apply();
@@ -85,6 +98,37 @@ public class AlarmSharedPreferencesHelper {
         return preferences.getString(RINGTONE, "");
     }
 
+    public void setMemo(String memo) {
+        editor.putString(MEMO, memo).apply();
+    }
+
+    public String getMemo() {
+        return preferences.getString(MEMO, "");
+    }
+
+    public void setRead(boolean isRead) {
+        editor.putBoolean(READ, isRead).apply();
+    }
+
+    public boolean isRead() {
+        return preferences.getBoolean(READ, false);
+    }
+
+    public void setArrivalMillis(long millis) {
+        editor.putLong(ARRIVAL_TIME, millis).apply();
+    }
+
+    public long getArrivalMillis() {
+        return preferences.getLong(ARRIVAL_TIME, System.currentTimeMillis());
+    }
+
+    public void setArrivalRang(boolean isRang) {
+        editor.putBoolean(ARRIVAL_RANG, isRang).apply();
+    }
+
+    public boolean isArrivalRang() {
+        return preferences.getBoolean(ARRIVAL_RANG, false);
+    }
 }
 
 

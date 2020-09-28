@@ -62,7 +62,11 @@ public class RingtonePlayer {
         // 진동
         if (sharPrefHelper.isVibrate()) {
             if (Build.VERSION.SDK_INT >= 26) {
-                vibrator.vibrate(VibrationEffect.createWaveform(new long[] { 2000, 2000 }, 0));
+                vibrator.vibrate(VibrationEffect.createWaveform(new long[] { 2000, 2000 }, 0),
+                        new AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .setUsage(AudioAttributes.USAGE_ALARM)
+                                .build());
             } else {
                 vibrator.vibrate(new long[] { 2000, 2000 }, 0);
             }

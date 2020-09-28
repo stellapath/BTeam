@@ -29,4 +29,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
+    <string name="image_picker_title">이미지를 선택하세요.</string>
+
 </resources>

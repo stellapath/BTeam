@@ -1,29 +1,37 @@
 package com.bteam.project.user;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
+import com.android.volley.toolbox.Volley;
 import com.bteam.project.R;
+import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
-import com.esafirm.imagepicker.features.ImagePicker;
-import com.esafirm.imagepicker.features.ReturnMode;
-import com.esafirm.imagepicker.model.Image;
+import com.kroegerama.imgpicker.BottomSheetImagePicker;
+import com.kroegerama.imgpicker.ButtonType;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class MyPageActivity extends AppCompatActivity {
+
+public class MyPageActivity extends AppCompatActivity implements BottomSheetImagePicker.OnImagesSelectedListener {
+
+    private static final String TAG = "MyPageActivity";
 
     private ImageView profileImage;
     private TextView name, email;
@@ -33,6 +41,12 @@ public class MyPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
+        if (Common.login_info == null) {
+            MyMotionToast.errorToast(MyPageActivity.this, "로그인 정보가 존재하지 않습니다.");
+            finish();
+            return;
+        }
+
         initView();
         initProfile();
 
@@ -41,19 +55,14 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO 프로필 이미지 수정
-                ImagePicker.create(MyPageActivity.this)
-                        .returnMode(ReturnMode.ALL)
-                        .folderMode(true)
-                        .toolbarFolderTitle("폴더")
-                        .toolbarImageTitle("이미지 선택")
-                        .toolbarArrowColor(Color.BLACK)
-                        .includeVideo(false)
-                        .single()
-                        .showCamera(true)
-                        .start();
+                new BottomSheetImagePicker.Builder("fileProvider")
+                        .cameraButton(ButtonType.Button)
+                        .galleryButton(ButtonType.Button)
+                        .singleSelectTitle(R.string.image_picker_title)
+                        .requestTag("single")
+                        .show(getSupportFragmentManager(), null);
             }
         });
-
     }
 
     private void initView() {
@@ -73,11 +82,8 @@ public class MyPageActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            Image image = ImagePicker.getFirstImageOrNull(data);
+    public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
+        Uri profileImageUri = list.get(0);
 
-        }
     }
 }

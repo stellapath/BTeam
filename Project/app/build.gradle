@@ -61,7 +61,7 @@ dependencies {
     // JSON 데이터 파싱
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    // 네트워크 관련 라이브러리리
+    // 네트워크 관련 라이브러리
     implementation 'com.android.volley:volley:1.1.1'
 
     // MotionToast
@@ -73,13 +73,12 @@ dependencies {
     // RingtonePicker
     implementation 'com.kevalpatel2106:ringtonepicker:1.2'
 
-    // imagePicker
-    implementation 'com.github.esafirm.android-image-picker:imagepicker:2.3.0'
-    implementation 'com.github.esafirm.android-image-picker:rximagepicker:2.3.0'
-    implementation 'com.github.bumptech.glide:glide:4.5.0'
-
     // background
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+
+    // BottomSheet ImagePicker
+    implementation 'com.kroegerama:bottomsheet-imagepicker:1.1.2'
+
 }
 repositories {
     mavenCentral()

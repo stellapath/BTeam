@@ -1,21 +1,16 @@
 package com.bteam.project.user;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.request.SimpleMultiPartRequest;
-import com.android.volley.toolbox.Volley;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bteam.project.R;
-import com.bteam.project.network.VolleySingleton;
+import com.bteam.project.network.MyFileUploader;
+import com.bteam.project.network.MyImageLoader;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
 import com.kroegerama.imgpicker.BottomSheetImagePicker;
@@ -84,6 +79,16 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
     @Override
     public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
         Uri profileImageUri = list.get(0);
+        String url = Common.SERVER_URL + "andProfileImageUpload";
+        Map<String, String> params = new HashMap<>();
+        params.put("email", Common.login_info.getUser_email());
 
+        MyFileUploader fileUploader = new MyFileUploader(url, params, profileImageUri);
+        fileUploader.execute();
+
+        MyImageLoader imageLoader = new MyImageLoader(this);
+        imageLoader.getProfileImage();
+
+        initProfile();
     }
 }

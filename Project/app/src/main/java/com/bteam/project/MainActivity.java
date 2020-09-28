@@ -2,7 +2,6 @@ package com.bteam.project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +20,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.bteam.project.network.VolleySingleton;
+import com.bteam.project.network.MyImageLoader;
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
 import com.bteam.project.util.Common;
-import com.bteam.project.util.MyMotionToast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -69,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                getProfileImage();
+                MyImageLoader imageLoader = new MyImageLoader(this);
+                imageLoader.getProfileImage();
             }
         }
     }
@@ -167,24 +164,5 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
-    }
-
-    private void getProfileImage() {
-        if (Common.login_info == null) return;
-        final String url = Common.SERVER_URL + Common.login_info.getUser_imagepath();
-        ImageLoader imageLoader = VolleySingleton.getInstance(this.getApplicationContext())
-                .getImageLoader();
-        imageLoader.get(url, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                drawer_image.setImageBitmap(response.getBitmap());
-                if (Common.login_info != null) Common.login_info.setProfile_image(response.getBitmap());
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                MyMotionToast.errorToast(MainActivity.this, "프로필 이미지를 불러오는 데 실패했습니다.");
-            }
-        });
     }
 }

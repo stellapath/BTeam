@@ -20,7 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.bteam.project.network.MyImageLoader;
+import com.bteam.project.network.NetworkHelper;
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
 import com.bteam.project.util.Common;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                MyImageLoader imageLoader = new MyImageLoader(this);
+                NetworkHelper imageLoader = new NetworkHelper(this);
                 imageLoader.getProfileImage();
             }
         }

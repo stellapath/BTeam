@@ -2,15 +2,16 @@ package com.bteam.project.user;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bteam.project.R;
-import com.bteam.project.network.MyFileUploader;
-import com.bteam.project.network.MyImageLoader;
+import com.bteam.project.network.NetworkHelper;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
 import com.kroegerama.imgpicker.BottomSheetImagePicker;
@@ -28,8 +29,11 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
 
     private static final String TAG = "MyPageActivity";
 
-    private ImageView profileImage;
+    private ImageView profileImage, backButton;
     private TextView name, email;
+    private TextView tab_myInfo;
+    private TextView myInfo_email, myInfo_nickname, myInfo_tel, myInfo_addr, myInfo_birth;
+    private LinearLayout myInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,14 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         initView();
         initProfile();
 
+        // 뒤로가기 버튼 클릭 시
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         // 프로필 이미지 클릭 시
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,12 +70,29 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
                         .show(getSupportFragmentManager(), null);
             }
         });
+
+        // 내 정보 클릭 시
+        tab_myInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 하단에 내 정보 표시
+            }
+        });
     }
 
     private void initView() {
+        backButton = findViewById(R.id.profile_backButton);
         profileImage = findViewById(R.id.profile_image);
         name = findViewById(R.id.profile_name);
         email = findViewById(R.id.profile_email);
+
+        tab_myInfo = findViewById(R.id.profile_tab_myInfo);
+        myInfo = findViewById(R.id.profile_myInfo);
+        myInfo_email = findViewById(R.id.profile_myInfo_email);
+        myInfo_nickname = findViewById(R.id.profile_myInfo_nickname);
+        myInfo_tel = findViewById(R.id.profile_myInfo_tel);
+        myInfo_addr = findViewById(R.id.profile_myInfo_addr);
+        myInfo_birth = findViewById(R.id.profile_myInfo_birth);
     }
 
     private void initProfile() {
@@ -79,16 +108,5 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
     @Override
     public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
         Uri profileImageUri = list.get(0);
-        String url = Common.SERVER_URL + "andProfileImageUpload";
-        Map<String, String> params = new HashMap<>();
-        params.put("email", Common.login_info.getUser_email());
-
-        MyFileUploader fileUploader = new MyFileUploader(url, params, profileImageUri);
-        fileUploader.execute();
-
-        MyImageLoader imageLoader = new MyImageLoader(this);
-        imageLoader.getProfileImage();
-
-        initProfile();
     }
 }

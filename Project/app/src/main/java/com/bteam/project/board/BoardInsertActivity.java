@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,15 +25,22 @@ import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
 import com.bteam.project.util.MyMotionToast;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class BoardInsertActivity extends AppCompatActivity {
 
@@ -92,11 +97,46 @@ public class BoardInsertActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-                SendBoardInsertRequest request = new SendBoardInsertRequest(getBoardVO(), fileUri);
-                request.execute();
+                sendBoardInsertRequest();
+                finish();
             }
         });
 
+    }
+
+    private void sendBoardInsertRequest() {
+        BoardVO vo = getBoardVO();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("board_email", vo.getBoard_email())
+                .addFormDataPart("board_nickname", vo.getBoard_nickname())
+                .addFormDataPart("board_category", vo.getBoard_category() + "")
+                .addFormDataPart("board_title", vo.getBoard_title())
+                .addFormDataPart("board_content", vo.getBoard_content())
+                .addFormDataPart("file", getFileName(fileUri),
+                        RequestBody.create(MultipartBody.FORM, new File(fileUri.getPath())))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(Common.SERVER_URL + "andBoardInsert")
+                .post(requestBody)
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                MyMotionToast.errorToast(BoardInsertActivity.this, "서버와의 연결이 원활하지 않습니다.");
+                finish();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                MyMotionToast.successToast(BoardInsertActivity.this, "게시글이 작성되었습니다.");
+                finish();
+            }
+        });
     }
 
     @Override
@@ -144,130 +184,6 @@ public class BoardInsertActivity extends AppCompatActivity {
         vo.setBoard_email(Common.login_info.getUser_email());
         vo.setBoard_nickname(Common.login_info.getUser_nickname());
         return vo;
-    }
-
-    // 게시글 작성 요청 보내기
-    private class SendBoardInsertRequest extends AsyncTask<Void, Void, String> {
-
-        private BoardVO vo;
-        private Uri fileUri;
-
-        public SendBoardInsertRequest(BoardVO vo, Uri fileUri) {
-            this.vo = vo;
-            this.fileUri = fileUri;
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-
-            String twoHyphens = "--";
-            String boundary = "****" + System.currentTimeMillis() + "****";
-            String lineEnd = "\r\n";
-
-            String[] names = {
-                    "board_category",
-                    "board_title",
-                    "board_content",
-                    "board_email",
-                    "board_nickname"
-            };
-            
-            String[] values = {
-                    vo.getBoard_category() + "",
-                    vo.getBoard_title(),
-                    vo.getBoard_content(),
-                    vo.getBoard_email(),
-                    vo.getBoard_nickname()
-            };
-            
-            String result = "";
-
-            File file = null;
-            if (fileUri != null) {
-                file = new File(fileUri.getPath());
-            }
-
-            byte[] buffer;
-            int maxBufferSize = 1 * 1024 * 1024;
-
-            try {
-                URL url = new URL(Common.SERVER_URL + "andBoardInsert");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setReadTimeout(3000);
-                conn.setConnectTimeout(3000);
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setUseCaches(false);
-                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-
-                // 파라미터 보내기
-                String delimiter = twoHyphens + boundary + lineEnd;
-                StringBuffer postDataBuilder = new StringBuffer();
-                for (int i = 0; i < names.length; i++) {
-                    postDataBuilder.append(delimiter);
-                    postDataBuilder.append("Content-Disposition: form-data; name=\"" + names[i] + "\"" + lineEnd);
-                    postDataBuilder.append(lineEnd + values[i] + lineEnd);
-                }
-
-                // 파일이 존재하면 파일 보내기
-                if (fileUri != null) {
-                    postDataBuilder.append(delimiter);
-                    postDataBuilder.append("Content-Disposition: form-data; name=\"file\";");
-                    postDataBuilder.append("filename=\"" + getFileName(fileUri) + "\"" + lineEnd);
-                }
-
-                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-                dos.write(postDataBuilder.toString().getBytes());
-
-                if (fileUri != null) {
-                    dos.writeBytes(lineEnd);
-                    FileInputStream fis = new FileInputStream(file);
-                    buffer = new byte[maxBufferSize];
-                    int length = -1;
-                    while ((length = fis.read(buffer)) != -1) {
-                        dos.write(buffer, 0, length);
-                    }
-                    dos.writeBytes(lineEnd);
-                    dos.writeBytes(lineEnd);
-                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                    fis.close();
-                } else {
-                    dos.writeBytes(lineEnd);
-                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                }
-                dos.flush();
-                dos.close();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String line = "";
-                StringBuffer sb = new StringBuffer();
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-                result = sb.toString();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if (s.contains("1")) {
-                MyMotionToast.successToast(BoardInsertActivity.this, "게시글이 작성되었습니다.");
-                setResult(RESULT_OK);
-            } else {
-                MyMotionToast.errorToast(BoardInsertActivity.this, "게시글 작성에 실패했습니다.\n잠시 후에 다시 시도해 주세요.");
-                setResult(RESULT_CANCELED);
-            }
-            finish();
-
-            super.onPostExecute(s);
-        }
     }
 
     // Uri로 파일 이름 구하기

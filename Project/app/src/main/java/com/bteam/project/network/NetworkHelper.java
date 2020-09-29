@@ -8,11 +8,16 @@ import com.android.volley.toolbox.ImageLoader;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
 
-public class MyImageLoader {
+import java.util.Map;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
+public class NetworkHelper {
 
     private Context context;
 
-    public MyImageLoader(Context context) {
+    public NetworkHelper(Context context) {
         this.context = context;
     }
 

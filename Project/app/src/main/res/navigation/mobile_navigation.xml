@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.bteam.project.home.HomeFragment"
+        android:name="com.project.bteam.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_alarm"
-        android:name="com.bteam.project.alarm.AlarmFragment"
+        android:name="com.project.bteam.alarm.AlarmFragment"
         android:label="@string/title_alarm"
         tools:layout="@layout/fragment_alarm" />
     <fragment
         android:id="@+id/navigation_direction"
-        android:name="com.bteam.project.direction.DirectionFragment"
+        android:name="com.project.bteam.direction.DirectionFragment"
         android:label="@string/title_direction"
         tools:layout="@layout/fragment_direction" />
     <fragment
         android:id="@+id/navigation_board"
-        android:name="com.bteam.project.board.BoardFragment"
+        android:name="com.project.bteam.board.BoardFragment"
         android:label="@string/title_board"
         tools:layout="@layout/fragment_board" />
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.bteam.project.settings.SettingsFragment"
+        android:name="com.project.bteam.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 

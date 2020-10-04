@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "89642786788",
+    "firebase_url": "https://estproject.firebaseio.com",
+    "project_id": "estproject",
+    "storage_bucket": "estproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89642786788:android:e0a7cc425567be108b31f1",
+        "android_client_info": {
+          "package_name": "com.project.bteam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "89642786788-3257gp8tai5eu9nkooanj1uheusu1tvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0RCmLzcVti-jPxTDfP-PcuD7X5DW9maA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "89642786788-3257gp8tai5eu9nkooanj1uheusu1tvl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

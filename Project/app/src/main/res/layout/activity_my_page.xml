@@ -186,20 +186,6 @@
                     android:layout_height="match_parent"
                     android:background="@color/lightgrey" />
 
-                <TextView
-                    android:id="@+id/reviewbtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:fontFamily="@font/proximanovaregular"
-                    android:gravity="center"
-                    android:padding="13dp"
-                    android:text="Review"
-                    android:textAllCaps="true"
-                    android:textColor="@color/lightgrey"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
             </LinearLayout>
 
             <include layout="@layout/content_my_profile" />

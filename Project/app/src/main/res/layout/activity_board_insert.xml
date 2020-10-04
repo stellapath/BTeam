@@ -1,154 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/emailthread_scrollable_container"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    tools:context=".board.BoardInsertActivity">
 
-    <FrameLayout
+    <ScrollView
+        android:id="@+id/emailthread_scrollable_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/window_background"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="4dp"
-            android:background="#FDFDFD"
-            android:paddingBottom="@dimen/bottom_spacing_for_bottomappbar">
+            android:layout_height="wrap_content"
+            android:background="@color/window_background"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/board_insert_title"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_toStartOf="@+id/board_insert_close"
-                android:fontFamily="@font/worksans_bold"
-                android:textColor="#132629"
-                android:textSize="28sp"
-                android:padding="8dp"
-                android:background="#EEF0F2"
-                tools:hint="제목을 입력하세요" />
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="#FDFDFD"
+                android:paddingBottom="@dimen/bottom_spacing_for_bottomappbar">
 
-            <ImageButton
-                android:id="@+id/board_insert_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"
-                android:src="@drawable/ic_keyboard_arrow_down_24dp"
-                android:tint="#516771"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/board_insert_writer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_title"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:textColor="#414344"
-                tools:text="작성자" />
-
-            <TextView
-                android:id="@+id/board_insert_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_writer"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:textColor="#657D78"
-                android:textSize="12sp"
-                tools:text="날짜" />
-
-            <EditText
-                android:id="@+id/board_insert_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_date"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:lineSpacingExtra="8dp"
-                android:textColor="#3C4242"
-                android:textSize="16sp"
-                android:minHeight="200dp"
-                android:gravity="left"
-                android:padding="8dp"
-                android:background="#EEF0F2"
-                tools:hint="내용을 입력하세요" />
-
-            <LinearLayout android:id="@+id/board_insert_attachment"
-                style="@style/Expand.FakeClickable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_content"
-                android:layout_marginBottom="24dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@color/color_accent"
-                    android:padding="20dp"
-                    android:src="@drawable/ic_attachment_24dp"
-                    tools:ignore="ContentDescription"
-                    app:tint="#172629" />
-
-                <LinearLayout
+                <EditText
+                    android:id="@+id/board_insert_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_toStartOf="@+id/board_insert_close"
+                    android:fontFamily="@font/worksans_bold"
+                    android:textColor="#132629"
+                    android:textSize="28sp"
+                    android:padding="8dp"
                     android:background="#EEF0F2"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="24dp"
-                    android:paddingStart="24dp"
-                    android:paddingTop="16dp">
+                    tools:hint="제목을 입력하세요" />
 
-                    <TextView
-                        android:id="@+id/board_insert_file_name"
+                <ImageButton
+                    android:id="@+id/board_insert_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_keyboard_arrow_down_24dp"
+                    android:tint="#516771"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/board_insert_writer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/board_insert_title"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#414344"
+                    tools:text="작성자" />
+
+                <TextView
+                    android:id="@+id/board_insert_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/board_insert_writer"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="#657D78"
+                    android:textSize="12sp"
+                    tools:text="이메일" />
+
+                <EditText
+                    android:id="@+id/board_insert_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/board_insert_email"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:lineSpacingExtra="8dp"
+                    android:textColor="#3C4242"
+                    android:textSize="16sp"
+                    android:minHeight="200dp"
+                    android:gravity="left"
+                    android:padding="8dp"
+                    android:background="#EEF0F2"
+                    tools:hint="내용을 입력하세요" />
+
+                <LinearLayout android:id="@+id/board_insert_attachment"
+                    style="@style/Expand.FakeClickable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/board_insert_content"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_accent"
+                        android:padding="20dp"
+                        android:src="@drawable/ic_baseline_image_search_24"
+                        tools:ignore="ContentDescription"
+                        app:tint="#172629" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/worksans_bold"
-                        android:text="파일 첨부"
-                        android:textColor="#BF000000"
-                        android:textSize="16sp"
-                        tools:ignore="HardcodedText" />
+                        android:background="#EEF0F2"
+                        android:orientation="vertical"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="24dp"
+                        android:paddingStart="24dp"
+                        android:paddingTop="16dp">
 
-                    <TextView
-                        android:id="@+id/board_insert_file_size"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        tools:ignore="HardcodedText" />
+                        <TextView
+                            android:id="@+id/board_insert_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/worksans_bold"
+                            android:text="이미지 첨부"
+                            android:textColor="#BF000000"
+                            android:textSize="16sp"
+                            tools:ignore="HardcodedText" />
+
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-            <Button
-                android:id="@+id/board_insert_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_attachment"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@color/color_accent"
-                android:textSize="16sp"
-                style="?android:borderlessButtonStyle"
-                android:text="게시글 작성" />
+                <Button
+                    android:id="@+id/board_insert_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/board_insert_attachment"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/color_accent"
+                    android:textSize="16sp"
+                    style="?android:borderlessButtonStyle"
+                    android:text="게시글 작성" />
 
 
-        </RelativeLayout>
-    </FrameLayout>
+            </RelativeLayout>
+        </FrameLayout>
 
-</ScrollView>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

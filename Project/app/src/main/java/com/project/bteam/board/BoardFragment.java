@@ -1,0 +1,67 @@
+package com.project.bteam.board;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.project.bteam.R;
+import com.project.bteam.board.adapter.CategoryAdapter;
+import com.project.bteam.board.model.CategoryVO;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BoardFragment extends Fragment {
+
+    private static final String TAG = "BoardFragment";
+
+    private RecyclerView recyclerView;
+    private CategoryAdapter adapter;
+    private List<CategoryVO> list;
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable final Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_board, container, false);
+
+        recyclerView = root.findViewById(R.id.category_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        list = new ArrayList<>();
+        loadCategoryList();
+
+        return root;
+    }
+
+    private void loadCategoryList() {
+        DatabaseReference refer = FirebaseDatabase.getInstance().getReference("Categories");
+        refer.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    CategoryVO vo = ds.getValue(CategoryVO.class);
+                    list.add(vo);
+                }
+                adapter = new CategoryAdapter(getActivity(), list);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+}

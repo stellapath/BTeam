@@ -20,27 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
-import com.bteam.project.util.MyMotionToast;
+import com.bteam.project.util.Common;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class BoardInsertActivity extends AppCompatActivity {
 
@@ -97,47 +82,13 @@ public class BoardInsertActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-                sendBoardInsertRequest();
+
                 finish();
             }
         });
 
     }
 
-    private void sendBoardInsertRequest() {
-        BoardVO vo = getBoardVO();
-
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("board_email", vo.getBoard_email())
-                .addFormDataPart("board_nickname", vo.getBoard_nickname())
-                .addFormDataPart("board_category", vo.getBoard_category() + "")
-                .addFormDataPart("board_title", vo.getBoard_title())
-                .addFormDataPart("board_content", vo.getBoard_content())
-                .addFormDataPart("file", getFileName(fileUri),
-                        RequestBody.create(MultipartBody.FORM, new File(fileUri.getPath())))
-                .build();
-
-        Request request = new Request.Builder()
-                .url(Common.SERVER_URL + "andBoardInsert")
-                .post(requestBody)
-                .build();
-
-        OkHttpClient client = new OkHttpClient();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                MyMotionToast.errorToast(BoardInsertActivity.this, "서버와의 연결이 원활하지 않습니다.");
-                finish();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                MyMotionToast.successToast(BoardInsertActivity.this, "게시글이 작성되었습니다.");
-                finish();
-            }
-        });
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
         preferences = getActivity().getSharedPreferences("Weather", Context.MODE_PRIVATE);
 
         initView(root);
-        /* TODO 테스트시에는 꺼둠
+
         // Weather 객체가 null 일때만 불러오도록 해서 로딩시간을 줄인다
         if (weather == null) {
             if ( getWeatherList() != null ) {
@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
                 setWeather(weather);
             }
         }
-        */
+
         // 날씨를 클릭하면 날씨 상세 액티비티로 이동
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override

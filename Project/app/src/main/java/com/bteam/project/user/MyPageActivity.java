@@ -2,7 +2,6 @@ package com.bteam.project.user;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bteam.project.R;
-import com.bteam.project.network.NetworkHelper;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
 import com.kroegerama.imgpicker.BottomSheetImagePicker;
@@ -20,9 +18,7 @@ import com.kroegerama.imgpicker.ButtonType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MyPageActivity extends AppCompatActivity implements BottomSheetImagePicker.OnImagesSelectedListener {

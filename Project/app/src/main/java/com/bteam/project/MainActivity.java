@@ -20,10 +20,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.bteam.project.network.NetworkHelper;
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
 import com.bteam.project.util.Common;
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -37,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private CircleImageView drawer_image;
     private TextView drawer_nickname, drawer_id;
 
-    /***********************************************************************************************
-     * onCreate()
-     ***********************************************************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
         navigationSetting();
 
     }
-    /***********************************************************************************************
-     * onCreate()
-     ***********************************************************************************************/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -65,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                NetworkHelper imageLoader = new NetworkHelper(this);
-                imageLoader.getProfileImage();
+                Glide.with(this).load(Common.login_info.getUser_image()).into(drawer_image);
             }
         }
     }

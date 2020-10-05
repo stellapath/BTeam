@@ -13,12 +13,13 @@ import com.bteam.project.R;
 import com.bteam.project.home.model.Weather;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    ArrayList<Weather> list;
+    List<Weather> list;
 
-    public WeatherAdapter(ArrayList<Weather> list) {
+    public WeatherAdapter(List<Weather> list) {
         this.list = list;
     }
 

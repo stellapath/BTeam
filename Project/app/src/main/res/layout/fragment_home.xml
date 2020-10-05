@@ -7,15 +7,35 @@
     android:background="@color/colorBackground"
     android:padding="8dp">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/content_weather" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <include layout="@layout/content_weather"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
 
+            <include layout="@layout/content_traffic"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
 
-    </LinearLayout>
+            <include layout="@layout/content_comment"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
 
+            <include layout="@layout/content_alarm"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

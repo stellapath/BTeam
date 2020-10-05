@@ -1,44 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/board_bar"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/board_collapse"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/board_notice"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/board_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@color/colorPrimary"
+                android:layout_width="180dp"
+                android:layout_height="180dp">
 
-    </com.google.android.material.appbar.AppBarLayout>
+                <ImageView
+                    android:id="@+id/board_icon1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_notepad"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.34" />
 
-    <include layout="@layout/content_board" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="공지사항"
+                    android:textSize="18sp"
+                    android:textColor="#fff"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/board_icon1" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/board_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/board_collapse"
-        app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_add" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/board_traffic"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:background="@color/colorPrimary">
+
+                <ImageView
+                    android:id="@+id/board_icon2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_car"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.34" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="실시간 교통상황"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/board_icon2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+</LinearLayout>

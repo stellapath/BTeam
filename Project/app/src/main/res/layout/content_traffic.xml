@@ -7,6 +7,9 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/traffic_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 </androidx.cardview.widget.CardView>

@@ -2,7 +2,6 @@ package com.bteam.project.board.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +18,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecyclerViewAdapter.NoticeRecyclerViewHolder> {
-
-    List<BoardVO> list;
+public class BoardListAdapter extends RecyclerView.Adapter<BoardListAdapter.NoticeRecyclerViewHolder> {
 
     private Context context;
+    private List<BoardVO> list;
 
-    public NoticeRecyclerViewAdapter(List<BoardVO> list, Context context) {
-        this.list = list;
+    public BoardListAdapter(Context context, List<BoardVO> list) {
         this.context = context;
+        this.list = list;
     }
 
     @NonNull
@@ -86,5 +84,4 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
             }
         }
     }
-
 }

@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="4dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:padding="8dp"
@@ -17,7 +17,7 @@
             android:id="@+id/home_alarm_ic"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_alarm"
+            android:src="@drawable/ic_alarm_clock"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

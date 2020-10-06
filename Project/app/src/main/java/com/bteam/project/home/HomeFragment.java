@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -23,6 +24,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
+import com.bteam.project.alarm.helper.TimeCalculator;
 import com.bteam.project.board.BoardListActivity;
 import com.bteam.project.home.adapter.TrafficAdapter;
 import com.bteam.project.home.model.Traffic;
@@ -53,10 +56,12 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     private SharedPreferences preferences;
+    private AlarmSharedPreferencesHelper sharPrefHelper;
+    private TimeCalculator timeCalc;
     private SwipeRefreshLayout refreshLayout;
-    private CardView cardView, comment_cardView;
+    private CardView cardView, comment_cardView, cardview_alarm;
     private ImageView background, icon;
-    private TextView temperature, current, city;
+    private TextView temperature, current, city, home_alarm_txt;
     private RecyclerView traffic_recyclerView, comment_recyclerView;
     private ProgressWheel weather_wheel, traffic_wheel, comment_wheel;
 
@@ -65,6 +70,8 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         preferences = getActivity().getSharedPreferences("Weather", Context.MODE_PRIVATE);
+        sharPrefHelper = new AlarmSharedPreferencesHelper(getActivity());
+        timeCalc = new TimeCalculator();
 
         initView(root);
 
@@ -89,6 +96,18 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), BoardListActivity.class);
                 intent.putExtra("category", 0);
                 startActivity(intent);
+            }
+        });
+
+        // 알람 정보
+        home_alarm_txt.setText( timeCalc.toString( sharPrefHelper.getWakeUpMillis(), 0 )
+                + " 에\n알람이 설정되어 있습니다.");
+
+        // 알람 클릭시 알람 탭으로 이동
+        cardview_alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.navigation_alarm);
             }
         });
 
@@ -121,6 +140,8 @@ public class HomeFragment extends Fragment {
         weather_wheel = root.findViewById(R.id.home_weather_progress);
         traffic_wheel = root.findViewById(R.id.home_traffic_progress);
         comment_wheel = root.findViewById(R.id.home_comment_progress);
+        cardview_alarm = root.findViewById(R.id.cardview_alarm);
+        home_alarm_txt = root.findViewById(R.id.home_alarm_txt);
     }
 
     // 날씨 불러오기
@@ -238,6 +259,10 @@ public class HomeFragment extends Fragment {
                     traffic_wheel.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Traffic traffic = new Traffic();
+                    traffic.setDetail("돌발 통제 정보가 존재하지 않습니다.");
+                    list.add(traffic);
+                    showTraffic(list);
                     traffic_wheel.setVisibility(View.GONE);
                 }
             }

@@ -23,11 +23,16 @@ import android.widget.TimePicker;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bteam.project.R;
+import com.bteam.project.alarm.adapter.AlarmAdapter;
+import com.bteam.project.alarm.dialog.DestinationPopupActivity;
 import com.bteam.project.alarm.dialog.DurationPickerDialog;
 import com.bteam.project.alarm.dialog.IntervalPickerDialog;
 import com.bteam.project.alarm.dialog.MemoPopupActivity;
@@ -37,6 +42,10 @@ import com.bteam.project.alarm.helper.MyAlarmManager;
 import com.bteam.project.alarm.helper.TimeCalculator;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * 알람 울리는 순서
@@ -84,6 +93,7 @@ public class AlarmFragment extends Fragment {
                 if (isChecked) {
                     // 체크가 되었을 때
                     requestOverlayPermission();
+                    requestLocationPermission();
                     startAlarm();
                 } else {
                     // 체크를 해제했을 때
@@ -176,6 +186,14 @@ public class AlarmFragment extends Fragment {
             }
         });
 
+        // 목적지 설정 클릭 이벤트
+        locationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), DestinationPopupActivity.class);
+                startActivityForResult(intent, Common.REQUEST_DESTINATION);
+            }
+        });
 
         // 도착시간 클릭 이벤트
         arrivalView.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +236,20 @@ public class AlarmFragment extends Fragment {
 
     // 알람 화면 불러오기 (저장된 정보 가져오기)
     private void initAlarm() {
+
+        // 알람 수 표시
+        List<String> list = new ArrayList<>();
+        list.add(timeCalc.toString(sharPrefHelper.getWakeUpMillis(), 0));
+        for (int i = 1; i <= sharPrefHelper.getNumberOfAlarms(); i++) {
+            long arrivalMillis = sharPrefHelper.getWakeUpMillis();
+            int interval = sharPrefHelper.getInterval();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(arrivalMillis);
+            calendar.add(Calendar.MINUTE, interval * i);
+            list.add(timeCalc.toString(calendar.getTimeInMillis(), 0));
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(new AlarmAdapter(list));
 
         // 알람 재설정
         resetAlarm();
@@ -411,12 +443,22 @@ public class AlarmFragment extends Fragment {
         }
     }
 
-    private void requestOverlayPermission() { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    private void requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P) && (!Settings.canDrawOverlays(getActivity()))) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getActivity().getPackageName()));
                 startActivityForResult(intent, Common.REQUEST_OVERRAY_PERMISSION);
             }
+        }
+    }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 1234);
+        } else {
+            // 권한이 승인된 상태
         }
     }
 

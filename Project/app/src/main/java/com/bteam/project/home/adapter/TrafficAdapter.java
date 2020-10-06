@@ -42,21 +42,21 @@ public class TrafficAdapter extends RecyclerView.Adapter<TrafficAdapter.TrafficV
 
     class TrafficViewHolder extends RecyclerView.ViewHolder {
 
-        TextView /*num, accident, street,*/ detail, time;
+        TextView num, accident, street, detail, time;
 
         public TrafficViewHolder(@NonNull View itemView) {
             super(itemView);
-            // num = itemView.findViewById(R.id.traffic_num);
-            // accident = itemView.findViewById(R.id.traffic_accident);
-            // street = itemView.findViewById(R.id.traffic_street);
+            num = itemView.findViewById(R.id.traffic_num);
+            accident = itemView.findViewById(R.id.traffic_accident);
+            street = itemView.findViewById(R.id.traffic_street);
             detail = itemView.findViewById(R.id.traffic_detail);
             time = itemView.findViewById(R.id.traffic_time);
         }
 
         public void setTraffic(Traffic traffic) {
-            // num.setText(traffic.getNum());
-            // accident.setText(traffic.getTypeOfAccident());
-            // street.setText(traffic.getStreetName());
+            num.setText(traffic.getNum());
+            accident.setText(traffic.getTypeOfAccident());
+            street.setText(traffic.getStreetName());
             detail.setText(traffic.getDetail());
             time.setText(traffic.getTime());
         }

@@ -29,6 +29,8 @@ public class Common {
     public static final int REQUEST_RINGTONE = 201;
     public static final int REQUEST_MEMO = 202;
     public static final int REQUEST_DESTINATION = 203;
+    public static final int REQUEST_AUTOCOMPLETE_1 = 204;
+    public static final int REQUEST_AUTOCOMPLETE_2 = 205;
 
     /* Board RequestCode */
     public static final int REQUEST_BOARD_INSERT = 300;
@@ -37,6 +39,5 @@ public class Common {
     /* Permission */
     public static final int REQUEST_OVERRAY_PERMISSION = 2323;
     public static final int REQUEST_EXTERNAL_STORAGE_PERMISSION = 2424;
-
 
 }

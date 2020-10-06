@@ -40,22 +40,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
     implementation 'com.android.support:design:30.0.0'
-
     //원형 이미지뷰
-    //사용법
-    /*<de.hdodenhof.circleimageview.CircleImageView
-    android:layout_width="60dp"
-    android:layout_height="60dp"
-    app:civ_border_width="2dp"
-    app:civ_border_color="#FF000000"
-    android:layout_gravity="center_vertical"
-    android:src="@drawable/jung"/>*/
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     // JSON 데이터 파싱
@@ -70,9 +59,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    // RingtonePicker
-    implementation 'com.kevalpatel2106:ringtonepicker:1.2'
-
     // background
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 
@@ -82,6 +68,14 @@ dependencies {
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    // progress
+    implementation 'com.pnikosis:materialish-progress:1.7'
+
+    // 지도 관련
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation "com.google.android.gms:play-services-location:17.1.0"
 
 }
 repositories {

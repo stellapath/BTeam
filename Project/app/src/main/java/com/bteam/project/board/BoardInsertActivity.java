@@ -37,7 +37,7 @@ public class BoardInsertActivity extends AppCompatActivity {
     private LinearLayout attachment;
     private Button insertButton;
 
-    private Uri fileUri;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +68,7 @@ public class BoardInsertActivity extends AppCompatActivity {
                 checkPermission();
 
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                // intent.setType("image/*"); <---- 이미지만 선택 가능
-                intent.setType("*/*"); // <---- 모든파일 선택가능
-                /* setType을 하지 않으면 예외 발생 */
+                intent.setType("image/*");
                 startActivityForResult(intent, Common.REQUEST_BOARD_FILE);
             }
         });
@@ -82,7 +80,7 @@ public class BoardInsertActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-
+                // sendBoardInsertRequest();
                 finish();
             }
         });
@@ -95,21 +93,7 @@ public class BoardInsertActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // 파일 선택 후 파일 정보를 받는 곳
         if (requestCode == Common.REQUEST_BOARD_FILE && resultCode == RESULT_OK) {
-            fileUri = data.getData();
-            // ↓ 비트맵으로 받는 방법 ↓
-            /*
-            try {
-                InputStream in = getContentResolver().openInputStream(data.getData());
-                Bitmap image = BitmapFactory.decodeStream(in);
-                imgVwSelected.setImageBitmap(image);
-                in.close();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-            */
-            // 파일 선택 후 파일 이름 변경
-            filename.setText(getFileName(fileUri));
-            // TODO 파일크기 구하기
+            imageUri = data.getData();
         }
 
     }

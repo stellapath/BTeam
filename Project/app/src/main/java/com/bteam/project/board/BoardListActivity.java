@@ -1,6 +1,5 @@
-package com.bteam.project;
+package com.bteam.project.board;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +11,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bteam.project.R;
 import com.bteam.project.board.adapter.BoardListAdapter;
 import com.bteam.project.board.model.BoardVO;
 import com.bteam.project.network.VolleySingleton;

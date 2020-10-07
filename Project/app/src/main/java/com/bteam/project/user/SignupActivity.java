@@ -1,6 +1,5 @@
 package com.bteam.project.user;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,8 +22,6 @@ import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.user.model.UserVO;
-import com.bteam.project.util.MyMotionToast;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +31,6 @@ import java.util.regex.Pattern;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
-
-    private Context context;
 
     private EditText signup_email, signup_pw, signup_pw2, signup_nickname, signup_phone,
                      signup_zipcode, signup_address, signup_detail, signup_birth;
@@ -47,8 +42,6 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
-        context = getApplicationContext();
 
         signup_email = findViewById(R.id.signup_email);
         signup_pw = findViewById(R.id.signup_pw);
@@ -66,8 +59,9 @@ public class SignupActivity extends AppCompatActivity {
         signup_andAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddressActivity.class);
-                startActivityForResult(intent, Common.REQUEST_ADDRESS);
+                // TODO 주소 입력
+                //Intent intent = new Intent(getApplicationContext(), AddressActivity.class);
+                //startActivityForResult(intent, Common.REQUEST_ADDRESS);
             }
         });
 
@@ -77,33 +71,40 @@ public class SignupActivity extends AppCompatActivity {
 
                 /* 유효성 검사 */
                 if (signup_email.getText().toString().length() == 0) {
-                    MyMotionToast.warningToast(SignupActivity.this, "이메일을 입력하세요");
+                    Toast.makeText(SignupActivity.this, "이메일을 입력하세요.",
+                            Toast.LENGTH_SHORT).show();
                     signup_email.requestFocus();
                     return;
                 }else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
-                    MyMotionToast.warningToast(SignupActivity.this, "유효하지 않은 이메일 입니다.");
+                    Toast.makeText(SignupActivity.this,
+                            "유효하지 않은 이메일 입니다.", Toast.LENGTH_SHORT).show();
                     signup_email.requestFocus();
                     return;
                 }
 
                 if (signup_pw.getText().toString().length() == 0) {
-                    MyMotionToast.warningToast(SignupActivity.this, "비밀번호를 입력하세요.");
+                    Toast.makeText(SignupActivity.this, "비밀번호를 입력하세요.",
+                            Toast.LENGTH_SHORT).show();
                     signup_pw.requestFocus();
                     return;
                 }else if(!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{6,15}$", signup_pw.getText())){
-                    MyMotionToast.warningToast(SignupActivity.this, "비밀번호는 6 ~ 15자리로\n숫자, 영어, 특수문자를 모두 포함해야 합니다.");
+                    Toast.makeText(SignupActivity.this,
+                            "비밀번호는 6 ~ 15자리로\n숫자, 영어, 특수문자를 모두 포함해야 합니다.",
+                            Toast.LENGTH_SHORT).show();
                     signup_pw.requestFocus();
                     return;
                 }
 
                 if (signup_pw2.getText().toString().length() == 0) {
-                    MyMotionToast.warningToast(SignupActivity.this, "비밀번호 확인을 입력하세요.");
+                    Toast.makeText(SignupActivity.this, "비밀번호 확인을 입력하세요.",
+                            Toast.LENGTH_SHORT).show();
                     signup_pw2.requestFocus();
                     return;
                 }
 
                 if (!signup_pw.getText().toString().equals(signup_pw2.getText().toString())) {
-                    MyMotionToast.warningToast(SignupActivity.this, "비밀번호가 일치하지 않습니다.");
+                    Toast.makeText(SignupActivity.this, "비밀번호가 일치하지 않습니다.",
+                            Toast.LENGTH_SHORT).show();
                     signup_pw.setText("");
                     signup_pw2.setText("");
                     signup_pw.requestFocus();
@@ -111,11 +112,14 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 if (signup_nickname.getText().toString().length() == 0) {
-                    MyMotionToast.warningToast(SignupActivity.this, "닉네임을 입력하세요.");
+                    Toast.makeText(SignupActivity.this, "닉네임을 입력하세요.",
+                            Toast.LENGTH_SHORT).show();
                     signup_nickname.requestFocus();
                     return;
                 } else if (!Pattern.matches("^[가-힣a-zA-Z0-9]{2,6}$", signup_nickname.getText())){
-                    MyMotionToast.warningToast(SignupActivity.this,"2 ~ 6자리의 한글, 영어, 숫자만 사용가능합니다.");
+                    Toast.makeText(SignupActivity.this,
+                            "2 ~ 6자리의 한글, 영어, 숫자만 사용가능합니다.",
+                            Toast.LENGTH_SHORT).show();
                     signup_nickname.requestFocus();
                    return;
 
@@ -167,7 +171,8 @@ public class SignupActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MyMotionToast.errorToast(SignupActivity.this, "서버와의 연결이 원활하지 않습니다.");
+                Toast.makeText(SignupActivity.this, "서버와의 연결이 원활하지 않습니다.",
+                        Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -193,11 +198,12 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onPostExecute(String s) {
         if (s.contains("1")) {
-            MyMotionToast.successToast(SignupActivity.this, "회원가입이 완료되었습니다.");
+            Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();
         } else {
-            MyMotionToast.errorToast(SignupActivity.this, "회원가입에 실패했습니다. 잠시 후에 다시 시도해 주세요.");
+            Toast.makeText(this, "회원가입에 실패했습니다. 잠시 후에 다시 시도해 주세요.",
+                    Toast.LENGTH_SHORT).show();
             setResult(RESULT_CANCELED);
             finish();
         }

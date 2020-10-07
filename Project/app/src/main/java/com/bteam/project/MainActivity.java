@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // 하단 네비게이션 설정
         BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_direction, R.id.navigation_board, R.id.navigation_settings
+                R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_direction, R.id.navigation_board
         ).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

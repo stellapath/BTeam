@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -284,5 +285,13 @@ public class HomeFragment extends Fragment {
     private void showTraffic(List<Traffic> list) {
         traffic_recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         traffic_recyclerView.setAdapter(new TrafficAdapter(list));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Common.REQUEST_WEATHER) {
+            getWeatherList();
+        }
     }
 }

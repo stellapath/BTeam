@@ -1,11 +1,17 @@
 package com.bteam.project.alarm.dialog;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bteam.project.R;
+import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.util.Common;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -40,7 +48,10 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
     private static final String TAG = "DestinationPopupActivit";
 
     private GoogleMap map;
-    private Geocoder geocoder;
+    private AlarmSharedPreferencesHelper sharPrefHelper;
+    private Button button;
+    private LatLng placeLatLng;
+    private String placeAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,8 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         setContentView(R.layout.activity_destination_popup);
 
         requestLocationPermission();
+
+        sharPrefHelper = new AlarmSharedPreferencesHelper(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.destination_map);
@@ -59,15 +72,16 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         setTitle("목적지 설정");
         initView();
 
-        geocoder = new Geocoder(this);
-
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.destination_autocomplete_begin);
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG, Place.Field.ID,
+                Place.Field.NAME, Place.Field.ADDRESS));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
-
+                placeLatLng = place.getLatLng();
+                placeAddress = place.getAddress();
+                showSelectedPlace(place.getLatLng(), place.getName(), place.getAddress());
             }
 
             @Override
@@ -76,40 +90,25 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
             }
         });
 
-/*        begin_search.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<Address> list = null;
-
-                String str = begin.getText().toString();
-                try {
-                    list = geocoder.getFromLocationName(str, 10);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    result.setText("주소를 불러오는 과정에서 오류가 발생했습니다.");
-                }
-
-                if (list != null) {
-                    if (list.size() == 0) {
-                        result.setText("해당되는 주소 정보는 없습니다.");
-                    } else {
-                        result.setText("");
-                        map.clear();
-                        Address addr = list.get(0);
-                        double lat = addr.getLatitude();
-                        double lon = addr.getLongitude();
-                        LatLng latLng = new LatLng(lat, lon);
-                        map.addMarker(new MarkerOptions().position(latLng).title("출발지 설정").snippet("ㅁㄴㅇㄻㄴㅇㄹ"));
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                    }
+                if (placeLatLng != null && placeAddress != null) {
+                    sharPrefHelper.setLatitude(placeLatLng.latitude);
+                    sharPrefHelper.setLongitude(placeLatLng.longitude);
+                    sharPrefHelper.setAddress(placeAddress);
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    // 위치 저장 실패!
                 }
             }
-        });*/
+        });
 
     }
 
     private void initView() {
-
+        button = findViewById(R.id.destination_button);
     }
 
     @Override
@@ -131,21 +130,60 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
     }
 
     private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 1234);
-        } else {
-            // 권한이 승인된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1234);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1234);
         }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.addMarker(new MarkerOptions().position(getSavedLocation()).title("저장된 위치"))
+                .showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(getSavedLocation(), 15));
+    }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    private void showSelectedPlace(LatLng latLng, String title, String addr) {
+        map.clear();
+        map.addMarker(new MarkerOptions().position(latLng).title(title).snippet(addr))
+                .showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+    }
+
+    private LatLng getMyLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = LocationManager.GPS_PROVIDER;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        Location currentLocation = locationManager.getLastKnownLocation(locationProvider);
+        if (currentLocation != null) {
+            double lng = currentLocation.getLongitude();
+            double lat = currentLocation.getLatitude();
+            return new LatLng(lat, lng);
+        } else {
+            return null;
+        }
+    }
+
+    private LatLng getSavedLocation() {
+        if (sharPrefHelper.getLatitude() == 0 || sharPrefHelper.getLongitude() == 0) {
+            return getMyLocation();
+        } else {
+            return new LatLng(sharPrefHelper.getLatitude(), sharPrefHelper.getLongitude());
+        }
     }
 }

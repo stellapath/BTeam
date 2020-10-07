@@ -1,15 +1,22 @@
 package com.bteam.project.user;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bteam.project.R;
+import com.bteam.project.network.FileUploadHelper;
 import com.bteam.project.util.Common;
 import com.bteam.project.util.MyMotionToast;
 import com.kroegerama.imgpicker.BottomSheetImagePicker;
@@ -18,7 +25,17 @@ import com.kroegerama.imgpicker.ButtonType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MyPageActivity extends AppCompatActivity implements BottomSheetImagePicker.OnImagesSelectedListener {
@@ -57,7 +74,7 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO 프로필 이미지 수정
+                requestStoragePermission();
                 new BottomSheetImagePicker.Builder("fileProvider")
                         .cameraButton(ButtonType.Button)
                         .galleryButton(ButtonType.Button)
@@ -104,5 +121,47 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
     @Override
     public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
         Uri profileImageUri = list.get(0);
+        Log.i(TAG, "onImagesSelected: " + profileImageUri.toString());
+        imageUpload(new File(FileUploadHelper.getPath(this, profileImageUri)));
+    }
+
+    private void imageUpload(File file) {
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("email", Common.login_info.getUser_email())
+                .addFormDataPart("file", file.getName(), RequestBody.create(file, MultipartBody.FORM))
+                .build();
+        Request request = new Request.Builder()
+                .url(Common.SERVER_URL + "andImageUpload")
+                .post(requestBody)
+                .build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e(TAG, "onFailure: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.i(TAG, "onResponse: " + response);
+            }
+        });
+    }
+
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1234);
+        }
     }
 }

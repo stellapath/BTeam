@@ -30,14 +30,11 @@ public class MyAlarmManager {
     public void start(long millis, int requestCode) {
         Log.i(TAG, "start");
 
-        long alarmTimeMillis = timeCalc.isBefore(millis);
-        Log.i(TAG, "alarmTime: " + timeCalc.toString(millis, 0));
-
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setAlarmClock(new AlarmManager
-                .AlarmClockInfo(alarmTimeMillis, pendingIntent), pendingIntent);
+                .AlarmClockInfo(millis, pendingIntent), pendingIntent);
     }
 
     public void stop(int requestCode) {

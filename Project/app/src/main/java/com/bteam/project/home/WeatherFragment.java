@@ -1,5 +1,6 @@
 package com.bteam.project.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -136,6 +138,7 @@ public class WeatherFragment extends Fragment {
     private void setWeather(List<Weather> list) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new WeatherAdapter(list));
+        getActivity().setTitle(list.get(0).getCity());
     }
 
 }

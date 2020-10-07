@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,12 +23,27 @@ import androidx.core.content.ContextCompat;
 
 import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
+import com.bteam.project.network.FileUploadHelper;
 import com.bteam.project.util.Common;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class BoardInsertActivity extends AppCompatActivity {
+
+    private static final String TAG = "BoardInsertActivity";
 
     private int category;
 
@@ -37,7 +53,7 @@ public class BoardInsertActivity extends AppCompatActivity {
     private LinearLayout attachment;
     private Button insertButton;
 
-    private Uri imageUri;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +96,7 @@ public class BoardInsertActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-                // sendBoardInsertRequest();
+                sendBoardInsertRequest();
                 finish();
             }
         });
@@ -93,7 +109,8 @@ public class BoardInsertActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // 파일 선택 후 파일 정보를 받는 곳
         if (requestCode == Common.REQUEST_BOARD_FILE && resultCode == RESULT_OK) {
-            imageUri = data.getData();
+            Uri uri = data.getData();
+            file = new File(FileUploadHelper.getPath(this, uri));
         }
 
     }
@@ -110,6 +127,34 @@ public class BoardInsertActivity extends AppCompatActivity {
         insertButton = findViewById(R.id.board_insert_button);
     }
 
+    private void sendBoardInsertRequest() {
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("tra_user_email", Common.login_info.getUser_email())
+                .addFormDataPart("tra_username", Common.login_info.getUser_nickname())
+                .addFormDataPart("tra_user_imageURL", Common.login_info.getUser_imagepath())
+                .addFormDataPart("tra_user_content", content.getText().toString())
+                .addFormDataPart("file", file.getName(), RequestBody.create(file, MultipartBody.FORM))
+                .build();
+        Request request = new Request.Builder()
+                .url(Common.SERVER_URL + "andTrafficInsert")
+                .post(requestBody)
+                .build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e(TAG, "onFailure: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.i(TAG, "onResponse: " + response);
+            }
+        });
+
+    }
+
     // 작성한 글의 정보들을 객체에 넣는다
     private BoardVO getBoardVO() {
         BoardVO vo = new BoardVO();
@@ -121,36 +166,19 @@ public class BoardInsertActivity extends AppCompatActivity {
         return vo;
     }
 
-    // Uri로 파일 이름 구하기
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-
     public void checkPermission() {
-        String temp = "";
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            temp += Manifest.permission.READ_EXTERNAL_STORAGE + " ";
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
         }
-        if (TextUtils.isEmpty(temp) == false) { // 권한 요청
-            ActivityCompat.requestPermissions(this, temp.trim().split(" "), 1);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 거절된 상태
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1234);
         }
     }
 }

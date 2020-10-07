@@ -21,7 +21,6 @@ import com.android.volley.toolbox.Volley;
 import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.board.model.BoardVO;
-import com.bteam.project.util.MyMotionToast;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -89,7 +88,8 @@ public class BoardDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MyMotionToast.errorToast(BoardDetailActivity.this, "서버와의 연결이 원활하지 않습니다.");
+                Toast.makeText(BoardDetailActivity.this, "서버와의 연결이 원활하지 않습니다.",
+                        Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override

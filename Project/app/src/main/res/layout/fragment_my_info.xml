@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Bootom Cards with sections-->
 <LinearLayout
-    android:id="@+id/personalinfo"
+    android:id="@+id/profile_myInfo"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -25,7 +25,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/profile_bottomTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="내 정보"
@@ -39,7 +38,6 @@
                     android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/profile_bottomEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="수정"
@@ -50,10 +48,40 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/profile_myInfo_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="내용" />
+                android:layout_marginTop="12dp"
+                android:text="이메일 : " />
+
+            <TextView
+                android:id="@+id/profile_myInfo_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="별명 : " />
+
+            <TextView
+                android:id="@+id/profile_myInfo_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="전화번호 : " />
+
+            <TextView
+                android:id="@+id/profile_myInfo_addr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="주소 : " />
+
+            <TextView
+                android:id="@+id/profile_myInfo_birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="생일 : " />
+
         </LinearLayout>
 
     </LinearLayout>

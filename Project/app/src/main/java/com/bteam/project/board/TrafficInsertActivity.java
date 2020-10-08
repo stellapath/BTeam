@@ -1,14 +1,14 @@
 package com.bteam.project.board;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,38 +16,25 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import com.bteam.project.R;
-import com.bteam.project.board.model.BoardVO;
 import com.bteam.project.network.FileUploadHelper;
 import com.bteam.project.util.Common;
 import com.kroegerama.imgpicker.BottomSheetImagePicker;
 import com.kroegerama.imgpicker.ButtonType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
-public class BoardInsertActivity extends AppCompatActivity {
-
-    private static final String TAG = "BoardInsertActivity";
-
-    private int category;
+public class TrafficInsertActivity extends AppCompatActivity
+        implements BottomSheetImagePicker.OnImagesSelectedListener {
 
     private EditText title, content;
     private ImageButton close;
@@ -64,21 +51,15 @@ public class BoardInsertActivity extends AppCompatActivity {
 
         initView();
 
-        // 글 작성을 위한 카테고리를 받아온다
-        if (getIntent() != null) {
-            Intent intent = getIntent();
-            category = intent.getIntExtra("category", 0);
-        }
-
         // 작성자는 로그인 정보에서 가져온다
         writer.setText(Common.login_info.getUser_nickname());
 
         // 날짜는 현재 시간으로 자동 생성한다
-        Date date = new Date();
+        Date date1 = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 a hh시 mm분");
-        writer.setText(sdf.format(date));
+        date.setText(sdf.format(date1));
 
-        // 파일 첨부 클릭 시
+        // 이미지 첨부 클릭 시
         attachment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,21 +81,9 @@ public class BoardInsertActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-
                 finish();
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // 파일 선택 후 파일 정보를 받는 곳
-        if (requestCode == Common.REQUEST_BOARD_FILE && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            file = new File(FileUploadHelper.getPath(this, uri));
-        }
-
     }
 
     private void initView() {
@@ -126,6 +95,18 @@ public class BoardInsertActivity extends AppCompatActivity {
         filename = findViewById(R.id.board_insert_file_name);
         attachment = findViewById(R.id.board_insert_attachment);
         insertButton = findViewById(R.id.board_insert_button);
+    }
+
+    private void insertTraffic() {
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("tra_")
+    }
+
+    @Override
+    public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
+        Uri uri = list.get(0);
+        file = new File( FileUploadHelper.getPath(this, uri) );
     }
 
     public void checkPermission() {

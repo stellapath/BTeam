@@ -1,20 +1,9 @@
 package com.bteam.project.user.model;
 
-import android.graphics.Bitmap;
-
 public class UserVO {
 
 	private String user_email, user_pw, user_nickname, user_phone, user_zipcode,
 				    user_address, detail_address, user_birth, user_key, user_image, user_imagepath;
-    private Bitmap profile_image;
-
-    public Bitmap getProfile_image() {
-        return profile_image;
-    }
-
-    public void setProfile_image(Bitmap profile_image) {
-        this.profile_image = profile_image;
-    }
 
     public String getUser_email() {
 		return user_email;

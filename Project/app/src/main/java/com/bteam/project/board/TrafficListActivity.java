@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,9 +19,9 @@ import com.android.volley.toolbox.Volley;
 import com.bteam.project.R;
 import com.bteam.project.board.adapter.TrafficListAdapter;
 import com.bteam.project.board.model.TrafficVO;
-import com.bteam.project.home.adapter.TrafficAdapter;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import java.util.List;
 public class TrafficListActivity extends AppCompatActivity {
 
     private RecyclerView board_traffic_recyclerView;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,29 +45,35 @@ public class TrafficListActivity extends AppCompatActivity {
 
         initView();
 
-        getBoardList();
+        getTrafficList();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // traffic insert
+            }
+        });
     }
 
     private void initView() {
         board_traffic_recyclerView = findViewById(R.id.board_traffic_recyclerView);
+        fab = findViewById(R.id.traffic_fab);
     }
 
-    private void getBoardList() {
+    private void getTrafficList() {
         final String url = Common.SERVER_URL + "andTraffic";
         StringRequest request = new StringRequest(Request.Method.GET, url,
         new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
-                TrafficVO[] vos = gson.fromJson(response.trim(), TrafficVO[].class);
-                List<TrafficVO> list = Arrays.asList(vos);
-                onPostExecute(list);
+                onPostExecute(Arrays.asList(gson.fromJson(response.trim(), TrafficVO[].class)));
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(TrafficListActivity.this,
-                        "게시글을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TrafficListActivity.this, "게시글을 불러오는 데 실패했습니다.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
         VolleySingleton.getInstance(this).addToRequestQueue(request);
@@ -73,7 +81,7 @@ public class TrafficListActivity extends AppCompatActivity {
 
     private void onPostExecute(List<TrafficVO> list) {
         board_traffic_recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        board_traffic_recyclerView.setAdapter(new TrafficListAdapter(list));
+        board_traffic_recyclerView.setAdapter(new TrafficListAdapter(this, list));
     }
 
     @Override

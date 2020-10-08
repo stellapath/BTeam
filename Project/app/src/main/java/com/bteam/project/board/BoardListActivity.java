@@ -1,10 +1,13 @@
 package com.bteam.project.board;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,7 +28,6 @@ import java.util.List;
 public class BoardListActivity extends AppCompatActivity {
 
     private RecyclerView board_recyclerView;
-    private List<BoardVO> list;
 
     private int category = 0;
 
@@ -34,12 +36,22 @@ public class BoardListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_list);
 
-        initView();
-
-        list = new ArrayList<>();
+        Toolbar toolbar = findViewById(R.id.board_list_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         category = getIntent().getIntExtra("category", 0);
+        switch (category) {
+            case 0 :
+                setTitle("공지사항");
+                break;
+        }
+
+        initView();
+
         getBoardList(category);
+
+        // TODO 스크롤 내리면 다음페이지 불러오는 처리
     }
 
     private void initView() {
@@ -47,25 +59,20 @@ public class BoardListActivity extends AppCompatActivity {
     }
 
     private void getBoardList(int category) {
-        String url = "";
-        switch (category) {
-            case 0:
-                url = Common.SERVER_URL + "andNotice";
-                break;
-        }
+        String url = Common.SERVER_URL + "andBoardList?category=" + category;
         StringRequest request = new StringRequest(Request.Method.GET, url,
            new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 BoardVO[] vo = gson.fromJson(response.trim(), BoardVO[].class);
-                list.addAll(Arrays.asList(vo));
-                onPostExecute(list);
+                onPostExecute(Arrays.asList(vo));
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(BoardListActivity.this, "게시글을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BoardListActivity.this, "게시글을 불러오는 데 실패했습니다.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
         VolleySingleton.getInstance(this).addToRequestQueue(request);
@@ -74,5 +81,15 @@ public class BoardListActivity extends AppCompatActivity {
     private void onPostExecute(List<BoardVO> list) {
         board_recyclerView.setLayoutManager(new LinearLayoutManager(this));
         board_recyclerView.setAdapter(new BoardListAdapter(this, list));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

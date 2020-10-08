@@ -115,7 +115,7 @@ public class BoardDetailActivity extends AppCompatActivity {
         content.setText( vo.getBoard_content() );
         filename.setText( vo.getBoard_filename() );
         // filesize.settext
-        profile.setImageBitmap( vo.getBoard_writer_image() );
+        // profile.setImageBitmap( vo.getBoard_writer_image() );
         if (vo.getBoard_filename() == null) {
             attachment.setVisibility(View.GONE);
         }

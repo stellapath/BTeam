@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".board.TrafficListActivity">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="match_parent"
+        tools:context=".board.TrafficListActivity">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/traffic_toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/traffic_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/board_traffic_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/board_traffic_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/traffic_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="#172629"
+        app:elevation="20dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:layout_gravity="bottom|end"
+        tools:ignore="ContentDescription" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

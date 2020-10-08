@@ -25,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".board.TrafficListActivity"></activity>
+        <activity android:name=".board.TrafficInsertActivity"></activity>
+        <activity android:name=".board.TrafficListActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

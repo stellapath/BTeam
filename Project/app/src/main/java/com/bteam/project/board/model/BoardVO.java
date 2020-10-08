@@ -7,15 +7,6 @@ public class BoardVO {
     private String board_email, board_nickname, board_title, board_content, board_filename, board_filepath;
     private String board_date;
     private int board_num, board_category, board_like, board_readcnt, board_no;
-    private Bitmap board_writer_image;
-
-    public Bitmap getBoard_writer_image() {
-        return board_writer_image;
-    }
-
-    public void setBoard_writer_image(Bitmap board_writer_image) {
-        this.board_writer_image = board_writer_image;
-    }
 
     public String getBoard_filename() {
         return board_filename;

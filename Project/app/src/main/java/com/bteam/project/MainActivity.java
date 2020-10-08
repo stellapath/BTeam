@@ -2,6 +2,7 @@ package com.bteam.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,8 +60,20 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                Glide.with(this).load(Common.login_info.getUser_image()).into(drawer_image);
+                if (TextUtils.isEmpty(Common.login_info.getUser_imagepath())) {
+                    drawer_image.setImageResource(R.drawable.ic_user);
+                } else {
+                    Glide.with(this)
+                            .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
+                            .into(drawer_image);
+                }
             }
+        }
+
+        if (requestCode == Common.REQUEST_MYPAGE) {
+            Glide.with(this)
+                    .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
+                    .into(drawer_image);
         }
     }
 

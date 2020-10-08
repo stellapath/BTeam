@@ -1,22 +1,16 @@
 package com.bteam.project.home.adapter;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bteam.project.R;
 import com.bteam.project.home.model.City;
-import com.bteam.project.util.MyMotionToast;
 
 import java.util.ArrayList;
 

@@ -17,7 +17,7 @@ public class BoardFragment extends Fragment {
 
     private static final String TAG = "BoardFragment";
 
-    private CardView notice;
+    private CardView notice, traffic;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -36,10 +36,19 @@ public class BoardFragment extends Fragment {
             }
         });
 
+        traffic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), TrafficListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return root;
     }
 
     private void initView(View root) {
         notice = root.findViewById(R.id.board_notice);
+        traffic = root.findViewById(R.id.board_traffic);
     }
 }

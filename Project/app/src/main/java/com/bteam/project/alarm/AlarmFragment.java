@@ -306,6 +306,16 @@ public class AlarmFragment extends Fragment {
 
         // 목적지 가져오기
         destination.setText(sharPrefHelper.getAddress());
+
+        // 도착시간 가져오기
+        long arrivalMillis = sharPrefHelper.getArrivalMillis();
+        arrivalTime.setText( timeCalc.toString(sharPrefHelper.getArrivalMillis(), 0) );
+        if (aSwitch.isChecked()) {
+            startArrivalTimer(arrivalMillis, arrivalLeft);
+        } else {
+            arrivalLeft.setText("알람이 꺼져 있습니다.");
+            if (wakeUpTimer != null) wakeUpTimer.cancel();
+        }
     }
 
     // 알람 시작

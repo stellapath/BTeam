@@ -22,7 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "onReceive");
-
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MyNotificationManager notificationManager = new MyNotificationManager(context);
             notificationManager.show();
@@ -30,5 +30,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Intent alarmIntent = new Intent(context, AlarmActivity.class);
             context.startActivity(alarmIntent);
         }
+        */
+        Intent ringer = new Intent(context, AlarmActivity.class);
+        context.startActivity(ringer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }

@@ -101,7 +101,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/color_accent"
                     android:padding="20dp"
-                    android:src="@drawable/ic_attachment_24dp"
+                    android:src="@drawable/ic_image"
                     tools:ignore="ContentDescription"
                     app:tint="#172629" />
 
@@ -117,21 +117,15 @@
 
                     <TextView
                         android:id="@+id/board_insert_file_name"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/worksans_bold"
-                        android:text="파일 첨부"
+                        android:text="이미지 첨부"
                         android:textColor="#BF000000"
                         android:textSize="16sp"
                         tools:ignore="HardcodedText" />
 
-                    <TextView
-                        android:id="@+id/board_insert_file_size"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        tools:ignore="HardcodedText" />
                 </LinearLayout>
             </LinearLayout>
 

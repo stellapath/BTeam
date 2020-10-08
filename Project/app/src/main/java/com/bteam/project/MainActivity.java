@@ -2,6 +2,7 @@ package com.bteam.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,8 +60,20 @@ public class MainActivity extends AppCompatActivity {
                 String user_email = Common.login_info.getUser_email();
                 drawer_nickname.setText(user_nickname);
                 drawer_id.setText(user_email);
-                Glide.with(this).load(Common.login_info.getUser_image()).into(drawer_image);
+                if (TextUtils.isEmpty(Common.login_info.getUser_imagepath())) {
+                    drawer_image.setImageResource(R.drawable.ic_user);
+                } else {
+                    Glide.with(this)
+                            .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
+                            .into(drawer_image);
+                }
             }
+        }
+
+        if (requestCode == Common.REQUEST_MYPAGE) {
+            Glide.with(this)
+                    .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
+                    .into(drawer_image);
         }
     }
 
@@ -72,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         // 하단 네비게이션 설정
         BottomNavigationView navView = findViewById(R.id.bottom_nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_direction, R.id.navigation_board, R.id.navigation_settings
+                R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_direction, R.id.navigation_board
         ).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

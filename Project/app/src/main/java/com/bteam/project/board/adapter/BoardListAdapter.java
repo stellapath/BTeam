@@ -77,7 +77,7 @@ public class BoardListAdapter extends RecyclerView.Adapter<BoardListAdapter.Noti
         void setBoardItems(BoardVO vo) {
             writer.setText(vo.getBoard_nickname() + " - " + vo.getBoard_date());
             title.setText(vo.getBoard_title());
-            image.setImageBitmap(vo.getBoard_writer_image());
+            // image.setImageBitmap(vo.getBoard_writer_image());
             file.setText(vo.getBoard_filename());
             if (vo.getBoard_filename() == null) {
                 file.setVisibility(View.GONE);

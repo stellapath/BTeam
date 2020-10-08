@@ -30,7 +30,9 @@ public class AlarmSharedPreferencesHelper {
     private final String RINGTONE = "ringtone";
     private final String MEMO = "memo";
     private final String READ = "read";
-
+    private final String LATITUDE = "latitude";
+    private final String LONGITUDE = "longitude";
+    private final String ADDRESS = "address";
     private final String ARRIVAL_TIME = "arrivalTime";
     private final String ARRIVAL_RANG = "arrivalRang";
 
@@ -112,6 +114,32 @@ public class AlarmSharedPreferencesHelper {
 
     public boolean isRead() {
         return preferences.getBoolean(READ, false);
+    }
+
+    public void setLatitude(double latitude) {
+        String lat = latitude + "";
+        editor.putString(LATITUDE, lat).apply();
+    }
+
+    public double getLatitude() {
+        return Double.parseDouble(preferences.getString(LATITUDE, "0"));
+    }
+
+    public void setLongitude(double longitude) {
+        String lon = longitude + "";
+        editor.putString(LONGITUDE, lon).apply();
+    }
+
+    public double getLongitude() {
+        return Double.parseDouble(preferences.getString(LONGITUDE, "0"));
+    }
+
+    public void setAddress(String addr) {
+        editor.putString(ADDRESS, addr).apply();
+    }
+
+    public String getAddress() {
+        return preferences.getString(ADDRESS, "설정된 목적지가 없습니다.");
     }
 
     public void setArrivalMillis(long millis) {

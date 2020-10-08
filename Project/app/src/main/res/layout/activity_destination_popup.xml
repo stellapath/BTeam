@@ -21,7 +21,9 @@
         android:layout_height="500dp"/>
 
     <Button
-        android:text="설정"
+        android:id="@+id/destination_button"
+        android:text="목적지 설정"
+        android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
 

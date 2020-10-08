@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bteam.project.R;
-import com.bteam.project.util.MyMotionToast;
 
 import java.util.Locale;
 
@@ -38,7 +38,8 @@ public class MemoPopupActivity extends AppCompatActivity {
                 if (i == TextToSpeech.SUCCESS) {
                     int result = tts.setLanguage(Locale.KOREA);
                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        MyMotionToast.errorToast(MemoPopupActivity.this, "한글 언어팩이 존재하지 않습니다.");
+                        Toast.makeText(MemoPopupActivity.this, "한글 언어팩이 존재하지 않습니다.",
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         tts.setPitch(0.7f);
                         tts.setSpeechRate(1.2f);

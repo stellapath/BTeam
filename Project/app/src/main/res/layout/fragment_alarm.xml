@@ -270,8 +270,9 @@
                         android:id="@+id/alarm_destination"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:text="%s"
-                        android:textSize="19sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 

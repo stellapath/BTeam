@@ -25,7 +25,7 @@
 
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/>
+            android:required="false" />
 
         <activity android:name=".OnBoardActivity" />
         <activity android:name=".board.BoardListActivity" />
@@ -41,7 +41,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/api_key"/>
+            android:value="@string/api_key" />
 
         <receiver
             android:name=".alarm.helper.BootCompletedReceiver"
@@ -57,8 +57,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".alarm.dialog.DestinationPopupActivity" />
+        <activity android:name=".alarm.dialog.DestinationPopupActivity" />
         <activity
             android:name=".alarm.dialog.MemoPopupActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />

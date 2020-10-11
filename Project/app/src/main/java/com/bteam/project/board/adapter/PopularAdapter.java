@@ -22,27 +22,28 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.TrafficListViewHolder> {
+public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.PopularViewHolder> {
 
     private Context context;
     private List<TrafficVO> list;
 
-    public TrafficListAdapter(Context context, List<TrafficVO> list) {
+    public PopularAdapter(Context context, List<TrafficVO> list) {
         this.context = context;
         this.list = list;
     }
 
     @NonNull
     @Override
-    public TrafficListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TrafficListViewHolder(LayoutInflater
-                .from(parent.getContext())
-                .inflate(R.layout.item_comment, parent, false));
+    public PopularViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new PopularViewHolder(
+                LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_popular, parent, false)
+        );
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TrafficListViewHolder holder, int position) {
-        holder.setTraffic(list.get(position));
+    public void onBindViewHolder(@NonNull PopularViewHolder holder, int position) {
+        holder.setPopular(list.get(position));
     }
 
     @Override
@@ -50,18 +51,18 @@ public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.
         return list == null ? 0 : list.size();
     }
 
-    class TrafficListViewHolder extends RecyclerView.ViewHolder {
+    class PopularViewHolder extends RecyclerView.ViewHolder {
 
-        TextView writer, title;
-        CircleImageView profile;
+        TextView content, writer;
         ImageView image;
+        CircleImageView userImage;
 
-        public TrafficListViewHolder(@NonNull View itemView) {
+        public PopularViewHolder(@NonNull View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         Intent intent = new Intent(context, TrafficDetailActivity.class);
@@ -71,19 +72,19 @@ public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.
                 }
             });
 
-            writer = itemView.findViewById(R.id.traffic_writer);
-            title = itemView.findViewById(R.id.traffic_title);
-            profile = itemView.findViewById(R.id.traffic_profile);
-            image = itemView.findViewById(R.id.traffic_image);
+            content = itemView.findViewById(R.id.popular_content);
+            writer = itemView.findViewById(R.id.popular_writer);
+            image = itemView.findViewById(R.id.popular_image);
+            userImage = itemView.findViewById(R.id.popular_user_image);
         }
 
-        public void setTraffic(TrafficVO vo) {
+        public void setPopular(TrafficVO vo) {
+            content.setText(vo.getTra_content());
             writer.setText(vo.getTra_username() + " - " + vo.getTra_time());
-            title.setText(vo.getTra_content());
-            if (!TextUtils.isEmpty(vo.getTra_user_image()))
-                Glide.with(context).load(Common.SERVER_URL + vo.getTra_user_image()).into(profile);
             if (!TextUtils.isEmpty(vo.getTra_content_image()))
                 Glide.with(context).load(Common.SERVER_URL + vo.getTra_content_image()).into(image);
+            if (!TextUtils.isEmpty(vo.getTra_user_image()))
+                Glide.with(content).load(Common.SERVER_URL + vo.getTra_user_image()).into(userImage);
         }
     }
 }

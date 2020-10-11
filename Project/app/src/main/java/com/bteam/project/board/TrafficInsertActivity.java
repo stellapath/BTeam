@@ -1,20 +1,21 @@
 package com.bteam.project.board;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bteam.project.R;
 import com.bteam.project.network.FileUploadHelper;
@@ -26,18 +27,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TrafficInsertActivity extends AppCompatActivity
         implements BottomSheetImagePicker.OnImagesSelectedListener {
 
-    private EditText title, content;
+    private static final String TAG = "TrafficInsertActivity";
+
+    private EditText content;
     private ImageButton close;
+    private ImageView placeholder;
     private TextView writer, date, filename;
     private LinearLayout attachment;
     private Button insertButton;
@@ -47,7 +57,7 @@ public class TrafficInsertActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board_insert);
+        setContentView(R.layout.activity_traffic_insert);
 
         initView();
 
@@ -81,31 +91,69 @@ public class TrafficInsertActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // 글 작성 요청
-                finish();
+                insertTraffic();
             }
         });
     }
 
     private void initView() {
-        title = findViewById(R.id.board_insert_title);
-        content = findViewById(R.id.board_insert_content);
-        close = findViewById(R.id.board_insert_close);
-        writer = findViewById(R.id.board_insert_writer);
-        date = findViewById(R.id.board_insert_date);
-        filename = findViewById(R.id.board_insert_file_name);
-        attachment = findViewById(R.id.board_insert_attachment);
-        insertButton = findViewById(R.id.board_insert_button);
+        content = findViewById(R.id.traffic_insert_content);
+        close = findViewById(R.id.traffic_insert_close);
+        writer = findViewById(R.id.traffic_insert_writer);
+        date = findViewById(R.id.traffic_insert_date);
+        filename = findViewById(R.id.traffic_insert_file_name);
+        attachment = findViewById(R.id.traffic_insert_attachment);
+        insertButton = findViewById(R.id.traffic_insert_button);
+        placeholder = findViewById(R.id.traffic_placeholder);
     }
 
     private void insertTraffic() {
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("tra_")
+        RequestBody requestBody = null;
+        if (file != null) {
+            requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("tra_user_email", Common.login_info.getUser_email())
+                    .addFormDataPart("tra_username", Common.login_info.getUser_nickname())
+                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath())
+                    .addFormDataPart("tra_content", content.getText().toString())
+                    .addFormDataPart("file", file.getName(), RequestBody.create(file, MultipartBody.FORM))
+                    .build();
+        } else {
+            requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("tra_user_email", Common.login_info.getUser_email())
+                    .addFormDataPart("tra_username", Common.login_info.getUser_nickname())
+                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath())
+                    .addFormDataPart("tra_content", content.getText().toString())
+                    .build();
+        }
+
+        Request request = new Request.Builder()
+                .url(Common.SERVER_URL + "andTrafficInsert")
+                .post(requestBody)
+                .build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e(TAG, "onFailure: " + e.getMessage());
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.i(TAG, "onResponse: " + response);
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
     }
 
     @Override
     public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
         Uri uri = list.get(0);
+        placeholder.setImageURI(uri);
         file = new File( FileUploadHelper.getPath(this, uri) );
     }
 

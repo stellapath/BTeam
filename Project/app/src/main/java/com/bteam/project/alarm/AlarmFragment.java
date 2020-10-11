@@ -56,6 +56,8 @@ import java.util.List;
  * -> AlarmManager....set=한번알림 setRepeating=반복알림 (AlarmManager.RTC_WAKEUP, Millis, PendingIntent);
  * -> Receiver : 알람매니저를 통해 알람을 설정하면 리시버가 받는다. 리시버를 통해 다음 동작을 실행한다.
  */
+
+
 public class AlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";

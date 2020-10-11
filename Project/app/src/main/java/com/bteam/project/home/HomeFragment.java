@@ -25,15 +25,17 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bteam.project.R;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.alarm.helper.TimeCalculator;
-import com.bteam.project.board.BoardListActivity;
+import com.bteam.project.board.model.TrafficVO;
+import com.bteam.project.home.adapter.CommentAdapter;
 import com.bteam.project.home.adapter.TrafficAdapter;
 import com.bteam.project.home.model.Traffic;
+import com.bteam.project.home.model.Weather;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
-import com.bteam.project.R;
-import com.bteam.project.home.model.Weather;
+import com.google.gson.Gson;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.w3c.dom.Document;
@@ -44,6 +46,7 @@ import org.xml.sax.InputSource;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -94,9 +97,8 @@ public class HomeFragment extends Fragment {
         comment_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), BoardListActivity.class);
-                intent.putExtra("category", 0);
-                startActivity(intent);
+                NavHostFragment.findNavController(getParentFragment())
+                        .navigate(R.id.navigation_board);
             }
         });
 
@@ -108,9 +110,13 @@ public class HomeFragment extends Fragment {
         cardview_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.navigation_alarm);
+                NavHostFragment.findNavController(getParentFragment())
+                        .navigate(R.id.navigation_alarm);
             }
         });
+
+        // 게시판 불러오기
+        getCommentList();
 
         // 아래 스와이프 했을 때 새로고침 이벤트
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -279,12 +285,35 @@ public class HomeFragment extends Fragment {
 
     private void getCommentList() {
         String url = Common.SERVER_URL + "andTraffic";
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+           new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Gson gson = new Gson();
+                showComment(Arrays.asList(gson.fromJson(response.trim(), TrafficVO[].class)));
+                comment_wheel.setVisibility(View.GONE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "교통 정보 게시판을 불러오는 데 실패했습니다.",
+                        Toast.LENGTH_SHORT).show();
+                comment_wheel.setVisibility(View.GONE);
+            }
+        });
+        VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
     }
 
     // 교통 정보 표시하기
     private void showTraffic(List<Traffic> list) {
         traffic_recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         traffic_recyclerView.setAdapter(new TrafficAdapter(list));
+    }
+
+    // 게시글 표시하기
+    private void showComment(List<TrafficVO> list) {
+        comment_recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        comment_recyclerView.setAdapter(new CommentAdapter(getActivity(), list));
     }
 
     @Override

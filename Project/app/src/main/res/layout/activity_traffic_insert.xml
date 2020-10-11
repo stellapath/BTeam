@@ -20,22 +20,8 @@
             android:background="#FDFDFD"
             android:paddingBottom="@dimen/bottom_spacing_for_bottomappbar">
 
-            <EditText
-                android:id="@+id/board_insert_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_toStartOf="@+id/board_insert_close"
-                android:fontFamily="@font/worksans_bold"
-                android:textColor="#132629"
-                android:textSize="28sp"
-                android:padding="8dp"
-                android:background="#EEF0F2"
-                tools:hint="제목을 입력하세요" />
-
             <ImageButton
-                android:id="@+id/board_insert_close"
+                android:id="@+id/traffic_insert_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -47,21 +33,20 @@
                 tools:ignore="ContentDescription" />
 
             <TextView
-                android:id="@+id/board_insert_writer"
+                android:id="@+id/traffic_insert_writer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_title"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="24dp"
                 android:textColor="#414344"
                 tools:text="작성자" />
 
             <TextView
-                android:id="@+id/board_insert_date"
+                android:id="@+id/traffic_insert_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_writer"
+                android:layout_below="@+id/traffic_insert_writer"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:textColor="#657D78"
@@ -69,10 +54,10 @@
                 tools:text="날짜" />
 
             <EditText
-                android:id="@+id/board_insert_content"
+                android:id="@+id/traffic_insert_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_date"
+                android:layout_below="@+id/traffic_insert_date"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
@@ -85,11 +70,11 @@
                 android:background="#EEF0F2"
                 tools:hint="내용을 입력하세요" />
 
-            <LinearLayout android:id="@+id/board_insert_attachment"
+            <LinearLayout android:id="@+id/traffic_insert_attachment"
                 style="@style/Expand.FakeClickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_content"
+                android:layout_below="@+id/traffic_insert_content"
                 android:layout_marginBottom="24dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
@@ -116,7 +101,7 @@
                     android:paddingTop="16dp">
 
                     <TextView
-                        android:id="@+id/board_insert_file_name"
+                        android:id="@+id/traffic_insert_file_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -129,11 +114,22 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/traffic_placeholder"
+                android:scaleType="centerInside"
+                android:src="@drawable/placeholder"
+                android:layout_marginStart="16dp"                    android:background="#EEF0F2"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
+                android:layout_below="@+id/traffic_insert_attachment"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
             <Button
-                android:id="@+id/board_insert_button"
+                android:id="@+id/traffic_insert_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/board_insert_attachment"
+                android:layout_below="@+id/traffic_placeholder"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="@color/color_accent"

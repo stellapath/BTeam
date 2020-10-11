@@ -1,9 +1,7 @@
 package com.bteam.project.user;
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,8 +49,9 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
 
     private ImageView profileImage, backButton;
     private TextView name, email;
-    private TextView tab_myInfo;
+    private TextView tab_myInfo, tab_myPost;
     private MyInfoFragment myInfoFragment;
+    private MyPostFragment myPostFragment;
     private ProgressWheel wheel;
 
     @Override
@@ -72,6 +70,7 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         initProfile();
 
         myInfoFragment = new MyInfoFragment();
+        myPostFragment = new MyPostFragment();
 
         // 내 정보 표시
         getSupportFragmentManager().beginTransaction().replace(R.id.profile_container, myInfoFragment)
@@ -104,8 +103,21 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
             @Override
             public void onClick(View view) {
                 // 하단에 내 정보 표시
-                getSupportFragmentManager().beginTransaction().replace(R.id.profile_container, myInfoFragment)
-                        .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.profile_container, myInfoFragment).commit();
+                tab_myInfo.setTextColor(Color.BLUE);
+                tab_myPost.setTextColor(Color.GRAY);
+            }
+        });
+
+        // 내가 쓴 글 클릭 시
+        tab_myPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.profile_container, myPostFragment).commit();
+                tab_myPost.setTextColor(Color.BLUE);
+                tab_myInfo.setTextColor(Color.GRAY);
             }
         });
 
@@ -118,6 +130,7 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         email = findViewById(R.id.profile_email);
         tab_myInfo = findViewById(R.id.profile_tab_myInfo);
         wheel = findViewById(R.id.profile_progress);
+        tab_myPost = findViewById(R.id.profile_tab_myPost);
     }
 
     private void initProfile() {

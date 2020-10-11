@@ -1,7 +1,6 @@
-package com.bteam.project.board.adapter;
+package com.bteam.project.home.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bteam.project.R;
-import com.bteam.project.board.TrafficDetailActivity;
 import com.bteam.project.board.model.TrafficVO;
 import com.bteam.project.util.Common;
 import com.bumptech.glide.Glide;
@@ -22,27 +20,27 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.TrafficListViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
     private Context context;
     private List<TrafficVO> list;
 
-    public TrafficListAdapter(Context context, List<TrafficVO> list) {
+    public CommentAdapter(Context context, List<TrafficVO> list) {
         this.context = context;
         this.list = list;
     }
 
     @NonNull
     @Override
-    public TrafficListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TrafficListViewHolder(LayoutInflater
+    public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new CommentViewHolder(LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_comment, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TrafficListViewHolder holder, int position) {
-        holder.setTraffic(list.get(position));
+    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
+        holder.setComment(list.get(position));
     }
 
     @Override
@@ -50,13 +48,13 @@ public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.
         return list == null ? 0 : list.size();
     }
 
-    class TrafficListViewHolder extends RecyclerView.ViewHolder {
+    class CommentViewHolder extends RecyclerView.ViewHolder {
 
         TextView writer, title;
         CircleImageView profile;
         ImageView image;
 
-        public TrafficListViewHolder(@NonNull View itemView) {
+        public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -64,9 +62,7 @@ public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Intent intent = new Intent(context, TrafficDetailActivity.class);
-                        intent.putExtra("num", list.get(position).getTra_num());
-                        context.startActivity(intent);
+
                     }
                 }
             });
@@ -77,13 +73,15 @@ public class TrafficListAdapter extends RecyclerView.Adapter<TrafficListAdapter.
             image = itemView.findViewById(R.id.traffic_image);
         }
 
-        public void setTraffic(TrafficVO vo) {
+        public void setComment(TrafficVO vo) {
             writer.setText(vo.getTra_username() + " - " + vo.getTra_time());
             title.setText(vo.getTra_content());
             if (!TextUtils.isEmpty(vo.getTra_user_image()))
                 Glide.with(context).load(Common.SERVER_URL + vo.getTra_user_image()).into(profile);
+            /*
             if (!TextUtils.isEmpty(vo.getTra_content_image()))
                 Glide.with(context).load(Common.SERVER_URL + vo.getTra_content_image()).into(image);
+            */
         }
     }
 }

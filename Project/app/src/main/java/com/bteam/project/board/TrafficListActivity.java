@@ -1,27 +1,29 @@
 package com.bteam.project.board;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bteam.project.R;
 import com.bteam.project.board.adapter.TrafficListAdapter;
 import com.bteam.project.board.model.TrafficVO;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -31,6 +33,8 @@ public class TrafficListActivity extends AppCompatActivity {
 
     private RecyclerView board_traffic_recyclerView;
     private FloatingActionButton fab;
+
+    private final int TRAFFIC_LIST_REQUEST_CODE = 302;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +54,23 @@ public class TrafficListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // traffic insert
+                if (Common.login_info == null) {
+                    Snackbar.make(view, "게시글을 작성하시려면 로그인 해주세요.", Snackbar.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+                Intent intent = new Intent(TrafficListActivity.this, TrafficInsertActivity.class);
+                startActivityForResult(intent, TRAFFIC_LIST_REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TRAFFIC_LIST_REQUEST_CODE && resultCode == RESULT_OK) {
+            getTrafficList();
+        }
     }
 
     private void initView() {

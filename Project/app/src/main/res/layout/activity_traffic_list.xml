@@ -13,13 +13,15 @@
         tools:context=".board.TrafficListActivity">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:theme="@style/AppTheme.AppBarOverlay"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/traffic_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

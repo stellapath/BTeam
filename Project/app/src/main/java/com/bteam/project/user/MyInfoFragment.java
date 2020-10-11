@@ -31,7 +31,7 @@ public class MyInfoFragment extends Fragment {
         initView(root);
         getProfile();
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return root;
     }
 
     private void initView(View root) {

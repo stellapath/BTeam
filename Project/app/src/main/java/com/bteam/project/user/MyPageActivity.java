@@ -1,7 +1,5 @@
 package com.bteam.project.user;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -72,9 +68,17 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         myInfoFragment = new MyInfoFragment();
         myPostFragment = new MyPostFragment();
 
-        // 내 정보 표시
-        getSupportFragmentManager().beginTransaction().replace(R.id.profile_container, myInfoFragment)
-                .commit();
+        if (getIntent() != null && getIntent().getBooleanExtra("myPost", false)) {
+            // 내가 쓴 글 표시
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.profile_container, myPostFragment).commit();
+                tab_myInfo.setTextColor(Color.GRAY);
+                tab_myPost.setTextColor(Color.BLUE);
+        } else {
+            // 내 정보 표시
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.profile_container, myInfoFragment).commit();
+        }
 
         // 뒤로가기 버튼 클릭 시
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +92,6 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestStoragePermission();
                 new BottomSheetImagePicker.Builder("fileProvider")
                         .cameraButton(ButtonType.Button)
                         .galleryButton(ButtonType.Button)
@@ -197,21 +200,5 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
             }
         });
         VolleySingleton.getInstance(MyPageActivity.this).addToRequestQueue(request);
-    }
-
-    private void requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1234);
-        }
     }
 }

@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="개인 메뉴를 이용하시려면 로그인 해주세요."
+        android:text="개인 메뉴를 이용하시려면\n로그인 해주세요."
         android:textSize="16sp"
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"

@@ -265,7 +265,7 @@ public class HomeFragment extends Fragment {
                     showTraffic(list);
                     traffic_wheel.setVisibility(View.GONE);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     Traffic traffic = new Traffic();
                     traffic.setDetail("돌발 통제 정보가 존재하지 않습니다.");
                     list.add(traffic);

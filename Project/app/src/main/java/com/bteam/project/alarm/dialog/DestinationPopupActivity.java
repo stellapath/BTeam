@@ -58,8 +58,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_destination_popup);
 
-        requestLocationPermission();
-
         sharPrefHelper = new AlarmSharedPreferencesHelper(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -127,22 +125,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1234);
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1234);
-        }
     }
 
     @Override

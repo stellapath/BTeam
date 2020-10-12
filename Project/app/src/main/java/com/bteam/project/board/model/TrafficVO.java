@@ -1,6 +1,8 @@
 package com.bteam.project.board.model;
 
-public class TrafficVO {
+import java.io.Serializable;
+
+public class TrafficVO implements Serializable {
 
 	private String tra_num, tra_user_email, tra_username, tra_user_image,
 			tra_content, tra_content_image, tra_time;

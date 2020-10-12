@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -73,7 +72,8 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
     private void initPlayer() {
         playerView = findViewById(R.id.youtube_player);
-        playerView.initialize(getString(R.string.api_key), new YouTubePlayer.OnInitializedListener() {
+        playerView.initialize(getString(R.string.api_key),
+            new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider,
                                                 YouTubePlayer youTubePlayer, boolean b) {
@@ -109,6 +109,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
                     @Override
                     public void onError(YouTubePlayer.ErrorReason errorReason) {
+                        Log.e(TAG, "onError: " + errorReason);
                         Toast.makeText(YoutubeActivity.this,
                                 "날씨 예보를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT)
                                 .show();
@@ -120,6 +121,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider,
                                                 YouTubeInitializationResult youTubeInitializationResult) {
+                Log.e(TAG, "onInitializationFailure: " + youTubeInitializationResult);
                 Toast.makeText(YoutubeActivity.this,
                         "날씨 예보를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
                 finish();

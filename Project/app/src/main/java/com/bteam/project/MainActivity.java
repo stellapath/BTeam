@@ -117,6 +117,27 @@ public class MainActivity extends AppCompatActivity {
         drawer_nickname = headView.findViewById(R.id.drawer_nickname);
         drawer_id = headView.findViewById(R.id.drawer_id);
 
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    // 내가 올린 게시글
+                    case R.id.nav_post :
+                        if (Common.login_info == null) {
+                            Toast.makeText(MainActivity.this,
+                                    "이 메뉴는 로그인한 사용자만 이용할 수 있습니다.", Toast.LENGTH_SHORT)
+                                    .show();
+                            return false;
+                        }
+                        Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                        intent.putExtra("myPost", true);
+                        startActivity(intent);
+                        break;
+                }
+                return true;
+            }
+        });
+
         // 사이드 네비게이션 헤더 클릭 시 이벤트
         headView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
     }
 

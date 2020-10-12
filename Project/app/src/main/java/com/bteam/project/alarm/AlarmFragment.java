@@ -96,7 +96,6 @@ public class AlarmFragment extends Fragment {
                 if (isChecked) {
                     // 체크가 되었을 때
                     requestOverlayPermission();
-                    requestLocationPermission();
                     startAlarm();
                 } else {
                     // 체크를 해제했을 때
@@ -494,31 +493,6 @@ public class AlarmFragment extends Fragment {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getActivity().getPackageName()));
                 startActivityForResult(intent, Common.REQUEST_OVERRAY_PERMISSION);
-            }
-        }
-    }
-
-    private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1234);
-        }
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 거절된 상태
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1234);
-        }
-    }
-
-    private void requestExternalStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        Common.REQUEST_EXTERNAL_STORAGE_PERMISSION);
             }
         }
     }

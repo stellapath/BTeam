@@ -43,36 +43,21 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
     implementation 'com.android.support:design:30.0.0'
-    //원형 이미지뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    // JSON 데이터 파싱
     implementation 'com.google.code.gson:gson:2.8.6'
-
-    // 네트워크 관련 라이브러리
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0-RC1'
-
-    // background
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
-
-    // BottomSheet ImagePicker
     implementation 'com.kroegerama:bottomsheet-imagepicker:1.1.2'
-
-    // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-
-    // progress
     implementation 'com.pnikosis:materialish-progress:1.7'
-
-    // 지도 관련
     implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
-
+    implementation 'gun0912.ted:tedpermission:2.2.3'
 }
 repositories {
     mavenCentral()

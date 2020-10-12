@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.bteam.project.MainActivity;
 import com.bteam.project.R;
+import com.bteam.project.alarm.YoutubeActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,17 +47,29 @@ public class DirectionFragment extends Fragment {
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
     private Button BTButton;
-    MainActivity activity;
+    private Button button;
+
+    /**
+     * 연결 끊기면 Receiver로 받기
+     * 내 위치를 가져와서 일정 주기마다 저장하기 (xy좌표) --> SharedPreferences 쓰시면 될듯
+     * 하세요
+     */
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_direction, container, false);
 
-        activity = (MainActivity) getActivity();
-
         BTButton = root.findViewById(R.id.dire_btn);
+
+        button = root.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), YoutubeActivity.class);
+                startActivity(intent);
+            }
+        });
 
         BTButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -64,7 +77,7 @@ public class DirectionFragment extends Fragment {
                 if (!onBT) { //Connect
                     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     if (mBluetoothAdapter == null) { //장치가 블루투스를 지원하지 않는 경우.
-                        Toast.makeText(activity.getApplicationContext(), "Bluetooth 지원을 하지 않는 기기입니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Bluetooth 지원을 하지 않는 기기입니다.", Toast.LENGTH_SHORT).show();
                     } else { // 장치가 블루투스를 지원하는 경우.
                         if (!mBluetoothAdapter.isEnabled()) {
                             // 블루투스를 지원하지만 비활성 상태인 경우
@@ -78,9 +91,11 @@ public class DirectionFragment extends Fragment {
                             if (pairedDevices.size() > 0) {
                                 // 페어링 된 장치가 있는 경우.
                                 // selectDevice();
+                                Toast.makeText(getActivity(), "연결된 장치가 있습니다.", Toast.LENGTH_SHORT).show();
                             } else {
                                 // 페어링 된 장치가 없는 경우.
-                                Toast.makeText(activity.getApplicationContext(), "먼저 Bluetooth 설정에 들어가 페어링을 진행해 주세요.", Toast.LENGTH_SHORT).show();
+                                // 검색된 목록을 다이얼로그로 표시
+                                Toast.makeText(getActivity(), "먼저 Bluetooth 설정에 들어가 페어링을 진행해 주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -112,10 +127,10 @@ public class DirectionFragment extends Fragment {
 
         if (mPairedDeviceCount == 0) {
             //  페어링 된 장치가 없는 경우
-            Toast.makeText(activity.getApplicationContext(),"장치를 페어링 해주세요!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"장치를 페어링 해주세요!",Toast.LENGTH_SHORT).show();
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity.getApplicationContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("블루투스 장치 선택");
 
 
@@ -153,7 +168,7 @@ public class DirectionFragment extends Fragment {
         mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
 
         //Progress Dialog
-        asyncDialog = new ProgressDialog(activity.getApplicationContext());
+        asyncDialog = new ProgressDialog(getActivity());
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         asyncDialog.setMessage("블루투스 연결중..");
         asyncDialog.show();
@@ -167,8 +182,6 @@ public class DirectionFragment extends Fragment {
                     // 소켓 생성
                     bSocket = mRemoteDevice.createRfcommSocketToServiceRecord(uuid);
 
-
-
                     // RFCOMM 채널을 통한 연결
                     bSocket.connect();
 
@@ -177,11 +190,11 @@ public class DirectionFragment extends Fragment {
                     mInputStream = bSocket.getInputStream();
 
 
-                    activity.runOnUiThread(new Runnable() {
+                    getActivity().runOnUiThread(new Runnable() {
                         @SuppressLint({"ShowToast", "SetTextI18n"})
                         @Override
                         public void run() {
-                            Toast.makeText(activity.getApplicationContext(),selectedDeviceName + " 연결 완료",Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(),selectedDeviceName + " 연결 완료",Toast.LENGTH_LONG).show();
                             tvBT.setText(selectedDeviceName + " Connected");
                             BTButton.setText("disconnect");
                             asyncDialog.dismiss();
@@ -193,13 +206,13 @@ public class DirectionFragment extends Fragment {
 
                 }catch(Exception e) {
                     // 블루투스 연결 중 오류 발생
-                    activity.runOnUiThread(new Runnable() {
+                    getActivity().runOnUiThread(new Runnable() {
                         @SuppressLint({"ShowToast", "SetTextI18n"})
                         @Override
                         public void run() {
                             tvBT.setText("연결 오류 -- BT 상태 확인해주세요.");
                             asyncDialog.dismiss();
-                            Toast.makeText(activity.getApplicationContext(),"블루투스 연결 오류",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),"블루투스 연결 오류",Toast.LENGTH_SHORT).show();
                         }
                     });
 

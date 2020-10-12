@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,8 +47,8 @@ public class TrafficInsertActivity extends AppCompatActivity
     private static final String TAG = "TrafficInsertActivity";
 
     private EditText content;
-    private ImageButton close;
-    private ImageView placeholder;
+    private ImageButton close, delete;
+    private ImageView image;
     private TextView writer, date, filename;
     private LinearLayout attachment;
     private Button insertButton;
@@ -84,7 +85,16 @@ public class TrafficInsertActivity extends AppCompatActivity
             }
         });
 
-        // TODO 파일 삭제 버튼
+        // 이미지 삭제 버튼 클릭 시
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                file = null;
+                image.setImageResource(R.drawable.placeholder);
+                image.setVisibility(View.GONE);
+                delete.setVisibility(View.GONE);
+            }
+        });
 
         // 작성 버튼 클릭 시
         insertButton.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +114,8 @@ public class TrafficInsertActivity extends AppCompatActivity
         filename = findViewById(R.id.traffic_insert_file_name);
         attachment = findViewById(R.id.traffic_insert_attachment);
         insertButton = findViewById(R.id.traffic_insert_button);
-        placeholder = findViewById(R.id.traffic_placeholder);
+        image = findViewById(R.id.traffic_insert_image);
+        delete = findViewById(R.id.traffic_insert_delete);
     }
 
     private void insertTraffic() {
@@ -153,7 +164,9 @@ public class TrafficInsertActivity extends AppCompatActivity
     @Override
     public void onImagesSelected(@NotNull List<? extends Uri> list, @Nullable String s) {
         Uri uri = list.get(0);
-        placeholder.setImageURI(uri);
+        image.setVisibility(View.VISIBLE);
+        delete.setVisibility(View.VISIBLE);
+        image.setImageURI(uri);
         file = new File( FileUploadHelper.getPath(this, uri) );
     }
 

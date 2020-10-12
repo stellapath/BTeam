@@ -5,7 +5,7 @@ import com.bteam.project.user.model.UserVO;
 public class Common {
 
     /* Spring URL */
-    public static final String SERVER_URL = "http://192.168.29.100:7070/bteam/";
+    public static final String SERVER_URL = "http://192.168.0.165/bteam/";
 
     /* 로그인 정보가 들어오는 곳 */
     public static UserVO login_info;
@@ -31,10 +31,6 @@ public class Common {
     public static final int REQUEST_DESTINATION = 203;
     public static final int REQUEST_AUTOCOMPLETE_1 = 204;
     public static final int REQUEST_AUTOCOMPLETE_2 = 205;
-
-    /* Board RequestCode */
-    public static final int REQUEST_BOARD_INSERT = 300;
-    public static final int REQUEST_BOARD_FILE = 301;
 
     /* Permission */
     public static final int REQUEST_OVERRAY_PERMISSION = 2323;

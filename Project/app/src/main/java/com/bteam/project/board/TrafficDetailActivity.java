@@ -65,7 +65,7 @@ public class TrafficDetailActivity extends AppCompatActivity {
                 Log.e(TAG, "onErrorResponse: " + error);
             }
         });
-        VolleySingleton.getInstance(this).getRequestQueue().add(request);
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
     private void showTrafficDetail(TrafficVO vo) {

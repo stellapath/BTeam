@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:background="?attr/selectableItemBackground"
-                android:padding="16dp"
+                android:padding="10dp"
                 android:orientation="horizontal">
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -77,12 +77,30 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/alarm_weatherView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/alarm_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="기상 알람이 끝난 후 날씨 예보가 재생됩니다."
+                    android:drawablePadding="12dp"
+                    android:textSize="18sp"
+                    app:drawableStartCompat="@drawable/ic_baseline_cloud_24" />
+
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/alarm_intervalView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -118,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -154,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -191,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/alarm_ringtone"
@@ -209,7 +227,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/alarm_vibration"
@@ -227,7 +245,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/alarm_memo"
@@ -251,7 +269,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -283,7 +301,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"

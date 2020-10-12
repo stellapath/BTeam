@@ -69,7 +69,7 @@ public class MyPostFragment extends Fragment {
                 return map;
             }
         };
-        VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
     private void onPostExecute(List<TrafficVO> list) {

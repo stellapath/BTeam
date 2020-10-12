@@ -16,20 +16,48 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="날씨"
+                android:textSize="18sp" />
+
             <include layout="@layout/content_weather"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="교통 정보"
+                android:textSize="18sp" />
 
             <include layout="@layout/content_traffic"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="실시간 교통 정보 공유"
+                android:textSize="18sp" />
+
             <include layout="@layout/content_comment"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="설정된 알람"
+                android:textSize="18sp" />
 
             <include layout="@layout/content_alarm" />
 

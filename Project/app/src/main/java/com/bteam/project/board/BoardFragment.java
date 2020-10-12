@@ -1,5 +1,7 @@
 package com.bteam.project.board;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,8 @@ import com.bteam.project.board.adapter.TrafficListAdapter;
 import com.bteam.project.board.model.TrafficVO;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -30,8 +34,10 @@ import java.util.List;
 public class BoardFragment extends Fragment {
 
     private static final String TAG = "BoardFragment";
+    private final int TRAFFIC_INSERT_REQUEST_CODE = 300;
 
     private RecyclerView popular_recyclerView, traffic_recyclerView;
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -43,12 +49,35 @@ public class BoardFragment extends Fragment {
         getPopular();
         getTraffic();
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Common.login_info == null) {
+                    Snackbar.make(view, "로그인한 사용자만 글 작성이 가능합니다.",
+                            Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(getActivity(), TrafficInsertActivity.class);
+                startActivityForResult(intent, TRAFFIC_INSERT_REQUEST_CODE);
+            }
+        });
+
         return root;
     }
 
     private void initView(View root) {
         popular_recyclerView = root.findViewById(R.id.board_popular_recyclerView);
         traffic_recyclerView = root.findViewById(R.id.board_traffic_recyclerView);
+        fab = root.findViewById(R.id.board_fab);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TRAFFIC_INSERT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            getPopular();
+            getTraffic();
+        }
     }
 
     private void getPopular() {
@@ -66,7 +95,7 @@ public class BoardFragment extends Fragment {
                 Log.e(TAG, "onErrorResponse: " + error);
             }
         });
-        VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
     private void showPopular(List<TrafficVO> list) {
@@ -90,7 +119,7 @@ public class BoardFragment extends Fragment {
                 Log.e(TAG, "onErrorResponse: " + error);
             }
         });
-        VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
     private void showTraffic(List<TrafficVO> list) {

@@ -68,11 +68,11 @@ public class AlarmFragment extends Fragment {
     private MyAlarmManager alarmManager;
 
     private LinearLayout wakeUpView, intervalView, repeatView, durationView, ringtoneView,
-            vibrationView, memoView, locationView, arrivalView;
+            vibrationView, memoView, locationView, arrivalView, weatherView;
     private RecyclerView recyclerView;
     private SwitchCompat aSwitch;
     private TextView wakeUpTime, wakeUpLeft, interval, repeat, duration, ringtone,
-            vibration, memo, memoContent, destination, arrivalTime, arrivalLeft;
+            vibration, memo, memoContent, destination, arrivalTime, arrivalLeft, weather;
     private CountDownTimer wakeUpTimer, arrivalTimer;
 
     @Override
@@ -116,6 +116,19 @@ public class AlarmFragment extends Fragment {
                 TimePickerDialog dialog = new TimePickerDialog(getActivity(), wakeUpListener,
                         hour, minute, false);
                 dialog.show();
+            }
+        });
+
+        // 날씨 예보 클릭 이벤트
+        weatherView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sharPrefHelper.isWeather()) {
+                    sharPrefHelper.setWeather(false);
+                } else {
+                    sharPrefHelper.setWeather(true);
+                }
+                initAlarm();
             }
         });
 
@@ -228,6 +241,7 @@ public class AlarmFragment extends Fragment {
         memoView = v.findViewById(R.id.alarm_memoView);
         locationView = v.findViewById(R.id.alarm_locationView);
         arrivalView = v.findViewById(R.id.alarm_arrivalView);
+        weatherView = v.findViewById(R.id.alarm_weatherView);
 
         wakeUpTime = v.findViewById(R.id.alarm_wakeUpTime);
         wakeUpLeft = v.findViewById(R.id.alarm_wakeUpLeft);
@@ -241,6 +255,7 @@ public class AlarmFragment extends Fragment {
         destination = v.findViewById(R.id.alarm_destination);
         arrivalTime = v.findViewById(R.id.alarm_arrivalTime);
         arrivalLeft = v.findViewById(R.id.alarm_arrivalLeft);
+        weather = v.findViewById(R.id.alarm_weather);
     }
 
     // 알람 화면 불러오기 (저장된 정보 가져오기)
@@ -274,6 +289,13 @@ public class AlarmFragment extends Fragment {
         } else {
             wakeUpLeft.setText("알람이 꺼져 있습니다.");
             if (wakeUpTimer != null) wakeUpTimer.cancel();
+        }
+
+        // 날씨예보 재생여부 가져오기
+        if (sharPrefHelper.isWeather()) {
+            weather.setText("기상 알람이 끝난 후 날씨 예보가 재생됩니다.");
+        } else {
+            weather.setText("날씨 예보가 꺼졌습니다.");
         }
 
         // 반복 간격 가져오기

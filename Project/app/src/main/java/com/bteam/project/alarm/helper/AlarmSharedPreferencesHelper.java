@@ -22,6 +22,7 @@ public class AlarmSharedPreferencesHelper {
 
     private final String TURNED_ON = "turnedOn";
     private final String WAKEUP_TIME = "wakeUpTime";
+    private final String WEATHER = "weather";
     private final String INTERVAL = "interval";
     private final String NUMBER_OF_ALARMS = "numberOfAlarms";
     private final String ALREALDY_RANG_ALARMS = "alreadyRangAlarms";
@@ -50,6 +51,14 @@ public class AlarmSharedPreferencesHelper {
 
     public long getWakeUpMillis() {
         return preferences.getLong(WAKEUP_TIME, System.currentTimeMillis());
+    }
+
+    public void setWeather(boolean isWeather) {
+        editor.putBoolean(WEATHER, isWeather).apply();
+    }
+
+    public boolean isWeather() {
+        return preferences.getBoolean(WEATHER, true);
     }
 
     public void setInterval(int interval) {

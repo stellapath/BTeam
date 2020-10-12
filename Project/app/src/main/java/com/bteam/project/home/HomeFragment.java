@@ -154,8 +154,8 @@ public class HomeFragment extends Fragment {
     // 날씨 불러오기
     private void getWeatherList() {
         final List<Weather> list = new ArrayList<>();
-        String zone = preferences.getString("zone", "2914065000");
-        String url = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=" + zone;
+        final String zone = preferences.getString("zone", "2914065000");
+        final String url = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=" + zone;
         StringRequest request = new StringRequest(Request.Method.GET, url,
             new Response.Listener<String>() {
             @Override
@@ -226,8 +226,8 @@ public class HomeFragment extends Fragment {
     // 교통정보 가져오기 <<돌발 통제정보 게시판>>
     private void getTraffic() {
         final List<Traffic> list = new ArrayList<>();
-        String url1 = "http://www.gjtic.go.kr/utis/inc/list";
-        StringRequest request = new StringRequest(Request.Method.GET, url1,
+        final String url = "http://www.gjtic.go.kr/utis/inc/list";
+        StringRequest request = new StringRequest(Request.Method.GET, url,
             new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -284,7 +284,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getCommentList() {
-        String url = Common.SERVER_URL + "andTraffic";
+        final String url = Common.SERVER_URL + "andTraffic";
         StringRequest request = new StringRequest(Request.Method.GET, url,
            new Response.Listener<String>() {
             @Override
@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment {
                 comment_wheel.setVisibility(View.GONE);
             }
         });
-        VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
     // 교통 정보 표시하기

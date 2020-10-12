@@ -64,12 +64,10 @@
                 android:layout_marginBottom="24dp"
                 android:lineSpacingExtra="8dp"
                 android:textColor="#3C4242"
-                android:textSize="16sp"
-                android:minHeight="200dp"
+                android:textSize="18sp"
+                android:fontFamily="@font/worksans_bold"
                 android:gravity="left"
-                android:padding="8dp"
-                android:background="#EEF0F2"
-                tools:hint="내용" />
+                android:padding="8dp" />
 
             <ImageView
                 android:id="@+id/traffic_detail_image"
@@ -79,6 +77,8 @@
                 android:layout_below="@+id/traffic_detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+
 
         </RelativeLayout>
     </FrameLayout>

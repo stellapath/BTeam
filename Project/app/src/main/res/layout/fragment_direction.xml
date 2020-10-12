@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".direction.DirectionFragment">
+    tools:context=".direction.DirectionFragment"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/text_direction"
@@ -21,5 +22,30 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    
+    <EditText
+        android:id="@+id/dire_edit"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+    
+    <TextView
+        android:id="@+id/dire_text2"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="x,y"/>
+
+    <Button
+        android:id="@+id/dire_setShared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shar에 입력하기"/>
+
+    <Button
+        android:id="@+id/dire_getShared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shar 불러오기"/>
+    
+        
 
 </LinearLayout>

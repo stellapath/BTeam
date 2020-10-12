@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,7 @@ public class DirectionFragment extends Fragment {
     private Button BTButton;
     private Button button;
 
+
     /**
      * 연결 끊기면 Receiver로 받기
      * 내 위치를 가져와서 일정 주기마다 저장하기 (xy좌표) --> SharedPreferences 쓰시면 될듯
@@ -62,12 +65,18 @@ public class DirectionFragment extends Fragment {
 
         BTButton = root.findViewById(R.id.dire_btn);
 
+
+
+
+
         button = root.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), YoutubeActivity.class);
                 startActivity(intent);
+
+
             }
         });
 

@@ -33,6 +33,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /* 메인 액티비티 */
 public class MainActivity extends AppCompatActivity {
 
+    private final int LOGIN_REQUEST_CODE = 100;
+    private final int MYPAGE_REQUEST_CODE = 103;
     private AppBarConfiguration mAppBarConfiguration;
 
     private CircleImageView drawer_image;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // 로그인 처리
-        if (requestCode == Common.REQUEST_LOGIN) {
+        if (requestCode == LOGIN_REQUEST_CODE) {
             // 로그인이 완료 되었을 때
             if (resultCode == RESULT_OK) {
                 // 프로필 이미지 및 닉네임 변경 처리
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == Common.REQUEST_MYPAGE) {
+        if (requestCode == MYPAGE_REQUEST_CODE) {
             Glide.with(this)
                     .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
                     .into(drawer_image);
@@ -145,11 +147,11 @@ public class MainActivity extends AppCompatActivity {
                 if (Common.login_info == null) {
                     // 로그인 상태가 아니면 로그인 화면으로 넘기기
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivityForResult(intent, Common.REQUEST_LOGIN);
+                    startActivityForResult(intent, LOGIN_REQUEST_CODE);
                 } else {
                     // 로그인 상태이면 마이페이지로 넘기기
                     Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
-                    startActivityForResult(intent, Common.REQUEST_MYPAGE);
+                    startActivityForResult(intent, MYPAGE_REQUEST_CODE);
                 }
             }
         });

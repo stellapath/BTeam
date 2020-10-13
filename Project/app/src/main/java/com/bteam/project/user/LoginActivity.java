@@ -6,9 +6,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -34,9 +36,13 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    private final int SIGNUP_REQUEST_CODE = 101;
+    private final int EMAIL_VERIFY_REQUEST_CODE = 105;
+    private final int FORGOT_PASSWORD_REQUEST_CODE = 106;
 
-    EditText login_id, login_pw;
-    Button login_login, login_signup;
+    private EditText login_id, login_pw;
+    private Button login_login, login_signup;
+    private TextView forgot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         login_pw = findViewById(R.id.login_pw);
         login_login = findViewById(R.id.login_login);
         login_signup = findViewById(R.id.login_signup);
+        forgot = findViewById(R.id.login_forgot);
 
         login_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,10 +84,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, Common.REQUEST_SIGNUP);
+                startActivityForResult(intent, SIGNUP_REQUEST_CODE);
             }
         });
 
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                startActivityForResult(intent, FORGOT_PASSWORD_REQUEST_CODE);
+            }
+        });
     }
 
     // 서버 통신
@@ -118,14 +132,33 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onPostExecute(UserVO s) {
         if (s != null) {
-            Toast.makeText(this, "로그인 되었습니다.", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-            Common.login_info = s;
-            finish();
+            if (s.getUser_key().equals("OK")) {
+                // 이메일 인증이 완료된 경우
+                Toast.makeText(this, "로그인 되었습니다.", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                Common.login_info = s;
+                finish();
+            } else {
+                // 이메일 인증이 완료되지 않은 경우
+                Intent intent = new Intent(LoginActivity.this, EmailVerifyActivity.class);
+                intent.putExtra("vo", s);
+                startActivityForResult(intent, EMAIL_VERIFY_REQUEST_CODE);
+            }
         } else {
             Toast.makeText(this, "존재하지 않는 아이디이거나, 비밀번호를 잘못 입력하셨습니다.",
                     Toast.LENGTH_SHORT).show();
             setResult(RESULT_CANCELED);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EMAIL_VERIFY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
         }
     }
 

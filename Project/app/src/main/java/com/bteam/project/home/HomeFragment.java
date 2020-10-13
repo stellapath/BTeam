@@ -58,6 +58,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
+    private final int WEATHER_REQUEST_CODE = 10;
 
     private SharedPreferences preferences;
     private AlarmSharedPreferencesHelper sharPrefHelper;
@@ -86,7 +87,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                startActivityForResult(intent, Common.REQUEST_WEATHER);
+                startActivityForResult(intent, WEATHER_REQUEST_CODE);
             }
         });
 
@@ -323,7 +324,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Common.REQUEST_WEATHER) {
+        if (requestCode == WEATHER_REQUEST_CODE) {
             getWeatherList();
         }
     }

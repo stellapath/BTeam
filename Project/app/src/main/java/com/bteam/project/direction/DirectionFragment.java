@@ -65,21 +65,6 @@ public class DirectionFragment extends Fragment {
 
         BTButton = root.findViewById(R.id.dire_btn);
 
-
-
-
-
-        button = root.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), YoutubeActivity.class);
-                startActivity(intent);
-
-
-            }
-        });
-
         BTButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {

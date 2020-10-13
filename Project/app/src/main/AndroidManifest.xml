@@ -27,7 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".board.TrafficModifyActivity"></activity>
+        <activity android:name=".user.ForgotPasswordActivity"></activity>
+        <activity android:name=".user.EmailVerifyActivity" />
+        <activity android:name=".board.TrafficModifyActivity" />
         <activity android:name=".alarm.YoutubeActivity" />
         <activity android:name=".board.TrafficDetailActivity" />
 

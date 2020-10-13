@@ -1,6 +1,8 @@
 package com.bteam.project.user.model;
 
-public class UserVO {
+import java.io.Serializable;
+
+public class UserVO implements Serializable {
 
 	private String user_email, user_pw, user_nickname, user_phone, user_zipcode,
 				    user_address, detail_address, user_birth, user_key, user_image, user_imagepath;

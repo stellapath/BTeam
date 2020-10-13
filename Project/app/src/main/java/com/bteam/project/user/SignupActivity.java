@@ -97,12 +97,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (TextUtils.isEmpty(signup_email.getText().toString())) {
-                    Toast.makeText(SignupActivity.this,
-                            "이메일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "이메일을 입력하세요.");
+                    signup_email.requestFocus();
                     return;
                 } else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
-                    Toast.makeText(SignupActivity.this,
-                            "유효하지 않은 이메일 입니다.", Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "올바른 이메일 형식이 아닙니다.");
                     signup_email.requestFocus();
                     return;
                 }
@@ -127,65 +126,52 @@ public class SignupActivity extends AppCompatActivity {
 
                 /* 유효성 검사 */
                 if (signup_email.getText().toString().length() == 0) {
-                    Toast.makeText(SignupActivity.this, "이메일을 입력하세요.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "이메일을 입력하세요.");
                     signup_email.requestFocus();
                     return;
                 } else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
-                    Toast.makeText(SignupActivity.this,
-                            "유효하지 않은 이메일 입니다.", Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "올바른 이메일 형식이 아닙니다.");
                     signup_email.requestFocus();
                     return;
                 } else if (!isChecked) {
-                    Toast.makeText(SignupActivity.this,
-                            "이메일 중복확인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "이메일 중복확인을 해주세요.");
                     signup_email.requestFocus();
                     return;
                 } else if (!isAvailable) {
-                    Toast.makeText(SignupActivity.this,
-                            "이미 사용중인 이메일 입니다.", Toast.LENGTH_SHORT).show();
+                    showAlert("이메일 확인", "이미 사용중인 이메일 입니다.");
                     signup_email.requestFocus();
                     return;
                 }
 
                 if (signup_pw.getText().toString().length() == 0) {
-                    Toast.makeText(SignupActivity.this, "비밀번호를 입력하세요.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("비밀번호 확인", "비밀번호를 입력하세요.");
                     signup_pw.requestFocus();
                     return;
                 }else if(!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{6,15}$", signup_pw.getText())){
-                    Toast.makeText(SignupActivity.this,
-                            "비밀번호는 6 ~ 15자리로\n숫자, 영어, 특수문자를 모두 포함해야 합니다.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("비밀번호 확인","비밀번호는 6 ~ 15자리로\n숫자, 영어, 특수문자를 모두 포함해야 합니다.");
                     signup_pw.requestFocus();
                     return;
                 }
 
                 if (signup_pw2.getText().toString().length() == 0) {
-                    Toast.makeText(SignupActivity.this, "비밀번호 확인을 입력하세요.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("비밀번호 확인", "비밀번호 확인을 입력하세요.");
                     signup_pw2.requestFocus();
                     return;
                 }
 
                 if (!signup_pw.getText().toString().equals(signup_pw2.getText().toString())) {
-                    Toast.makeText(SignupActivity.this, "비밀번호가 일치하지 않습니다.",
-                            Toast.LENGTH_SHORT).show();
-                    signup_pw.setText("");
+                    showAlert("비밀번호 확인", "비밀번호가 일치하지 않습니다.");
                     signup_pw2.setText("");
                     signup_pw.requestFocus();
                     return;
                 }
 
                 if (signup_nickname.getText().toString().length() == 0) {
-                    Toast.makeText(SignupActivity.this, "닉네임을 입력하세요.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("별명 확인", "별명을 입력하세요.");
                     signup_nickname.requestFocus();
                     return;
                 } else if (!Pattern.matches("^[가-힣a-zA-Z0-9]{2,6}$", signup_nickname.getText())){
-                    Toast.makeText(SignupActivity.this,
-                            "2 ~ 6자리의 한글, 영어, 숫자만 사용가능합니다.",
-                            Toast.LENGTH_SHORT).show();
+                    showAlert("별명 확인", "2 ~ 6자리의 한글, 영어, 숫자만 사용가능합니다.");
                     signup_nickname.requestFocus();
                    return;
 
@@ -194,6 +180,17 @@ public class SignupActivity extends AppCompatActivity {
                 UserVO vo = getUserVO();
                 sendSignupRequest(vo);
 
+            }
+        });
+
+        // 비밀번호를 바꿀 시 테두리 효과 초기
+        signup_pw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    signup_pw.setBackgroundResource(R.drawable.custom_input);
+                    signup_pw2.setBackgroundResource(R.drawable.custom_input);
+                }
             }
         });
 
@@ -208,11 +205,10 @@ public class SignupActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String password = signup_pw.getText().toString();
                 String passwordConfirm = signup_pw2.getText().toString();
-                /* 비밀번호가 일치하면 둘다 초록색, 추후 비밀번호 일치하지 않음 글씨로 변경할까? */
                 if(password.equals(passwordConfirm)){
                     signup_pw.setBackgroundResource(R.drawable.custom_input_green);
                     signup_pw2.setBackgroundResource(R.drawable.custom_input_green);
-                } else {      /* 다르면 비밀번호 확인창 빨강색 */
+                } else {
                     signup_pw.setBackgroundResource(R.drawable.custom_input_red);
                     signup_pw2.setBackgroundResource(R.drawable.custom_input_red);
                 }
@@ -249,18 +245,10 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 if (response.contains("true")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
-                    builder.setTitle("중복확인");
-                    builder.setMessage("사용 가능한 이메일 입니다.");
-                    builder.setPositiveButton("확인", null);
-                    builder.show();
+                    showAlert("중복확인", "사용가능한 이메일 입니다.");
                     isAvailable = true;
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
-                    builder.setTitle("중복확인");
-                    builder.setMessage("이미 사용중인 이메일 입니다.");
-                    builder.setPositiveButton("확인", null);
-                    builder.show();
+                    showAlert("중복확인", "이미 사용중인 이메일 입니다.");
                     isAvailable = false;
                 }
                 isChecked = true;
@@ -327,6 +315,7 @@ public class SignupActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("user_email", vo.getUser_email());
                 params.put("user_pw", vo.getUser_pw());
+                params.put("user_nickname", vo.getUser_nickname());
                 params.put("user_phone", vo.getUser_phone());
                 params.put("user_zipcode", vo.getUser_zipcode());
                 params.put("user_address", vo.getUser_address());
@@ -344,7 +333,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onPostExecute(String s) {
-        if (s.contains("1")) {
+        if (s.contains("true")) {
             Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();
@@ -408,5 +397,13 @@ public class SignupActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAlert(String title, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setPositiveButton("확인", null);
+        builder.show();
     }
 }

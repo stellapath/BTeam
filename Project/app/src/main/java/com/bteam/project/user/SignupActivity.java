@@ -2,15 +2,25 @@ package com.bteam.project.user;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -22,8 +32,18 @@ import com.bteam.project.util.Common;
 import com.bteam.project.R;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.user.model.UserVO;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AddressComponent;
+import com.google.android.libraries.places.api.model.AddressComponents;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -31,41 +51,77 @@ import java.util.regex.Pattern;
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
+    private final int AUTOCOMPLETE_REQUEST_CODE = 401;
 
     private EditText signup_email, signup_pw, signup_pw2, signup_nickname, signup_phone,
                      signup_zipcode, signup_address, signup_detail, signup_birth;
-    private Button signup_andAddress, signup_submit;
+    private Button address, submit, emailCheck;
+    private LinearLayout expand;
+    private TextView expandBtn;
 
     private boolean isChecked = false;
+    private boolean isAvailable = false;
+    private boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        signup_email = findViewById(R.id.signup_email);
-        signup_pw = findViewById(R.id.signup_pw);
-        signup_pw2 = findViewById(R.id.signup_pw2);
-        signup_nickname = findViewById(R.id.signup_nickname);
-        signup_phone = findViewById(R.id.signup_phone);
-        signup_zipcode = findViewById(R.id.signup_zipcode);
-        signup_address = findViewById(R.id.signup_address);
-        signup_detail = findViewById(R.id.signup_detail);
-        signup_birth = findViewById(R.id.signup_birth);
+        Toolbar toolbar = findViewById(R.id.signup_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("회원가입");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        signup_andAddress = findViewById(R.id.signup_andAddress);
-        signup_submit = findViewById(R.id.signup_submit);
+        Places.initialize(getApplicationContext(), getString(R.string.api_key));
+        PlacesClient placesClient = Places.createClient(this);
 
-        signup_andAddress.setOnClickListener(new View.OnClickListener() {
+        initView();
+
+        expand.setVisibility(View.GONE);
+
+        expandBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO 주소 입력
-                //Intent intent = new Intent(getApplicationContext(), AddressActivity.class);
-                //startActivityForResult(intent, Common.REQUEST_ADDRESS);
+                if (isExpanded) {
+                    isExpanded = false;
+                    expand.setVisibility(View.GONE);
+                } else {
+                    isExpanded = true;
+                    expand.setVisibility(View.VISIBLE);
+                }
             }
         });
 
-        signup_submit.setOnClickListener(new View.OnClickListener() {
+        emailCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(signup_email.getText().toString())) {
+                    Toast.makeText(SignupActivity.this,
+                            "이메일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
+                    Toast.makeText(SignupActivity.this,
+                            "유효하지 않은 이메일 입니다.", Toast.LENGTH_SHORT).show();
+                    signup_email.requestFocus();
+                    return;
+                }
+                emailCheck();
+            }
+        });
+
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Place.Field> fields =
+                        Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS_COMPONENTS);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(SignupActivity.this);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+            }
+        });
+
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -75,9 +131,19 @@ public class SignupActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     signup_email.requestFocus();
                     return;
-                }else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
+                } else if(!Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$",signup_email.getText())){
                     Toast.makeText(SignupActivity.this,
                             "유효하지 않은 이메일 입니다.", Toast.LENGTH_SHORT).show();
+                    signup_email.requestFocus();
+                    return;
+                } else if (!isChecked) {
+                    Toast.makeText(SignupActivity.this,
+                            "이메일 중복확인을 해주세요.", Toast.LENGTH_SHORT).show();
+                    signup_email.requestFocus();
+                    return;
+                } else if (!isAvailable) {
+                    Toast.makeText(SignupActivity.this,
+                            "이미 사용중인 이메일 입니다.", Toast.LENGTH_SHORT).show();
                     signup_email.requestFocus();
                     return;
                 }
@@ -144,11 +210,11 @@ public class SignupActivity extends AppCompatActivity {
                 String passwordConfirm = signup_pw2.getText().toString();
                 /* 비밀번호가 일치하면 둘다 초록색, 추후 비밀번호 일치하지 않음 글씨로 변경할까? */
                 if(password.equals(passwordConfirm)){
-                    signup_pw.setBackgroundColor(Color.GREEN);
-                    signup_pw2.setBackgroundColor(Color.GREEN);
-                }else{      /* 다르면 비밀번호 확인창 빨강색 */
-                    signup_pw.setBackgroundColor(Color.GREEN);
-                    signup_pw2.setBackgroundColor(Color.RED);
+                    signup_pw.setBackgroundResource(R.drawable.custom_input_green);
+                    signup_pw2.setBackgroundResource(R.drawable.custom_input_green);
+                } else {      /* 다르면 비밀번호 확인창 빨강색 */
+                    signup_pw.setBackgroundResource(R.drawable.custom_input_red);
+                    signup_pw2.setBackgroundResource(R.drawable.custom_input_red);
                 }
             }
             @Override
@@ -157,6 +223,87 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initView() {
+        signup_email = findViewById(R.id.signup_email);
+        signup_pw = findViewById(R.id.signup_pw);
+        signup_pw2 = findViewById(R.id.signup_pw2);
+        signup_nickname = findViewById(R.id.signup_nickname);
+        signup_phone = findViewById(R.id.signup_phone);
+        signup_zipcode = findViewById(R.id.signup_zipcode);
+        signup_address = findViewById(R.id.signup_address);
+        signup_detail = findViewById(R.id.signup_detail);
+        signup_birth = findViewById(R.id.signup_birth);
+        address = findViewById(R.id.signup_andAddress);
+        submit = findViewById(R.id.signup_submit);
+        expand = findViewById(R.id.signup_expand);
+        expandBtn = findViewById(R.id.signup_expandBtn);
+        emailCheck = findViewById(R.id.signup_emailCheck);
+    }
+
+    // 이메일 중복확인
+    private void emailCheck() {
+        final String url = Common.SERVER_URL + "andEmailCheck";
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("true")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+                    builder.setTitle("중복확인");
+                    builder.setMessage("사용 가능한 이메일 입니다.");
+                    builder.setPositiveButton("확인", null);
+                    builder.show();
+                    isAvailable = true;
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+                    builder.setTitle("중복확인");
+                    builder.setMessage("이미 사용중인 이메일 입니다.");
+                    builder.setPositiveButton("확인", null);
+                    builder.show();
+                    isAvailable = false;
+                }
+                isChecked = true;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(SignupActivity.this,
+                        "서버와의 연결이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("email", signup_email.getText().toString());
+                return map;
+            }
+        };
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    // 주소 검색 api 결과
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> politicals = new ArrayList<>();
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            AddressComponents addressComponents = place.getAddressComponents();
+            for (AddressComponent ac : addressComponents.asList()) {
+                Log.i(TAG, "onActivityResult: " + ac.getTypes());
+                if (ac.getTypes().contains("postal_code"))
+                    signup_zipcode.setText(ac.getName());
+                if (ac.getTypes().contains("political"))
+                    politicals.add(ac.getName());
+                if (ac.getTypes().contains("premise"))
+                    politicals.add(ac.getName());
+            }
+            for (int i = politicals.size() - 1; i >= 0; i--) {
+                if (i == politicals.size() - 1) continue;
+                signup_address.append(politicals.get(i) + " ");
+            }
+        }
     }
 
     // 서버 통신
@@ -251,5 +398,15 @@ public class SignupActivity extends AppCompatActivity {
         this.lowerCheck = lowerCheck;
         this.size = size;
         return randomKey();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

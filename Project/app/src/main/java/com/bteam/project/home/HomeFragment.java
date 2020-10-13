@@ -103,8 +103,12 @@ public class HomeFragment extends Fragment {
         });
 
         // 알람 정보
-        home_alarm_txt.setText( timeCalc.toString( sharPrefHelper.getWakeUpMillis(), 0 )
-                + " 에\n알람이 설정되어 있습니다.");
+        if (sharPrefHelper.isTurnedOn()) {
+            home_alarm_txt.setText( timeCalc.toString( sharPrefHelper.getWakeUpMillis(), 0 )
+                    + " 에\n알람이 설정되어 있습니다.");
+        } else {
+            home_alarm_txt.setText("알람이 설정되지 않았습니다.");
+        }
 
         // 알람 클릭시 알람 탭으로 이동
         cardview_alarm.setOnClickListener(new View.OnClickListener() {

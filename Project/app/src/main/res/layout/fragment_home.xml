@@ -32,13 +32,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="교통 정보"
+                android:text="돌발 통제 정보"
                 android:textSize="18sp" />
 
             <include layout="@layout/content_traffic"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="300dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
             <include layout="@layout/content_comment"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="300dp"/>
 
             <TextView
                 android:layout_width="wrap_content"

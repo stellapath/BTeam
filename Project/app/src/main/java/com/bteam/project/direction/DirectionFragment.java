@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +59,7 @@ public class DirectionFragment extends Fragment {
     private static final int REQUEST_ENABLE_BT = 1;
     private Button BTButton;
     private Button button, lo_btn;
+    private TextView textView;
 
     IntentFilter stateFilter;
 
@@ -72,6 +76,11 @@ public class DirectionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_direction, container, false);
 
         BTButton = root.findViewById(R.id.dire_btn);
+        textView = root.findViewById(R.id.text_direction);
+
+
+        // 리시버 등록
+        regiserRec();
 
         BTButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -113,6 +122,7 @@ public class DirectionFragment extends Fragment {
                         bSocket.close();
                         onBT = false;
                         BTButton.setText("connect");
+                        Toast.makeText(getActivity(),"연결을 해제합니다.",Toast.LENGTH_SHORT).show();
                     } catch (Exception ignored) {
                     }
 
@@ -135,6 +145,44 @@ public class DirectionFragment extends Fragment {
         stateFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);  //기기 검색 종료
         stateFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
         getActivity().registerReceiver(mBluetoothStateReceiver, stateFilter);
+    }
+
+    BroadcastReceiver mBluetoothStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();   //입력된 action
+            //입력된 action에 따라서 함수를 처리한다
+            if(action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
+//                    Log.d("Bluetooth", "ACTION_ACL_DISCONNECTED");
+                Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
+                startLocationService();
+
+            }
+
+        }
+    };
+    private void startLocationService() {
+        // 위치관리자 객체 참조
+        LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            Location lastLocation =
+                    manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(lastLocation != null){
+                Double latitude = lastLocation.getLatitude(); // 위도
+                Double longitude = lastLocation.getLongitude(); // 경도
+
+                String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
+                Log.d("main:location", msg);
+
+                textView.setText("트라이 위치1 : " + latitude +", " + longitude);
+                Toast.makeText(getActivity(), "null값이 아닌상태", Toast.LENGTH_SHORT).show();
+            }
+
+        }catch (SecurityException e){
+            Log.d("main:sException", e.getMessage());
+        }
+
+
     }
 
 
@@ -183,14 +231,18 @@ public class DirectionFragment extends Fragment {
     }
 
     public void connectToSelectedDevice(final String selectedDeviceName) {
+
+
+
+
         mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
 
         //Progress Dialog
         asyncDialog = new ProgressDialog(getActivity());
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        asyncDialog.setMessage("블루투스 연결중..");
+        asyncDialog.setMessage(selectedDeviceName+"블루투스 연결중..");
         asyncDialog.show();
-        asyncDialog.setCancelable(false);
+//        asyncDialog.setCancelable(false);
 
 
                 try {
@@ -198,8 +250,10 @@ public class DirectionFragment extends Fragment {
                     // 소켓 생성
                     bSocket = mRemoteDevice.createRfcommSocketToServiceRecord(uuid);
 
-                    // RFCOMM 채널을 통한 연결
+
+                    // RFCOMM 채널을 통한 연결 , 블루투스가 연결되지 않으면 여기서 Exception 발생
                     bSocket.connect();
+
 
                     // 데이터 송수신을 위한 스트림 열기
                     mOutputStream = bSocket.getOutputStream();
@@ -222,7 +276,7 @@ public class DirectionFragment extends Fragment {
                 }catch(Exception e) {
                     // 블루투스 연결 중 오류 발생
                     Toast.makeText(getActivity(),"블루투스 연결 오류",Toast.LENGTH_SHORT).show();
-
+                    asyncDialog.dismiss();
                 }
 
 

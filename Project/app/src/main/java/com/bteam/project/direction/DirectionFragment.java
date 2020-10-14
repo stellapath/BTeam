@@ -1,18 +1,25 @@
 package com.bteam.project.direction;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -45,11 +52,12 @@ public class DirectionFragment extends Fragment {
     private BluetoothDevice mRemoteDevice;
     public boolean onBT = false;
     public byte[] sendByte = new byte[4];
-    public TextView tvBT;
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
     private Button BTButton;
-    private Button button;
+    private Button button, lo_btn;
+
+    IntentFilter stateFilter;
 
 
     /**
@@ -84,7 +92,7 @@ public class DirectionFragment extends Fragment {
                             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
                             if (pairedDevices.size() > 0) {
                                 // 페어링 된 장치가 있는 경우.
-                                // selectDevice();
+                                selectDevice();
                                 Toast.makeText(getActivity(), "연결된 장치가 있습니다.", Toast.LENGTH_SHORT).show();
                             } else {
                                 // 페어링 된 장치가 없는 경우.
@@ -115,6 +123,22 @@ public class DirectionFragment extends Fragment {
         return root;
     }
 
+    public void regiserRec(){
+        stateFilter = new IntentFilter();
+        stateFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED); //BluetoothAdapter.ACTION_STATE_CHANGED : 블루투스 상태변화 액션
+        stateFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        stateFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED); //연결 확인
+        stateFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED); //연결 끊김 확인
+        stateFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        stateFilter.addAction(BluetoothDevice.ACTION_FOUND);    //기기 검색됨
+        stateFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);   //기기 검색 시작
+        stateFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);  //기기 검색 종료
+        stateFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
+        getActivity().registerReceiver(mBluetoothStateReceiver, stateFilter);
+    }
+
+
+
     public void selectDevice() {
         mDevices = mBluetoothAdapter.getBondedDevices();
         final int mPairedDeviceCount = mDevices.size();
@@ -141,7 +165,7 @@ public class DirectionFragment extends Fragment {
             public void onClick(DialogInterface dialog, int item) {
                 if(item == mPairedDeviceCount) {
                     // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
-                    //finish();
+//                    finish();
                 }
                 else {
                     // 연결할 장치를 선택한 경우
@@ -168,8 +192,6 @@ public class DirectionFragment extends Fragment {
         asyncDialog.show();
         asyncDialog.setCancelable(false);
 
-        Thread BTConnect = new Thread(new Runnable() {
-            public void run() {
 
                 try {
                     UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); //HC-06 UUID
@@ -189,7 +211,6 @@ public class DirectionFragment extends Fragment {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(),selectedDeviceName + " 연결 완료",Toast.LENGTH_LONG).show();
-                            tvBT.setText(selectedDeviceName + " Connected");
                             BTButton.setText("disconnect");
                             asyncDialog.dismiss();
                         }
@@ -200,22 +221,11 @@ public class DirectionFragment extends Fragment {
 
                 }catch(Exception e) {
                     // 블루투스 연결 중 오류 발생
-                    getActivity().runOnUiThread(new Runnable() {
-                        @SuppressLint({"ShowToast", "SetTextI18n"})
-                        @Override
-                        public void run() {
-                            tvBT.setText("연결 오류 -- BT 상태 확인해주세요.");
-                            asyncDialog.dismiss();
-                            Toast.makeText(getActivity(),"블루투스 연결 오류",Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    Toast.makeText(getActivity(),"블루투스 연결 오류",Toast.LENGTH_SHORT).show();
 
                 }
 
 
-            }
-        });
-        BTConnect.start();
 
 
     }
@@ -254,6 +264,48 @@ public class DirectionFragment extends Fragment {
         BTSend.run();
     }
 
+
+    private void checkDangerousPermissions() {
+        String[] permissions = {
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        };
+
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        for (int i = 0; i < permissions.length; i++) {
+            permissionCheck = ContextCompat.checkSelfPermission(getActivity(), permissions[i]);
+            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                break;
+            }
+        }
+
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getActivity(), "권한 있음", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(), "권한 없음", Toast.LENGTH_LONG).show();
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissions[0])) {
+                Toast.makeText(getActivity(), "권한 설명 필요함.", Toast.LENGTH_LONG).show();
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), permissions, 1);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getActivity(), permissions[i] + " 권한이 승인됨.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), permissions[i] + " 권한이 승인되지 않음.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
 
 
 }

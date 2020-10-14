@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".direction.SharedXYActivity">
+    tools:context=".direction.SharedXYActivity"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/xy_btn"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/xy_text1"
+        android:text="위도"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/xy_text2"
+        android:text="경도"/>
+
+    <EditText
+        android:id="@+id/dire_edit"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/dire_setShared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shar에 입력하기"/>
+
+    <Button
+        android:id="@+id/dire_getShared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shar 불러오기"/>
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/dire_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x,y"/>
+
+
+    </ScrollView>
+
+
+
+</LinearLayout>

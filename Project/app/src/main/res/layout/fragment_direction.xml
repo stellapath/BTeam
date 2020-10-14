@@ -30,16 +30,13 @@
         android:text="x,y"/>
 
     <Button
-        android:id="@+id/dire_setShared"
+        android:id="@+id/xy_Search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shar에 입력하기"/>
+        android:text="좌표값 찾기"/>
+    
 
-    <Button
-        android:id="@+id/dire_getShared"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Shar 불러오기"/>
+
     
         
 

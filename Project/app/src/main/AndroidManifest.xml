@@ -37,6 +37,8 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
+        <activity android:name=".direction.SharedXYActivity" />
+
         <activity android:name=".OnBoardActivity" />
         <activity
             android:name=".SplashActivity"

@@ -48,6 +48,7 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
     private TextView tab_myInfo, tab_myPost;
     private MyInfoFragment myInfoFragment;
     private MyPostFragment myPostFragment;
+    private MyInfoModifyFragment myInfoModifyFragment;
     private ProgressWheel wheel;
 
     @Override
@@ -67,6 +68,7 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
 
         myInfoFragment = new MyInfoFragment();
         myPostFragment = new MyPostFragment();
+        myInfoModifyFragment = new MyInfoModifyFragment();
 
         if (getIntent() != null && getIntent().getBooleanExtra("myPost", false)) {
             // 내가 쓴 글 표시
@@ -200,5 +202,15 @@ public class MyPageActivity extends AppCompatActivity implements BottomSheetImag
             }
         });
         VolleySingleton.getInstance(MyPageActivity.this).addToRequestQueue(request);
+    }
+
+    public void modifyInfo() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.profile_container, myInfoModifyFragment).commit();
+    }
+
+    public void saveInfo() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.profile_container, myInfoFragment).commit();
     }
 }

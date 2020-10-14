@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,8 @@ import com.bteam.project.R;
 import com.bteam.project.alarm.helper.AlarmSharedPreferencesHelper;
 import com.bteam.project.util.Common;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -37,6 +41,7 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.util.Arrays;
 
@@ -47,10 +52,12 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
 
     private static final String TAG = "DestinationPopupActivit";
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
     private GoogleMap map;
     private AlarmSharedPreferencesHelper sharPrefHelper;
     private Button button;
     private LatLng placeLatLng;
+    private Location myLocation;
     private String placeAddress;
 
     @Override
@@ -59,6 +66,7 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         setContentView(R.layout.activity_destination_popup);
 
         sharPrefHelper = new AlarmSharedPreferencesHelper(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.destination_map);
@@ -69,6 +77,28 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
 
         setTitle("목적지 설정");
         initView();
+
+        if (ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String[] permissions = {
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
+            ActivityCompat.requestPermissions(DestinationPopupActivity.this, permissions, 2020);
+            finish();
+            return;
+        }
+
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(DestinationPopupActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        myLocation = location;
+                        Log.i(TAG, "onSuccess: " + location);
+                    }
+                });
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.destination_autocomplete_begin);
@@ -91,14 +121,23 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (placeLatLng != null && placeAddress != null) {
+                if (placeLatLng == null) {
+                    Toast.makeText(DestinationPopupActivity.this,
+                            "지역이 선택 또는 변경되지 않았습니다.",
+                            Toast.LENGTH_SHORT).show();
+                } else if (myLocation != null) {
+                    Location target = new Location("");
+                    target.setLatitude(placeLatLng.latitude);
+                    target.setLongitude(placeLatLng.longitude);
+                    float distance = myLocation.distanceTo(target);
                     sharPrefHelper.setLatitude(placeLatLng.latitude);
                     sharPrefHelper.setLongitude(placeLatLng.longitude);
-                    sharPrefHelper.setAddress(placeAddress);
+                    sharPrefHelper.setDistance(distance);
+                    Toast.makeText(DestinationPopupActivity.this,
+                            "목적지가 설정되었습니다.", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
                     finish();
-                } else {
-                    // 위치 저장 실패!
+                    Log.i(TAG, "distance: " + distance);
                 }
             }
         });
@@ -116,7 +155,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
@@ -130,9 +168,16 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.addMarker(new MarkerOptions().position(getSavedLocation()).title("저장된 위치"))
-                .showInfoWindow();
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(getSavedLocation(), 15));
+        if (sharPrefHelper.getLatitude() == 0 || sharPrefHelper.getLongitude() == 0) {
+            LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+            map.addMarker(new MarkerOptions().position(latLng).title("내 위치")
+                    .snippet(myLocation.getProvider())).showInfoWindow();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        } else {
+            LatLng latLng = new LatLng(sharPrefHelper.getLatitude(), sharPrefHelper.getLongitude());
+            map.addMarker(new MarkerOptions().position(latLng).title("저장된 위치")).showInfoWindow();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        }
     }
 
     private void showSelectedPlace(LatLng latLng, String title, String addr) {
@@ -142,30 +187,7 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
-    private LatLng getMyLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider = LocationManager.GPS_PROVIDER;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-        Location currentLocation = locationManager.getLastKnownLocation(locationProvider);
-        if (currentLocation != null) {
-            double lng = currentLocation.getLongitude();
-            double lat = currentLocation.getLatitude();
-            return new LatLng(lat, lng);
-        } else {
-            return null;
-        }
-    }
+    private void getMyLocation() {
 
-    private LatLng getSavedLocation() {
-        if (sharPrefHelper.getLatitude() == 0 || sharPrefHelper.getLongitude() == 0) {
-            return getMyLocation();
-        } else {
-            return new LatLng(sharPrefHelper.getLatitude(), sharPrefHelper.getLongitude());
-        }
     }
 }

@@ -18,6 +18,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -37,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private final int MYPAGE_REQUEST_CODE = 103;
     private AppBarConfiguration mAppBarConfiguration;
 
+    private DrawerLayout drawer;
     private CircleImageView drawer_image;
     private TextView drawer_nickname, drawer_id;
+    private MenuItem login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                             .load(Common.SERVER_URL + Common.login_info.getUser_imagepath())
                             .into(drawer_image);
                 }
+                // 로그인 텍스트 -> 로그아웃
+                login.setTitle("로그아웃");
             }
         }
 
@@ -89,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_direction, R.id.navigation_board
         ).build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         // 사이드 네비게이션 (네비게이션 드로어) 설정
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
 
         /*
         NavigationView navigationView = findViewById(R.id.side_nav_view);
@@ -107,33 +112,85 @@ public class MainActivity extends AppCompatActivity {
         */
 
         ActionBarDrawerToggle toggle =
-                new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                new ActionBarDrawerToggle(this, drawer, toolbar,
                         R.string.navigation_draw_open, R.string.navigation_draw_close);
-        drawerLayout.addDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         // 사이드 네비게이션 클릭 이벤트
         NavigationView navigationView = findViewById(R.id.side_nav_view);
         View headView = navigationView.getHeaderView(0);
+        Menu menu = navigationView.getMenu();
         drawer_image = headView.findViewById(R.id.drawer_image);
         drawer_nickname = headView.findViewById(R.id.drawer_nickname);
         drawer_id = headView.findViewById(R.id.drawer_id);
+        login = menu.findItem(R.id.nav_login);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     // 내가 올린 게시글
+                    case R.id.nav_login :
+                        if (Common.login_info == null) {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivityForResult(intent, LOGIN_REQUEST_CODE);
+                        } else {
+                            Toast.makeText(MainActivity.this,
+                                    "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+                            Common.login_info = null;
+                            startActivity(getIntent());
+                            finish();
+                        }
+                        break;
+
+                    case R.id.nav_info :
+                        if (Common.login_info == null) {
+                            Toast.makeText(MainActivity.this,
+                                    "이 메뉴는 로그인한 사용자만 이용할 수 있습니다.",
+                                    Toast.LENGTH_SHORT).show();
+                            return false;
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                            startActivity(intent);
+                            break;
+                        }
+
                     case R.id.nav_post :
                         if (Common.login_info == null) {
                             Toast.makeText(MainActivity.this,
-                                    "이 메뉴는 로그인한 사용자만 이용할 수 있습니다.", Toast.LENGTH_SHORT)
-                                    .show();
+                                    "이 메뉴는 로그인한 사용자만 이용할 수 있습니다.",
+                                    Toast.LENGTH_SHORT).show();
                             return false;
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                            intent.putExtra("myPost", true);
+                            startActivity(intent);
                         }
-                        Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
-                        intent.putExtra("myPost", true);
-                        startActivity(intent);
+                        break;
+
+                    case R.id.nav_home :
+                        if (drawer.isDrawerOpen(GravityCompat.START))
+                            drawer.closeDrawer(GravityCompat.START);
+                        navController.navigate(R.id.navigation_home);
+                        break;
+
+                    case R.id.nav_alarm :
+                        if (drawer.isDrawerOpen(GravityCompat.START))
+                            drawer.closeDrawer(GravityCompat.START);
+                        navController.navigate(R.id.navigation_alarm);
+                        break;
+
+                    case R.id.nav_board :
+                        if (drawer.isDrawerOpen(GravityCompat.START))
+                            drawer.closeDrawer(GravityCompat.START);
+                        navController.navigate(R.id.navigation_board);
+                        break;
+
+                    case R.id.nav_iot :
+                        if (drawer.isDrawerOpen(GravityCompat.START))
+                            drawer.closeDrawer(GravityCompat.START);
+                        navController.navigate(R.id.navigation_direction);
                         break;
                 }
                 return true;
@@ -188,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
     // 뒤로가기 버튼이 눌렸을 때 앱 종료가 아닌 드로어가 닫히도록 설정
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

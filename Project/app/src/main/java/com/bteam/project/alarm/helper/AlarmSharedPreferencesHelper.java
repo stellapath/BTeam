@@ -36,6 +36,7 @@ public class AlarmSharedPreferencesHelper {
     private final String ADDRESS = "address";
     private final String ARRIVAL_TIME = "arrivalTime";
     private final String ARRIVAL_RANG = "arrivalRang";
+    private final String DISTANCE = "distance";
 
     public void setTurnedOn(boolean turnedOn) {
         editor.putBoolean(TURNED_ON, turnedOn).apply();
@@ -165,6 +166,14 @@ public class AlarmSharedPreferencesHelper {
 
     public boolean isArrivalRang() {
         return preferences.getBoolean(ARRIVAL_RANG, false);
+    }
+
+    public void setDistance(float distance) {
+        editor.putFloat(DISTANCE, distance).apply();
+    }
+
+    public float getDistance() {
+        return preferences.getFloat(DISTANCE, 0);
     }
 }
 

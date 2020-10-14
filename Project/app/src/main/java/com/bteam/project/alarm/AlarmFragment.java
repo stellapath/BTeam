@@ -73,7 +73,7 @@ public class AlarmFragment extends Fragment {
     private SwitchCompat aSwitch;
     private TextView wakeUpTime, wakeUpLeft, interval, repeat, duration, ringtone,
             vibration, memo, memoContent, destination, arrivalTime, arrivalLeft, weather;
-    private CountDownTimer wakeUpTimer, arrivalTimer;
+    private CountDownTimer wakeUpTimer;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -332,13 +332,7 @@ public class AlarmFragment extends Fragment {
 
         // 도착시간 가져오기
         long arrivalMillis = sharPrefHelper.getArrivalMillis();
-        arrivalTime.setText( timeCalc.toString(sharPrefHelper.getArrivalMillis(), 0) );
-        if (aSwitch.isChecked()) {
-            startArrivalTimer(arrivalMillis, arrivalLeft);
-        } else {
-            arrivalLeft.setText("알람이 꺼져 있습니다.");
-            if (wakeUpTimer != null) wakeUpTimer.cancel();
-        }
+        arrivalTime.setText( timeCalc.toString(arrivalMillis, 0) );
     }
 
     // 알람 시작
@@ -371,25 +365,6 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onTick(long l) {
                 wakeUpLeft.setText( timeCalc.getTimerString(l) );
-            }
-
-            @Override
-            public void onFinish() {
-                textView.setText("알람 시간이 지났습니다.");
-            }
-
-        }.start();
-    }
-
-    // 도착 타이머 시작
-    private void startArrivalTimer(long millis, final TextView textView) {
-        if (arrivalTimer != null) arrivalTimer.cancel();
-        arrivalTimer = new CountDownTimer(millis - System.currentTimeMillis(),
-                1000) {
-
-            @Override
-            public void onTick(long l) {
-                arrivalLeft.setText( timeCalc.getTimerString(l) );
             }
 
             @Override

@@ -1,10 +1,12 @@
 package com.bteam.project.user;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +37,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.forgot_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("비밀번호 찾기");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initView();
 
@@ -95,5 +98,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         builder.setMessage(msg);
         builder.setPositiveButton("에", null);
         builder.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

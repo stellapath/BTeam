@@ -25,6 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:textStyle="bold"
+            android:textColor="#000"
             android:text="선택"
             android:textSize="20sp" />
 

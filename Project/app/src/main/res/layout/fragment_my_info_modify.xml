@@ -27,9 +27,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="내 정보"
+                    android:text="내 정보 수정"
                     android:fontFamily="@font/proximanovaregular"
-                    android:textColor="#000"
+                    android:textColor="#2196F3"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -39,10 +39,10 @@
                     android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/profile_myInfo_modify"
+                    android:id="@+id/myInfo_modify_submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="수정"
+                    android:text="확인"
                     android:fontFamily="@font/proximanovaregular"
                     android:textColor="#E91E63"
                     android:layout_marginEnd="10dp"
@@ -50,44 +50,42 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/profile_myInfo_email"
-                android:layout_width="wrap_content"
+                android:id="@+id/myInfo_modify_email"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textSize="15sp"
+                android:textSize="18sp"
+                android:textStyle="bold
+"
                 android:text="이메일 : " />
 
-            <TextView
-                android:id="@+id/profile_myInfo_nickname"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/myInfo_modify_nickname"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textSize="15sp"
-                android:text="별명 : " />
+                android:hint="별명" />
 
-            <TextView
-                android:id="@+id/profile_myInfo_tel"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/myInfo_modify_tel"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textSize="15sp"
-                android:text="전화번호 : " />
+                android:hint="전화번호" />
 
-            <TextView
-                android:id="@+id/profile_myInfo_addr"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/myInfo_modify_addr"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textSize="15sp"
-                android:text="주소 : " />
+                android:hint="주소" />
 
-            <TextView
-                android:id="@+id/profile_myInfo_birth"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/myInfo_modify_birth"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textSize="15sp"
-                android:text="생일 : " />
+                android:hint="생일" />
 
         </LinearLayout>
 

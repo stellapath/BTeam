@@ -1,11 +1,13 @@
 package com.bteam.project.user;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +42,7 @@ public class EmailVerifyActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.email_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("이메일 인증");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (getIntent() != null) {
             s = (UserVO) getIntent().getSerializableExtra("vo");
@@ -162,5 +165,15 @@ public class EmailVerifyActivity extends AppCompatActivity {
             }
         };
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -54,29 +54,18 @@ public class DirectionFragment extends Fragment {
     public boolean onBT = false;
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
-    private Button sendBtn;
-    private ImageButton btButton;
-    private TextView textView, receiveData, getMsg;
+    private ImageButton btButton,sendBtn;
+    private TextView textView, receiveData, receiveData2;
     //sendData mThreadConnectedBluetooth;
     private EditText sendEdit;
     private int selfDis = 1;
 
-
-
     IntentFilter stateFilter;
-
     //////////////////////////////////////////////////
     private static final String TAG = "main:DirectionFrag";
 
-
-
-
-
-
-
     String mStrDelimiter = "\n";
     char mCharDelimiter = '\n';
-
 
     Thread mWorkerThread = null;
     byte[] readBuffer;
@@ -89,12 +78,12 @@ public class DirectionFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_direction, container, false);
 
-        btButton = root.findViewById(R.id.dire_imgBtn);
-        textView = root.findViewById(R.id.text_direction);
-        receiveData = root.findViewById(R.id.receiveData);
-        sendEdit = root.findViewById(R.id.sendEdit);
-        sendBtn = root.findViewById(R.id.sendBtn);
-        getMsg = root.findViewById(R.id.receiveData2);
+        btButton = root.findViewById(R.id.dire_imgBtn);         // 블루투스 연결 img버튼
+        // textView = root.findViewById(R.id.text_direction);   // 좌표값 출력 지도와 연동
+//        receiveData = root.findViewById(R.id.receiveData);      // 배터리 용량확인 text  불러쓴곳 없다
+        receiveData2 = root.findViewById(R.id.receiveData2);    // 아두이노로 부터 수신 배터리 용량
+//        sendEdit = root.findViewById(R.id.sendEdit);
+        sendBtn = root.findViewById(R.id.sendBtn);              // 배터리 확인 하기 위한 버튼
 
 
         // 리시버 등록
@@ -134,7 +123,6 @@ public class DirectionFragment extends Fragment {
                     }
 
                 } else { //DisConnect
-
                     try {
                         //mWorkerThread.interrupt();   // 데이터 송신 쓰레드 종료
                         selfDis = 0;
@@ -155,7 +143,8 @@ public class DirectionFragment extends Fragment {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
+//                 sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
+                sendData("a");         // 상태 확인문자 우노보드로 보내기
                 try {
                     Thread.sleep(1000); // 잠시대기
                 } catch (InterruptedException e) {
@@ -163,7 +152,7 @@ public class DirectionFragment extends Fragment {
                 }
                 beginListenForData();  // 상태 확인
 
-                sendEdit.setText("");
+//                 sendEdit.setText("");                Edit 초기화
 
 //                if(mThreadConnectedBluetooth != null) {
 //                    mThreadConnectedBluetooth.write(sendEdit.getText().toString());
@@ -233,7 +222,7 @@ public class DirectionFragment extends Fragment {
                 String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
                 Log.d("main:location", msg);
 
-                textView.setText("트라이 위치1 : " + latitude +", " + longitude);
+                // textView.setText("트라이 위치1 : " + latitude +", " + longitude);
             }
 
         }catch (SecurityException e){
@@ -419,7 +408,7 @@ public class DirectionFragment extends Fragment {
                                         Log.d("ACAC", "" + data.length());
 
 
-                                        getMsg.setText(data);
+                                        receiveData2.setText(data);
 
                                         //String tempData =  data.substring(0, 1);
                                         //Log.d("tempData", tempData);

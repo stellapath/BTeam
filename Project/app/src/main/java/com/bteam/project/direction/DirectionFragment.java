@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -24,20 +23,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bteam.project.MainActivity;
 import com.bteam.project.R;
-import com.bteam.project.alarm.YoutubeActivity;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -54,37 +52,59 @@ public class DirectionFragment extends Fragment {
     private InputStream mInputStream;
     private BluetoothDevice mRemoteDevice;
     public boolean onBT = false;
-    public byte[] sendByte = new byte[4];
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
-    private Button BTButton;
-    private Button button, lo_btn;
-    private TextView textView;
+    private Button sendBtn;
+    private ImageButton btButton;
+    private TextView textView, receiveData, getMsg;
+    //sendData mThreadConnectedBluetooth;
+    private EditText sendEdit;
+    private int selfDis = 1;
+
+
 
     IntentFilter stateFilter;
 
+    //////////////////////////////////////////////////
+    private static final String TAG = "main:DirectionFrag";
 
-    /**
-     * 연결 끊기면 Receiver로 받기
-     * 내 위치를 가져와서 일정 주기마다 저장하기 (xy좌표) --> SharedPreferences 쓰시면 될듯
-     * 하세요
-     */
+
+
+
+
+
+
+    String mStrDelimiter = "\n";
+    char mCharDelimiter = '\n';
+
+
+    Thread mWorkerThread = null;
+    byte[] readBuffer;
+    int readBufferPosition;
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_direction, container, false);
 
-        BTButton = root.findViewById(R.id.dire_btn);
+        btButton = root.findViewById(R.id.dire_imgBtn);
         textView = root.findViewById(R.id.text_direction);
+        receiveData = root.findViewById(R.id.receiveData);
+        sendEdit = root.findViewById(R.id.sendEdit);
+        sendBtn = root.findViewById(R.id.sendBtn);
+        getMsg = root.findViewById(R.id.receiveData2);
 
 
         // 리시버 등록
         regiserRec();
 
-        BTButton.setOnClickListener(new Button.OnClickListener() {
+        btButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "onClick: onBT " + onBT);
+
                 if (!onBT) { //Connect
                     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     if (mBluetoothAdapter == null) { //장치가 블루투스를 지원하지 않는 경우.
@@ -116,19 +136,57 @@ public class DirectionFragment extends Fragment {
                 } else { //DisConnect
 
                     try {
-                        BTSend.interrupt();   // 데이터 송신 쓰레드 종료
+                        //mWorkerThread.interrupt();   // 데이터 송신 쓰레드 종료
+                        selfDis = 0;
                         mInputStream.close();
                         mOutputStream.close();
                         bSocket.close();
                         onBT = false;
-                        BTButton.setText("connect");
                         Toast.makeText(getActivity(),"연결을 해제합니다.",Toast.LENGTH_SHORT).show();
-                    } catch (Exception ignored) {
+                        btButton.setImageResource(R.drawable.grayumbrella);
+                    } catch (Exception e) {
+                        Log.d(TAG, "onClick: disconnect " + e.getMessage());
                     }
 
                 }
             }
         });
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
+                try {
+                    Thread.sleep(1000); // 잠시대기
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                beginListenForData();  // 상태 확인
+
+                sendEdit.setText("");
+
+//                if(mThreadConnectedBluetooth != null) {
+//                    mThreadConnectedBluetooth.write(sendEdit.getText().toString());
+//
+//                }
+            }
+        });
+
+//        mBluetoothHandler = new Handler(){
+//            public void handleMessage(android.os.Message msg){
+//                if(msg.what == BT_MESSAGE_READ){
+//                    String readMessage = null;
+//                    try {
+//                        readMessage = new String((byte[]) msg.obj, "UTF-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                    }
+//                    receiveData.setText(readMessage);
+//                }
+//            }
+//        };
+
+
 
         return root;
     }
@@ -152,10 +210,11 @@ public class DirectionFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();   //입력된 action
             //입력된 action에 따라서 함수를 처리한다
-            if(action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
+            if(selfDis == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
 //                    Log.d("Bluetooth", "ACTION_ACL_DISCONNECTED");
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
-                startLocationService();
+                startLocationService();     // 좌표값 가져오는 메소드
+                btButton.setImageResource(R.drawable.discon);
 
             }
 
@@ -175,7 +234,6 @@ public class DirectionFragment extends Fragment {
                 Log.d("main:location", msg);
 
                 textView.setText("트라이 위치1 : " + latitude +", " + longitude);
-                Toast.makeText(getActivity(), "null값이 아닌상태", Toast.LENGTH_SHORT).show();
             }
 
         }catch (SecurityException e){
@@ -232,9 +290,6 @@ public class DirectionFragment extends Fragment {
 
     public void connectToSelectedDevice(final String selectedDeviceName) {
 
-
-
-
         mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
 
         //Progress Dialog
@@ -259,17 +314,19 @@ public class DirectionFragment extends Fragment {
                     mOutputStream = bSocket.getOutputStream();
                     mInputStream = bSocket.getInputStream();
 
-
                     getActivity().runOnUiThread(new Runnable() {
                         @SuppressLint({"ShowToast", "SetTextI18n"})
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(),selectedDeviceName + " 연결 완료",Toast.LENGTH_LONG).show();
-                            BTButton.setText("disconnect");
+                            btButton.setImageResource(R.drawable.blueumbrella);
                             asyncDialog.dismiss();
                         }
                     });
+                    //mThreadConnectedBluetooth = new sendData(mOutputStream, mInputStream);
+                    //mBluetoothHandler.obtainMessage(BT_CONNECTING_STATUS, 1, -1).sendToTarget();
 
+                    selfDis = 1;
                     onBT = true;
 
 
@@ -284,6 +341,7 @@ public class DirectionFragment extends Fragment {
 
     }
 
+
     public BluetoothDevice getDeviceFromBondedList(String name) {
         BluetoothDevice selectedDevice = null;
 
@@ -296,27 +354,116 @@ public class DirectionFragment extends Fragment {
         return selectedDevice;
     }
 
-    Thread BTSend  = new Thread(new Runnable() {
-        public void run() {
-            try {
-                mOutputStream.write(sendByte);    // 프로토콜 전송
-            } catch (Exception e) {
-                // 문자열 전송 도중 오류가 발생한 경우.
-            }
-        }
-    });
+    // 우노보드로 데이터 보내기
+    void sendData(String msg) {
+        try {
+            this.mOutputStream.write(new StringBuilder(String.valueOf(msg)).append(this.mStrDelimiter).toString().getBytes());
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "\ub370\uc774\ud130 \uc804\uc1a1 \uc911 \uc624\ub958\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.", Toast.LENGTH_SHORT).show();
 
-    //fixme : 데이터 전송
-    public void sendbtData(int btLightPercent) throws IOException {
-        //sendBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byte[] bytes = new byte[4];
-        bytes[0] = (byte) 0xa5;
-        bytes[1] = (byte) 0x5a;
-        bytes[2] = 1; //command
-        bytes[3] = (byte) btLightPercent;
-        sendByte = bytes;
-        BTSend.run();
+        }
     }
+
+    public void beginListenForData() {
+        final Handler handler = new Handler();
+        readBufferPosition = 0;                 // 버퍼 내 수신 문자 저장 위치.
+        readBuffer = new byte[1024];            // 수신 버퍼.
+        Log.d("beginListenForData", "1");
+        // 문자열 수신 쓰레드.
+        mWorkerThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("beginListenForData", "2");
+                // interrupt() 메소드를 이용 스레드를 종료시키는 예제이다.
+                // interrupt() 메소드는 하던 일을 멈추는 메소드이다.
+                // isInterrupted() 메소드를 사용하여 멈추었을 경우 반복문을 나가서 스레드가 종료하게 된다.
+//                while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    // InputStream.available() : 다른 스레드에서 blocking 하기 전까지 읽은 수 있는 문자열 개수를 반환함.
+                    int byteAvailable = mInputStream.available();   // 수신 데이터 확인
+
+
+                    if (byteAvailable > 0) {                        // 데이터가 수신된 경우.
+                        byte[] packetBytes = new byte[byteAvailable];
+                        // read(buf[]) : 입력스트림에서 buf[] 크기만큼 읽어서 저장 없을 경우에 -1 리턴.
+
+                        //                       Log.d("byteAvailable", String.valueOf(byteAvailable));
+                        Log.d("packetBytes", packetBytes.length + "");
+
+                        mInputStream.read(packetBytes);
+                        //                           readBufferPosition = 0;
+                        for (int i = 0; i < byteAvailable; i++) {
+                            byte b = packetBytes[i];
+                            if (b == mCharDelimiter) {
+                                Log.d("b", "b if : " + (int) b);
+//                                readBuffer[readBufferPosition++] = b;
+                                byte[] encodedBytes = new byte[readBufferPosition];
+                                //  System.arraycopy(복사할 배열, 복사시작점, 복사된 배열, 붙이기 시작점, 복사할 개수)
+                                //  readBuffer 배열을 처음 부터 끝까지 encodedBytes 배열로 복사.
+                                System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+
+                                final String data = new String(encodedBytes, "US-ASCII");
+
+                                //                                   Log.d("data", data + "\n");
+
+                                readBufferPosition = 0;
+
+                                handler.post(new Runnable() {
+                                    // 수신된 문자열 데이터에 대한 처리.
+                                    @Override
+                                    public void run() {
+                                        // mStrDelimiter = '\n';
+//                                            receiveHeart.setText(data.substring(0, 3));
+//                                            receiveTemperature.setText(data.substring(3, 8));
+                                        Log.d("run", "문자 처리");
+                                        Log.d("ACAC", "" + data.length());
+
+
+                                        getMsg.setText(data);
+
+                                        //String tempData =  data.substring(0, 1);
+                                        //Log.d("tempData", tempData);
+
+//                                            if(tempData.equals("c")){
+//                                                Log.d("Main"," 거실에 등 상태는 켜진상태입니다");
+//                                            }else if(tempData.equals("b")){
+//                                                Log.d("Main"," 거실에 등 상태는 꺼진상태입니다");
+//                                            }
+//
+//                                            if(tempData.equals("e")){
+//                                                Log.d("Main","가스렌지 상태는 꺼진상태입니다");
+//                                            }else if(tempData.equals("f")){
+//                                                Log.d("Main","가스렌지  상태는 켜진상태입니다");
+//                                            }
+                                    }
+
+                                });
+                            } else {
+                                readBuffer[readBufferPosition++] = b;
+                                Log.d("b", "b else : " + (int) b + " / readBufferPosition : " + readBufferPosition);
+                            }
+                        }
+                    }
+
+                } catch (Exception e) {    // 데이터 수신 중 오류 발생.
+                    Log.d("Error ", e.getMessage());
+                    //                       Toast.makeText(getApplicationContext(), "데이터 수신 중 오류가 발생 했습니다.", Toast.LENGTH_LONG).show();
+//                        finish();            // App 종료.
+                }
+                //               } //while문 종료
+            }
+
+        });
+        mWorkerThread.start();
+        try {
+            mWorkerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
 
     private void checkDangerousPermissions() {

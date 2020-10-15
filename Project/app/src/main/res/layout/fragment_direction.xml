@@ -50,6 +50,7 @@
 
 
                 <ImageButton
+                    android:id="@+id/exbtn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_emergency_off" />
@@ -71,6 +72,7 @@
 
 
                 <ImageButton
+                    android:id="@+id/exbtn2"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_flashlight_off" />

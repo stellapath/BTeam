@@ -203,7 +203,7 @@ public class DirectionFragment extends Fragment {
 //                    Log.d("Bluetooth", "ACTION_ACL_DISCONNECTED");
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
                 startLocationService();     // 좌표값 가져오는 메소드
-                btButton.setImageResource(R.drawable.discon);
+                btButton.setImageResource(R.drawable.disconumbrella);
 
             }
 

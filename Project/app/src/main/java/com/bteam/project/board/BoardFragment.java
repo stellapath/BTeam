@@ -65,19 +65,17 @@ public class BoardFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPopular();
+        getTraffic();
+    }
+
     private void initView(View root) {
         popular_recyclerView = root.findViewById(R.id.board_popular_recyclerView);
         traffic_recyclerView = root.findViewById(R.id.board_traffic_recyclerView);
         fab = root.findViewById(R.id.board_fab);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TRAFFIC_INSERT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            getPopular();
-            getTraffic();
-        }
     }
 
     private void getPopular() {

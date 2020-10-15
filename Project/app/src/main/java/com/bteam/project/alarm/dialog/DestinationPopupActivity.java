@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -68,6 +70,11 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         sharPrefHelper = new AlarmSharedPreferencesHelper(this);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        Toolbar toolbar = findViewById(R.id.destination_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("목적지 설정");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.destination_map);
         mapFragment.getMapAsync(this);
@@ -75,7 +82,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         Places.initialize(getApplicationContext(), getString(R.string.api_key));
         PlacesClient placesClient = Places.createClient(this);
 
-        setTitle("목적지 설정");
         initView();
 
         if (ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
@@ -189,5 +195,15 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
 
     private void getMyLocation() {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

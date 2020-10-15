@@ -78,7 +78,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <Button
+                android:id="@+id/traffic_detail_solve"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/traffic_detail_image"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="해결 되었습니다!" />
 
+            <Button
+                android:id="@+id/traffic_detail_like"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/traffic_detail_solve"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorAccent"
+                android:drawableStart="@drawable/ic_baseline_thumb_up_24"
+                android:drawablePadding="16dp"
+                android:paddingStart="120dp"
+                android:textAlignment="textStart"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="좋아요!" />
+
+            <TextView
+                android:id="@+id/traffic_detail_like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/traffic_detail_like"
+                android:layout_alignEnd="@+id/traffic_detail_like"
+                android:layout_alignBottom="@+id/traffic_detail_like"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="10dp"
+                android:text="0"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="18sp" />
 
         </RelativeLayout>
     </FrameLayout>

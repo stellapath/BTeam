@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -16,6 +17,7 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 public class YoutubeActivity extends YouTubeBaseActivity {
 
@@ -25,12 +27,17 @@ public class YoutubeActivity extends YouTubeBaseActivity {
     private YouTubePlayer player;
     private String videoID;
     private Button button;
+    private TextView description;
+    private ProgressWheel wheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube);
 
+        description = findViewById(R.id.youtube_description);
+        wheel = findViewById(R.id.youtube_wheel);
+        wheel.setVisibility(View.GONE);
         button = findViewById(R.id.youtube_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +50,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
     }
 
     private void getRecentWeatherYoutube() {
+        wheel.setVisibility(View.VISIBLE);
         final String url = "https://www.weather.go.kr/weather/warning/wtouchqNew.jsp";
         StringRequest request = new StringRequest(Request.Method.GET, url,
            new Response.Listener<String>() {
@@ -58,13 +66,23 @@ public class YoutubeActivity extends YouTubeBaseActivity {
                 begin = cut.indexOf(str) + str.length();
                 end = cut.indexOf("?");
                 videoID = cut.substring(begin, end);
-                Log.i(TAG, "onResponse: " + videoID);
+                // Log.i(TAG, "onResponse: " + videoID);
                 initPlayer();
+
+                // 대본 가져오기
+                str = "<div class=\"text-box-R\">";
+                begin = response.indexOf(str) + str.length();
+                end = response.indexOf("</div>", begin);
+                cut = response.substring(begin, end);
+                // Log.i(TAG, "onResponse: " + cut);
+                description.setText(cut.replaceAll("<br />", "\n"));
+                wheel.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "onErrorResponse: " + error);
+                wheel.setVisibility(View.GONE);
             }
         });
         VolleySingleton.getInstance(this).addToRequestQueue(request);

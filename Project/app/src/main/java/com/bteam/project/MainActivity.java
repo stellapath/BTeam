@@ -22,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bteam.project.alarm.YoutubeActivity;
 import com.bteam.project.user.LoginActivity;
 import com.bteam.project.user.MyPageActivity;
 import com.bteam.project.util.Common;
@@ -229,7 +230,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings :
-                Toast.makeText(this, "Settings 클릭됨", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, YoutubeActivity.class);
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);

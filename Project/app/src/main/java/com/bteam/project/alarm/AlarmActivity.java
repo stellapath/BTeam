@@ -110,8 +110,8 @@ public class AlarmActivity extends AppCompatActivity implements RingtonePlayer.O
 
         // 반복이 끝나고
         if (numberOfAlarms <= alreadyRangAlarms) {
-            // 날씨 예보가 켜져있고, 기상 알람일 경우에만 날씨 알람 띄우기
-            if (sharPrefHelper.isWeather() && !sharPrefHelper.isArrivalRang()) {
+            // 날씨 예보가 켜져있을 때
+            if (sharPrefHelper.isWeather()) {
                 Intent intent = new Intent(this, YoutubeActivity.class);
                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }

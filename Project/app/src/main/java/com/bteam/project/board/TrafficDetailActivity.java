@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,16 +17,21 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bteam.project.R;
 import com.bteam.project.board.model.TrafficVO;
 import com.bteam.project.network.VolleySingleton;
 import com.bteam.project.util.Common;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TrafficDetailActivity extends AppCompatActivity {
 
@@ -34,8 +40,9 @@ public class TrafficDetailActivity extends AppCompatActivity {
     private String num;
 
     private ImageButton close;
-    private TextView writer, date, content;
+    private TextView writer, date, content, like_count;
     private ImageView image;
+    private Button solve, like;
 
     private TrafficVO vo;
 
@@ -50,6 +57,25 @@ public class TrafficDetailActivity extends AppCompatActivity {
 
         initView();
         getTrafficDetail();
+
+        solve.setVisibility(View.GONE);
+
+        solve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
+                builder.setTitle("해결");
+                builder.setMessage("이 교통상황이 해결되었습니까?");
+                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        solve();
+                    }
+                });
+                builder.setNegativeButton("아니오", null);
+                builder.show();
+            }
+        });
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,12 +125,7 @@ public class TrafficDetailActivity extends AppCompatActivity {
                                         deleteTraffic();
                                     }
                                 });
-                                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                                builder.setNegativeButton("아니오", null);
                                 builder.show();
                                 break;
                         }
@@ -115,6 +136,14 @@ public class TrafficDetailActivity extends AppCompatActivity {
             }
         });
 
+        getLikeCount();
+
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setLike();
+            }
+        });
     }
 
     private void initView() {
@@ -123,6 +152,9 @@ public class TrafficDetailActivity extends AppCompatActivity {
         date = findViewById(R.id.traffic_detail_date);
         content = findViewById(R.id.traffic_detail_content);
         image = findViewById(R.id.traffic_detail_image);
+        solve = findViewById(R.id.traffic_detail_solve);
+        like = findViewById(R.id.traffic_detail_like);
+        like_count = findViewById(R.id.traffic_detail_like_count);
     }
 
     private void getTrafficDetail() {
@@ -134,11 +166,28 @@ public class TrafficDetailActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 vo = gson.fromJson(response.trim(), TrafficVO.class);
                 showTrafficDetail(vo);
+
+                if (Common.login_info != null) {
+                    if (Common.login_info.getUser_email().equals(vo.getTra_user_email())
+                            && vo.getTra_solve().equals("0")) {
+                        solve.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "onErrorResponse: " + error);
+                AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
+                builder.setTitle("불러오기 실패");
+                builder.setMessage("게시판을 불러오는 데 실패했습니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+                builder.show();
             }
         });
         VolleySingleton.getInstance(this).addToRequestQueue(request);
@@ -171,6 +220,93 @@ public class TrafficDetailActivity extends AppCompatActivity {
                         "게시글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void solve() {
+        final String url = Common.SERVER_URL + "andTrafficSolve?num=" + vo.getTra_num();
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+           new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("true")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
+                    builder.setTitle("해결 완료");
+                    builder.setMessage("해결되었습니다.");
+                    builder.setPositiveButton("확인", null);
+                    builder.show();
+                    solve.setVisibility(View.GONE);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
+                    builder.setTitle("해결 실패");
+                    builder.setMessage("알 수 없는 오류가 발생했습니다.");
+                    builder.setPositiveButton("확인", null);
+                    builder.show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(TrafficDetailActivity.this,
+                        "서버와의 통신이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void getLikeCount() {
+        final String url = Common.SERVER_URL + "andTrafficLikeSu";
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+           new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                like_count.setText(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                like_count.setText("ERROR");
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("email", Common.login_info.getUser_email());
+                map.put("num", vo.getTra_num());
+                return map;
+            }
+        };
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void setLike() {
+        final String url = Common.SERVER_URL + "andTrafficLike";
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+           new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.contains("1")) {
+                    getLikeCount();
+                } else {
+                    Toast.makeText(TrafficDetailActivity.this,
+                            "좋아요 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(TrafficDetailActivity.this,
+                        "서버와의 통신이 원활하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("email", Common.login_info.getUser_email());
+                map.put("num", vo.getTra_num());
+                return map;
+            }
+        };
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }

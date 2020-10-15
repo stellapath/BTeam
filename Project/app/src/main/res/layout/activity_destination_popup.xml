@@ -4,50 +4,97 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
     android:orientation="vertical"
     tools:context=".alarm.dialog.DestinationPopupActivity">
 
-    <fragment android:id="@+id/destination_autocomplete_begin"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        />
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/destination_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:orientation="vertical"
+        android:padding="8dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatToggleButton
-            android:id="@+id/destination_walk"
-            android:background=""
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <fragment android:id="@+id/destination_autocomplete_begin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
 
-        <androidx.appcompat.widget.AppCompatToggleButton
-            android:id="@+id/destination_car"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:textColor="#fff"
+                android:text="이동수단을 설정하세요"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:orientation="horizontal">
+
+                <ToggleButton
+                    android:id="@+id/destination_walk"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:textOff=" "
+                    android:textOn=" "
+                    android:background="@drawable/ic_running" />
+
+                <ToggleButton
+                    android:id="@+id/destination_car"
+                    android:layout_marginStart="24dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:textOff=" "
+                    android:textOn=" "
+                    android:background="@drawable/ic_circle_icons_car" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/destination_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"/>
+
+        <Button
+            android:id="@+id/destination_button"
+            android:layout_marginTop="8dp"
+            android:text="목적지 설정"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:background="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="60dp" />
 
     </LinearLayout>
-
-    <fragment
-        android:id="@+id/destination_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"/>
-
-    <Button
-        android:id="@+id/destination_button"
-        android:layout_marginTop="8dp"
-        android:text="목적지 설정"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000"
-        android:background="@color/colorAccent"
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
 
 </LinearLayout>

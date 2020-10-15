@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class TrafficVO implements Serializable {
 
 	private String tra_num, tra_user_email, tra_username, tra_user_image,
-			tra_content, tra_content_image, tra_time;
+			tra_content, tra_content_image, tra_time, tra_solve, tra_like;
 
 	public String getTra_num() {
 		return tra_num;
@@ -62,4 +62,20 @@ public class TrafficVO implements Serializable {
 	public void setTra_time(String tra_time) {
 		this.tra_time = tra_time;
 	}
+
+    public String getTra_solve() {
+        return tra_solve;
+    }
+
+    public void setTra_solve(String tra_solve) {
+        this.tra_solve = tra_solve;
+    }
+
+    public String getTra_like() {
+        return tra_like;
+    }
+
+    public void setTra_like(String tra_like) {
+        this.tra_like = tra_like;
+    }
 }

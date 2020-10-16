@@ -53,12 +53,14 @@
                     android:id="@+id/exbtn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_emergency_off" />
+                    android:src="@drawable/ic_emergency_off"
+                    android:background="@color/white"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="상단 LED조절" />
+                    android:text="상단 LED조절"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -75,11 +77,13 @@
                     android:id="@+id/exbtn2"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_flashlight_off" />
+                    android:src="@drawable/ic_flashlight_off"
+                    android:background="@color/white"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="전방 LED조절"/>
+                    android:text="전방 LED조절"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -94,14 +98,16 @@
 
 
                 <ImageButton
-                    android:id="@+id/sendBtn"
+                    android:id="@+id/checkBtn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_battery_chk" />
+                    android:src="@drawable/ic_battery_chk"
+                    android:background="@color/white"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="배터리 상태 확인"/>
+                    android:text="배터리 상태 확인"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/receiveData2"

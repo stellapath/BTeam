@@ -3,8 +3,10 @@ package com.bteam.project.alarm;
 import android.Manifest;
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +17,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -47,6 +50,7 @@ import com.bteam.project.util.Common;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 알람 울리는 순서
@@ -87,6 +91,14 @@ public class AlarmFragment extends Fragment {
 
         initView(root);
         initAlarm();
+
+        root.findViewById(R.id.tempButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ArrivalAlarmActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // 스위치 변경 이벤트
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -292,9 +304,11 @@ public class AlarmFragment extends Fragment {
 
         // 날씨예보 재생여부 가져오기
         if (sharPrefHelper.isWeather()) {
-            weather.setText("기상 알람이 끝난 후 날씨 예보가 재생됩니다.");
+            weather.setText("날씨 예보 켜짐");
+            weatherView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.color_accent));
         } else {
-            weather.setText("날씨 예보가 꺼졌습니다.");
+            weather.setText("날씨 예보 꺼짐");
+            weatherView.setBackgroundColor(Color.TRANSPARENT);
         }
 
         // 반복 간격 가져오기
@@ -316,8 +330,13 @@ public class AlarmFragment extends Fragment {
         }
 
         // 진동 여부 가져오기
-        if ( sharPrefHelper.isVibrate() ) vibration.setText("진동이 울립니다.");
-        else vibration.setText("진동이 울리지 않습니다.");
+        if ( sharPrefHelper.isVibrate() ) {
+            vibration.setText("켜짐");
+            vibrationView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.color_accent));
+        } else {
+            vibration.setText("꺼짐");
+            vibrationView.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         // 메모 가져오기
         if (TextUtils.isEmpty(sharPrefHelper.getMemo())) {
@@ -333,27 +352,55 @@ public class AlarmFragment extends Fragment {
         // 도착시간 가져오기
         long arrivalMillis = sharPrefHelper.getArrivalMillis();
         arrivalTime.setText( timeCalc.toString(arrivalMillis, 0) );
+
+        // 목적지까지의 시간 가져오기
+        String transportation = null;
+        if (sharPrefHelper.getTransportation().equals("walk")) transportation = "걸어서 ";
+        else if (sharPrefHelper.getTransportation().equals("car")) transportation = "자동차로 ";
+        long timeTaken = 0;
+        if (sharPrefHelper.getTransportation().equals("walk"))
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 4) * 60 * 60);
+        else if (sharPrefHelper.getTransportation().equals("car"))
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 30) * 60 * 60);
+        arrivalLeft.setText("목적지 까지 " + transportation + TimeUnit.MILLISECONDS.toMinutes(timeTaken)
+                + "분 거리입니다.");
     }
 
     // 알람 시작
     private void startAlarm() {
-        long wakeUpTimeMillis = sharPrefHelper.getWakeUpMillis();
-        long newMillis = timeCalc.isBefore(wakeUpTimeMillis);
-        sharPrefHelper.setWakeUpMillis(newMillis);
-        alarmManager.start(newMillis, Common.REQUEST_WAKEUP_ALARM);
+        long newWakeUp = timeCalc.isBefore(sharPrefHelper.getWakeUpMillis());
+        long newArrival = timeCalc.isBefore(sharPrefHelper.getArrivalMillis());
+        sharPrefHelper.setWakeUpMillis(newWakeUp);
+        sharPrefHelper.setArrivalMillis(newArrival);
+        alarmManager.start(newWakeUp, Common.REQUEST_WAKEUP_ALARM);
+        alarmManager.start(newArrival - getTimeTaken(), Common.REQUEST_ARRIVAL_ALARM);
         sharPrefHelper.setAlreadyRangAlarms(0);
-        sharPrefHelper.setArrivalRang(false);
     }
 
     // 알람 종료
     private void stopAlarm() {
         alarmManager.stop(Common.REQUEST_WAKEUP_ALARM);
+        alarmManager.stop(Common.REQUEST_ARRIVAL_ALARM);
     }
 
     // 알람 재시작
     private void resetAlarm() {
         if ( !sharPrefHelper.isTurnedOn() ) return;
-        alarmManager.reset(sharPrefHelper.getWakeUpMillis(), Common.REQUEST_WAKEUP_ALARM);
+        long newWakeUp = timeCalc.isBefore(sharPrefHelper.getWakeUpMillis());
+        long newArrival = timeCalc.isBefore(sharPrefHelper.getArrivalMillis());
+        alarmManager.reset(newWakeUp, Common.REQUEST_WAKEUP_ALARM);
+        alarmManager.reset(newArrival - getTimeTaken(), Common.REQUEST_ARRIVAL_ALARM);
+    }
+
+    // 걸리는 시간 구하기
+    private long getTimeTaken() {
+        long timeTaken = 0;
+        // distance / transportation
+        if (sharPrefHelper.getTransportation().equals("walk"))
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 4) * 60 * 60);
+        else if (sharPrefHelper.getTransportation().equals("car"))
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 30) * 60 * 60);
+        return timeTaken;
     }
 
     // 기상 타이머 시작

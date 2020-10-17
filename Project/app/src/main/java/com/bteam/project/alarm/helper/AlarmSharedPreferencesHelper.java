@@ -35,8 +35,8 @@ public class AlarmSharedPreferencesHelper {
     private final String LONGITUDE = "longitude";
     private final String ADDRESS = "address";
     private final String ARRIVAL_TIME = "arrivalTime";
-    private final String ARRIVAL_RANG = "arrivalRang";
     private final String DISTANCE = "distance";
+    private final String TRANSPORTATION = "transportation";
 
     public void setTurnedOn(boolean turnedOn) {
         editor.putBoolean(TURNED_ON, turnedOn).apply();
@@ -160,20 +160,20 @@ public class AlarmSharedPreferencesHelper {
         return preferences.getLong(ARRIVAL_TIME, System.currentTimeMillis());
     }
 
-    public void setArrivalRang(boolean isRang) {
-        editor.putBoolean(ARRIVAL_RANG, isRang).apply();
-    }
-
-    public boolean isArrivalRang() {
-        return preferences.getBoolean(ARRIVAL_RANG, false);
-    }
-
     public void setDistance(float distance) {
         editor.putFloat(DISTANCE, distance).apply();
     }
 
     public float getDistance() {
         return preferences.getFloat(DISTANCE, 0);
+    }
+
+    public void setTransportation(String transportation) {
+        editor.putString(TRANSPORTATION, transportation).apply();
+    }
+
+    public String getTransportation() {
+        return preferences.getString(TRANSPORTATION, "walk");
     }
 }
 

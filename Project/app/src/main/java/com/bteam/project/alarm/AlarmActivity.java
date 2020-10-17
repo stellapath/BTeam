@@ -2,6 +2,7 @@ package com.bteam.project.alarm;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TimeUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,7 +30,6 @@ public class AlarmActivity extends AppCompatActivity implements RingtonePlayer.O
     private MyAlarmManager alarmManager;
     private TimeCalculator timeCalc;
     private RingtonePlayer ringtonePlayer;
-    private MyNotificationManager notificationManager;
 
     private Button finishButton;
 
@@ -49,9 +49,6 @@ public class AlarmActivity extends AppCompatActivity implements RingtonePlayer.O
         alarmManager = new MyAlarmManager(this);
         timeCalc = new TimeCalculator();
         ringtonePlayer = new RingtonePlayer(this);
-        notificationManager = new MyNotificationManager(this);
-
-        notificationManager.cancel();
 
         getTime();
         showOnLockedScreen();
@@ -87,11 +84,6 @@ public class AlarmActivity extends AppCompatActivity implements RingtonePlayer.O
             alarmManager.reset(System.currentTimeMillis() + intervalMillis,
                     Common.REQUEST_WAKEUP_ALARM);
             sharPrefHelper.setAlreadyRangAlarms(alreadyRangAlarms + 1);
-        } else if (!sharPrefHelper.isArrivalRang()) {
-            // 도착 알람이 울리지 않았다면 도착알람 울리기
-            // 거리 계산 메소드
-            alarmManager.reset(arrivalMillis, Common.REQUEST_WAKEUP_ALARM);
-            sharPrefHelper.setArrivalRang(true);
         } else {
             // 출발 알람이 울리면 기상시간에서 하루를 더한 뒤 알람 재설정
             Calendar calendar = Calendar.getInstance();

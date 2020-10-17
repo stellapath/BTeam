@@ -27,7 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".user.ForgotPasswordActivity"></activity>
+        <activity android:name=".alarm.MemoActivity"></activity>
+        <activity android:name=".alarm.ArrivalAlarmActivity" />
+        <activity android:name=".user.ForgotPasswordActivity" />
         <activity android:name=".user.EmailVerifyActivity" />
         <activity android:name=".board.TrafficModifyActivity" />
         <activity android:name=".alarm.YoutubeActivity" />
@@ -38,7 +40,6 @@
             android:required="false" />
 
         <activity android:name=".direction.SharedXYActivity" />
-
         <activity android:name=".OnBoardActivity" />
         <activity
             android:name=".SplashActivity"

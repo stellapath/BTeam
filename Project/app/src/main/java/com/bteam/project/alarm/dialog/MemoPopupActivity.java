@@ -76,7 +76,7 @@ public class MemoPopupActivity extends AppCompatActivity {
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tts.speak(memoContent.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak(memoContent.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, "ttsEnd");
             }
         });
     }

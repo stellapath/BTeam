@@ -136,11 +136,13 @@ public class TrafficDetailActivity extends AppCompatActivity {
             }
         });
 
-        getLikeCount();
-
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Common.login_info == null) {
+                    showAlert("로그인 필요", "로그인이 필요한 기능입니다.");
+                    return;
+                }
                 setLike();
             }
         });
@@ -173,6 +175,8 @@ public class TrafficDetailActivity extends AppCompatActivity {
                         solve.setVisibility(View.VISIBLE);
                     }
                 }
+
+                getLikeCount();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -230,18 +234,10 @@ public class TrafficDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 if (response.contains("true")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
-                    builder.setTitle("해결 완료");
-                    builder.setMessage("해결되었습니다.");
-                    builder.setPositiveButton("확인", null);
-                    builder.show();
+                    showAlert("해결 완료", "해결되었습니다.");
                     solve.setVisibility(View.GONE);
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(TrafficDetailActivity.this);
-                    builder.setTitle("해결 실패");
-                    builder.setMessage("알 수 없는 오류가 발생했습니다.");
-                    builder.setPositiveButton("확인", null);
-                    builder.show();
+                    showAlert("해결 실패", "알 수 없는 오류가 발생했습니다.");
                 }
             }
         }, new Response.ErrorListener() {
@@ -255,8 +251,8 @@ public class TrafficDetailActivity extends AppCompatActivity {
     }
 
     private void getLikeCount() {
-        final String url = Common.SERVER_URL + "andTrafficLikeSu";
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        final String url = Common.SERVER_URL + "andTrafficLikeSu?num=" + vo.getTra_num();
+        StringRequest request = new StringRequest(Request.Method.GET, url,
            new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -267,15 +263,7 @@ public class TrafficDetailActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 like_count.setText("ERROR");
             }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> map = new HashMap<>();
-                map.put("email", Common.login_info.getUser_email());
-                map.put("num", vo.getTra_num());
-                return map;
-            }
-        };
+        });
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
@@ -308,5 +296,13 @@ public class TrafficDetailActivity extends AppCompatActivity {
             }
         };
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void showAlert(String title, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setPositiveButton("확인", null);
+        builder.show();
     }
 }

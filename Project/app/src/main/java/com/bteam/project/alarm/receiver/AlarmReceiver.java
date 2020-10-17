@@ -10,7 +10,9 @@ import android.os.Vibrator;
 import android.util.Log;
 
 import com.bteam.project.alarm.AlarmActivity;
+import com.bteam.project.alarm.ArrivalAlarmActivity;
 import com.bteam.project.alarm.service.MyNotificationManager;
+import com.bteam.project.util.Common;
 
 /**
  * 알람 시간이 되면 실행할 작업
@@ -31,7 +33,15 @@ public class AlarmReceiver extends BroadcastReceiver {
             context.startActivity(alarmIntent);
         }
         */
-        Intent ringer = new Intent(context, AlarmActivity.class);
-        context.startActivity(ringer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        switch (intent.getIntExtra("requestCode", 0)) {
+            case Common.REQUEST_WAKEUP_ALARM :
+                Intent ringer = new Intent(context, AlarmActivity.class);
+                context.startActivity(ringer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                break;
+            case Common.REQUEST_ARRIVAL_ALARM :
+                Intent ringer2 = new Intent(context, ArrivalAlarmActivity.class);
+                context.startActivity(ringer2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                break;
+        }
     }
 }

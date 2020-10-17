@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,6 +63,7 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
     private LatLng placeLatLng;
     private Location myLocation;
     private String placeAddress;
+    private ToggleButton walk, car;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,28 +87,9 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
 
         initView();
 
-        if (ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            String[] permissions = {
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
-            ActivityCompat.requestPermissions(DestinationPopupActivity.this, permissions, 2020);
-            finish();
-            return;
-        }
+        getMyLocation();
 
-        fusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(DestinationPopupActivity.this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        myLocation = location;
-                        Log.i(TAG, "onSuccess: " + location);
-                    }
-                });
-
+        // 주소 자동완성
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.destination_autocomplete_begin);
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG, Place.Field.ID,
@@ -124,6 +108,7 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
             }
         });
 
+        // 목적지 설정 버튼 클릭
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,15 +117,27 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
                             "지역이 선택 또는 변경되지 않았습니다.",
                             Toast.LENGTH_SHORT).show();
                 } else if (myLocation != null) {
+                    // 현재 위치에서 목적지까지 거리 계산
                     Location target = new Location("");
                     target.setLatitude(placeLatLng.latitude);
                     target.setLongitude(placeLatLng.longitude);
                     float distance = myLocation.distanceTo(target);
+
+                    // 설정에 좌표 저장
                     sharPrefHelper.setLatitude(placeLatLng.latitude);
                     sharPrefHelper.setLongitude(placeLatLng.longitude);
                     sharPrefHelper.setDistance(distance);
+                    sharPrefHelper.setAddress(placeAddress);
                     Toast.makeText(DestinationPopupActivity.this,
                             "목적지가 설정되었습니다.", Toast.LENGTH_SHORT).show();
+
+                    // 이동수단 저장
+                    if (walk.isChecked()) {
+                        sharPrefHelper.setTransportation("walk");
+                    } else if (car.isChecked()) {
+                        sharPrefHelper.setTransportation("car");
+                    }
+
                     setResult(RESULT_OK);
                     finish();
                     Log.i(TAG, "distance: " + distance);
@@ -148,10 +145,63 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
             }
         });
 
+        // 선택된 토글버튼 불러오기
+        if (sharPrefHelper.getTransportation().equals("walk"))
+            walk.setChecked(true);
+        else if (sharPrefHelper.getTransportation().equals("car"))
+            car.setChecked(true);
+
+        // 걷기 토글 버튼
+        walk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    car.setChecked(false);
+                }
+            }
+        });
+
+        // 자가용 토글 버튼
+        car.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    walk.setChecked(false);
+                }
+            }
+        });
     }
 
     private void initView() {
         button = findViewById(R.id.destination_button);
+        walk = findViewById(R.id.destination_walk);
+        car = findViewById(R.id.destination_car);
+    }
+
+    private void getMyLocation() {
+        // 위치 권한 체크
+        if (ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DestinationPopupActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String[] permissions = {
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
+            ActivityCompat.requestPermissions(DestinationPopupActivity.this, permissions, 2020);
+            finish();
+            return;
+        }
+
+        // 내 위치 구하기
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(DestinationPopupActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        myLocation = location;
+                        Log.i(TAG, "onSuccess: " + location);
+                    }
+                });
     }
 
     @Override
@@ -191,10 +241,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         map.addMarker(new MarkerOptions().position(latLng).title(title).snippet(addr))
                 .showInfoWindow();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-    }
-
-    private void getMyLocation() {
-
     }
 
     @Override

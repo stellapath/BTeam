@@ -63,7 +63,7 @@
                     android:layout_height="50dp"
                     android:textOff=" "
                     android:textOn=" "
-                    android:background="@drawable/ic_running" />
+                    android:background="@drawable/walk_toggle" />
 
                 <ToggleButton
                     android:id="@+id/destination_car"
@@ -72,7 +72,7 @@
                     android:layout_height="50dp"
                     android:textOff=" "
                     android:textOn=" "
-                    android:background="@drawable/ic_circle_icons_car" />
+                    android:background="@drawable/car_toggle" />
 
             </LinearLayout>
 

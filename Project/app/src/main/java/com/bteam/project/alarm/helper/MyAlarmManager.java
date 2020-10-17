@@ -28,9 +28,10 @@ public class MyAlarmManager {
     }
 
     public void start(long millis, int requestCode) {
-        Log.i(TAG, "start");
+        Log.i(TAG, "start " + requestCode);
 
         Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("requestCode", requestCode);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setAlarmClock(new AlarmManager
@@ -38,7 +39,7 @@ public class MyAlarmManager {
     }
 
     public void stop(int requestCode) {
-        Log.i(TAG, "stop");
+        Log.i(TAG, "stop " + requestCode);
 
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,

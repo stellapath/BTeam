@@ -50,7 +50,7 @@
 
 
                 <ImageButton
-                    android:id="@+id/exbtn"
+                    android:id="@+id/redLed"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_emergency_off"
@@ -74,7 +74,7 @@
 
 
                 <ImageButton
-                    android:id="@+id/exbtn2"
+                    android:id="@+id/forwardLed"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_flashlight_off"
@@ -98,7 +98,7 @@
 
 
                 <ImageButton
-                    android:id="@+id/checkBtn"
+                    android:id="@+id/checkBattery"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_battery_chk"

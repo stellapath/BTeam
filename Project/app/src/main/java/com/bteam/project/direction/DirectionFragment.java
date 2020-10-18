@@ -38,6 +38,7 @@ import com.bteam.project.R;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -54,9 +55,8 @@ public class DirectionFragment extends Fragment {
     public boolean onBT = false;
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
-    private ImageButton btButton,sendBtn;
+    private ImageButton btButton,checkBattery,redLed, forwardLed;
     private TextView textView, receiveData, receiveData2;
-    //sendData mThreadConnectedBluetooth;
     private EditText sendEdit;
     private int selfDis = 1;
 
@@ -80,10 +80,10 @@ public class DirectionFragment extends Fragment {
 
         btButton = root.findViewById(R.id.dire_imgBtn);         // 블루투스 연결 img버튼
         // textView = root.findViewById(R.id.text_direction);   // 좌표값 출력 지도와 연동
-//        receiveData = root.findViewById(R.id.receiveData);      // 배터리 용량확인 text  불러쓴곳 없다
         receiveData2 = root.findViewById(R.id.receiveData2);    // 아두이노로 부터 수신 배터리 용량
-//        sendEdit = root.findViewById(R.id.sendEdit);
-        sendBtn = root.findViewById(R.id.sendBtn);              // 배터리 확인 하기 위한 버튼
+        checkBattery = root.findViewById(R.id.checkBattery);    // 배터리 확인 하기 위한 버튼
+        redLed = root.findViewById(R.id.redLed);                // 상단 LED 조절 imgBtn
+        forwardLed = root.findViewById(R.id.forwardLed);        // 전방 LED 조절 imgBtn
 
 
         // 리시버 등록
@@ -140,9 +140,10 @@ public class DirectionFragment extends Fragment {
             }
         });
 
-        sendBtn.setOnClickListener(new View.OnClickListener() {
+        checkBattery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
 //                 sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
                 sendData("a");         // 상태 확인문자 우노보드로 보내기
                 try {
@@ -152,12 +153,32 @@ public class DirectionFragment extends Fragment {
                 }
                 beginListenForData();  // 상태 확인
 
+
+
 //                 sendEdit.setText("");                Edit 초기화
 
 //                if(mThreadConnectedBluetooth != null) {
 //                    mThreadConnectedBluetooth.write(sendEdit.getText().toString());
 //
 //                }
+            }
+        });
+
+        // 상단 LED 버튼 클릭시
+        redLed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                redLedSelect();
+
+            }
+        });
+
+        // 전방 LED 버튼 클릭시
+        forwardLed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                forwardLedSelect();
+
             }
         });
 
@@ -178,6 +199,17 @@ public class DirectionFragment extends Fragment {
 
 
         return root;
+    }
+
+    // 상단 LED 클릭시 선택
+    void redLedSelect(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        
+    }
+
+    // 전방 LED 클릭시 선택
+    void forwardLedSelect(){
+
     }
 
     public void regiserRec(){

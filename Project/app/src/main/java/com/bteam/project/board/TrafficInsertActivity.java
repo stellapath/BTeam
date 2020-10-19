@@ -119,7 +119,8 @@ public class TrafficInsertActivity extends AppCompatActivity
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("tra_user_email", Common.login_info.getUser_email())
                     .addFormDataPart("tra_username", Common.login_info.getUser_nickname())
-                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath())
+                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath()
+                            == null ? "" : Common.login_info.getUser_imagepath())
                     .addFormDataPart("tra_content", content.getText().toString())
                     .addFormDataPart("file", file.getName(), RequestBody.create(file, MultipartBody.FORM))
                     .build();
@@ -128,7 +129,8 @@ public class TrafficInsertActivity extends AppCompatActivity
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("tra_user_email", Common.login_info.getUser_email())
                     .addFormDataPart("tra_username", Common.login_info.getUser_nickname())
-                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath())
+                    .addFormDataPart("tra_user_image", Common.login_info.getUser_imagepath()
+                            == null ? "" : Common.login_info.getUser_imagepath())
                     .addFormDataPart("tra_content", content.getText().toString())
                     .build();
         }

@@ -35,7 +35,6 @@ public class MemoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.memo_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("저장된 메모");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initView();
 
@@ -52,7 +51,6 @@ public class MemoActivity extends AppCompatActivity {
                         tts.setSpeechRate(1.2f);
                     }
                 }
-
             }
         });
 

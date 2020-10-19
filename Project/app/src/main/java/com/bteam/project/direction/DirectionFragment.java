@@ -57,14 +57,14 @@ public class DirectionFragment extends Fragment {
     private static final int REQUEST_ENABLE_BT = 1;
     private ImageButton btButton,checkBattery,redLed, forwardLed;
     private TextView textView, receiveData, receiveData2;
-    private EditText sendEdit;
-    private int selfDis = 1;
+    private int selfDis = 0;
+    private String data;
+    private double battery;
 
     IntentFilter stateFilter;
     //////////////////////////////////////////////////
     private static final String TAG = "main:DirectionFrag";
 
-    String mStrDelimiter = "\n";
     char mCharDelimiter = '\n';
 
     Thread mWorkerThread = null;
@@ -143,15 +143,35 @@ public class DirectionFragment extends Fragment {
         checkBattery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(selfDis == 1) {
 //                 sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
-                sendData("a");         // 상태 확인문자 우노보드로 보내기
-                try {
-                    Thread.sleep(1000); // 잠시대기
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    sendData("i");         // 상태 확인문자 우노보드로 보내기
+                    try {
+                        Thread.sleep(1000); // 잠시대기
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    beginListenForData();  // 상태 확인
+
+                    battery = Double.parseDouble(data);
+
+                    if (battery >= 8.6) {
+                        Toast.makeText(getActivity(), "배터리 상태가 아주 좋아요", Toast.LENGTH_SHORT).show();
+                        checkBattery.setImageResource(R.drawable.ic_battery5);
+                    } else if (battery < 8.6 && battery >= 6.6) {
+                        Toast.makeText(getActivity(), "배터리 상태가 양호합니다.", Toast.LENGTH_SHORT).show();
+                        checkBattery.setImageResource(R.drawable.ic_battery3);
+                    } else if (battery < 6.6 && battery >= 6.2) {
+                        Toast.makeText(getActivity(), "배터리가 20프로 이하입니다. \n교체를 준비해주세요", Toast.LENGTH_SHORT).show();
+                        checkBattery.setImageResource(R.drawable.ic_battery1);
+                    } else if (battery < 6.2) {
+                        Toast.makeText(getActivity(), "배터리교체가 필요합니다.", Toast.LENGTH_SHORT).show();
+                        checkBattery.setImageResource(R.drawable.ic_battery_chenge);
+                    }
+                }else {
+                    Toast.makeText(getActivity(), "먼저 블루투스를 연결해 주세요.", Toast.LENGTH_SHORT).show();
                 }
-                beginListenForData();  // 상태 확인
+
 
 
 
@@ -168,7 +188,11 @@ public class DirectionFragment extends Fragment {
         redLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                redLedSelect();
+                if(selfDis == 1){
+                    redLedSelect();
+                }else{
+                    Toast.makeText(getActivity(),"먼저 블루투스를 연결해 주세요.",Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -177,7 +201,12 @@ public class DirectionFragment extends Fragment {
         forwardLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                forwardLedSelect();
+                if(selfDis == 1){
+                    forwardLedSelect();
+                }else{
+                    Toast.makeText(getActivity(),"먼저 블루투스를 연결해 주세요.",Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
@@ -203,12 +232,75 @@ public class DirectionFragment extends Fragment {
 
     // 상단 LED 클릭시 선택
     void redLedSelect(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("상단 LED 조절");
+
+        final CharSequence[] items = { "켜기", "깜박이기", "끄기"};
+
+        builder.setItems(items,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(id == 0){
+                            sendData("e");
+                            redLed.setImageResource(R.drawable.ic_emergency_on);
+                        }else if(id == 1){
+                            sendData("f");
+                            redLed.setImageResource(R.drawable.ic_emergency_on);
+                        }else if(id == 2){
+                            sendData("g");
+                            redLed.setImageResource(R.drawable.ic_emergency_off);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
     // 전방 LED 클릭시 선택
     void forwardLedSelect(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("전방 LED 조절");
+
+        final CharSequence[] items = { "1단계", "2단계", "3단계", "LED 끄기"};
+
+        builder.setItems(items,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(id == 0){
+                            sendData("a");
+                            forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                        }else if( id == 1){
+                            sendData("b");
+                            forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                        }else if( id == 2){
+                            sendData("c");
+                            forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                        }else if( id == 3){
+                            sendData("d");
+                            forwardLed.setImageResource(R.drawable.ic_flashlight_off);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
 
     }
 
@@ -236,6 +328,7 @@ public class DirectionFragment extends Fragment {
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
                 startLocationService();     // 좌표값 가져오는 메소드
                 btButton.setImageResource(R.drawable.disconumbrella);
+                selfDis = 0;
 
             }
 
@@ -376,9 +469,9 @@ public class DirectionFragment extends Fragment {
     }
 
     // 우노보드로 데이터 보내기
-    void sendData(String msg) {
+    public void sendData(String msg) {
         try {
-            this.mOutputStream.write(new StringBuilder(String.valueOf(msg)).append(this.mStrDelimiter).toString().getBytes());
+            this.mOutputStream.write(new StringBuilder(String.valueOf(msg)).toString().getBytes());
         } catch (Exception e) {
             Toast.makeText(getActivity(), "\ub370\uc774\ud130 \uc804\uc1a1 \uc911 \uc624\ub958\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.", Toast.LENGTH_SHORT).show();
 
@@ -423,7 +516,7 @@ public class DirectionFragment extends Fragment {
                                 //  readBuffer 배열을 처음 부터 끝까지 encodedBytes 배열로 복사.
                                 System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
 
-                                final String data = new String(encodedBytes, "US-ASCII");
+                                data = new String(encodedBytes, "US-ASCII");
 
                                 //                                   Log.d("data", data + "\n");
 
@@ -441,6 +534,7 @@ public class DirectionFragment extends Fragment {
 
 
                                         receiveData2.setText(data);
+                                        Log.d("받은데이터",data);
 
                                         //String tempData =  data.substring(0, 1);
                                         //Log.d("tempData", tempData);

@@ -103,11 +103,11 @@
                     android:layout_height="50dp"
                     android:src="@drawable/ic_battery_chk"
                     android:background="@color/white"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="배터리 상태 확인"
-                    android:textStyle="bold"/>
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="배터리 상태 확인"-->
+<!--                    android:textStyle="bold"/>-->
 
                 <TextView
                     android:id="@+id/receiveData2"

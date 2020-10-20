@@ -1,6 +1,5 @@
 package com.bteam.project.direction;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,15 +11,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -29,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +33,6 @@ import com.bteam.project.R;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -55,9 +49,9 @@ public class DirectionFragment extends Fragment {
     public boolean onBT = false;
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
-    private ImageButton btButton,checkBattery,redLed, forwardLed;
-    private TextView textView, receiveData, receiveData2;
-    private int selfDis = 0;
+    private ImageButton btButton, checkBattery, redLed, forwardLed;
+    private TextView batteryText;
+    private int btChk, ledChk = 0;                        // 블루투스, LED on or off 체크
     private String data;
     private double battery;
 
@@ -79,8 +73,7 @@ public class DirectionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_direction, container, false);
 
         btButton = root.findViewById(R.id.dire_imgBtn);         // 블루투스 연결 img버튼
-        // textView = root.findViewById(R.id.text_direction);   // 좌표값 출력 지도와 연동
-        receiveData2 = root.findViewById(R.id.receiveData2);    // 아두이노로 부터 수신 배터리 용량
+        batteryText = root.findViewById(R.id.receiveData2);    // 아두이노로 부터 수신 배터리 용량
         checkBattery = root.findViewById(R.id.checkBattery);    // 배터리 확인 하기 위한 버튼
         redLed = root.findViewById(R.id.redLed);                // 상단 LED 조절 imgBtn
         forwardLed = root.findViewById(R.id.forwardLed);        // 전방 LED 조절 imgBtn
@@ -124,8 +117,7 @@ public class DirectionFragment extends Fragment {
 
                 } else { //DisConnect
                     try {
-                        //mWorkerThread.interrupt();   // 데이터 송신 쓰레드 종료
-                        selfDis = 0;
+                        btChk = 0;
                         mInputStream.close();
                         mOutputStream.close();
                         bSocket.close();
@@ -143,44 +135,47 @@ public class DirectionFragment extends Fragment {
         checkBattery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(selfDis == 1) {
-//                 sendData(sendEdit.getText().toString().trim());         // 상태 확인문자 우노보드로 보내기
-                    sendData("i");         // 상태 확인문자 우노보드로 보내기
-                    try {
-                        Thread.sleep(1000); // 잠시대기
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    beginListenForData();  // 상태 확인
 
-                    battery = Double.parseDouble(data);
+                if (btChk == 1) {
+                    if(ledChk == 0) {
+                        sendData("i");         // 상태 확인문자 우노보드로 보내기
+                        try {
+                            Thread.sleep(1000); // 잠시대기
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        beginListenForData();  // 상태 확인
 
-                    if (battery >= 8.6) {
-                        Toast.makeText(getActivity(), "배터리 상태가 아주 좋아요", Toast.LENGTH_SHORT).show();
-                        checkBattery.setImageResource(R.drawable.ic_battery5);
-                    } else if (battery < 8.6 && battery >= 6.6) {
-                        Toast.makeText(getActivity(), "배터리 상태가 양호합니다.", Toast.LENGTH_SHORT).show();
-                        checkBattery.setImageResource(R.drawable.ic_battery3);
-                    } else if (battery < 6.6 && battery >= 6.2) {
-                        Toast.makeText(getActivity(), "배터리가 20프로 이하입니다. \n교체를 준비해주세요", Toast.LENGTH_SHORT).show();
-                        checkBattery.setImageResource(R.drawable.ic_battery1);
-                    } else if (battery < 6.2) {
-                        Toast.makeText(getActivity(), "배터리교체가 필요합니다.", Toast.LENGTH_SHORT).show();
-                        checkBattery.setImageResource(R.drawable.ic_battery_chenge);
+                        battery = Double.parseDouble(data);
+
+                        if (battery >= 8.0) {
+                            Toast.makeText(getActivity(), "배터리 상태가 아주 좋아요", Toast.LENGTH_SHORT).show();
+                            checkBattery.setImageResource(R.drawable.ic_battery5);
+                            batteryText.setText("배터리 상태가 아주 좋아요");
+                        } else if (battery < 8.0 && battery >= 6.5) {
+                            Toast.makeText(getActivity(), "배터리 상태가 양호합니다.", Toast.LENGTH_SHORT).show();
+                            checkBattery.setImageResource(R.drawable.ic_battery3);
+                            batteryText.setText("배터리 상태가 양호합니다.");
+                        } else if (battery < 6.5 && battery >= 6.1) {
+                            Toast.makeText(getActivity(), "배터리가 20프로 이하입니다. \n교체를 준비해주세요", Toast.LENGTH_SHORT).show();
+                            checkBattery.setImageResource(R.drawable.ic_battery1);
+                            batteryText.setText("배터리가 20프로 이하입니다.");
+                        } else if (battery < 6.1) {
+                            Toast.makeText(getActivity(), "배터리교체가 필요합니다.", Toast.LENGTH_SHORT).show();
+                            checkBattery.setImageResource(R.drawable.ic_battery_chenge);
+                            batteryText.setText("배터리 교체가 필요합니다.");
+                        }
+                    }else{
+                        Toast.makeText(getActivity(), "LED를 끄고 배터리를 체크해주세요.", Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(getActivity(), "먼저 블루투스를 연결해 주세요.", Toast.LENGTH_SHORT).show();
                 }
 
 
 
 
-//                 sendEdit.setText("");                Edit 초기화
 
-//                if(mThreadConnectedBluetooth != null) {
-//                    mThreadConnectedBluetooth.write(sendEdit.getText().toString());
-//
-//                }
             }
         });
 
@@ -188,7 +183,7 @@ public class DirectionFragment extends Fragment {
         redLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(selfDis == 1){
+                if(btChk == 1){
                     redLedSelect();
                 }else{
                     Toast.makeText(getActivity(),"먼저 블루투스를 연결해 주세요.",Toast.LENGTH_SHORT).show();
@@ -201,7 +196,7 @@ public class DirectionFragment extends Fragment {
         forwardLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(selfDis == 1){
+                if(btChk == 1){
                     forwardLedSelect();
                 }else{
                     Toast.makeText(getActivity(),"먼저 블루투스를 연결해 주세요.",Toast.LENGTH_SHORT).show();
@@ -243,12 +238,15 @@ public class DirectionFragment extends Fragment {
                         if(id == 0){
                             sendData("e");
                             redLed.setImageResource(R.drawable.ic_emergency_on);
+                            ledChk = 1;
                         }else if(id == 1){
                             sendData("f");
                             redLed.setImageResource(R.drawable.ic_emergency_on);
+                            ledChk = 1;
                         }else if(id == 2){
                             sendData("g");
                             redLed.setImageResource(R.drawable.ic_emergency_off);
+                            ledChk = 0;
                         }
                         dialog.dismiss();
                     }
@@ -278,15 +276,19 @@ public class DirectionFragment extends Fragment {
                         if(id == 0){
                             sendData("a");
                             forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                            ledChk = 1;
                         }else if( id == 1){
                             sendData("b");
                             forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                            ledChk = 1;
                         }else if( id == 2){
                             sendData("c");
                             forwardLed.setImageResource(R.drawable.ic_flashlight_on);
+                            ledChk = 1;
                         }else if( id == 3){
                             sendData("d");
                             forwardLed.setImageResource(R.drawable.ic_flashlight_off);
+                            ledChk = 0;
                         }
                         dialog.dismiss();
                     }
@@ -323,12 +325,11 @@ public class DirectionFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();   //입력된 action
             //입력된 action에 따라서 함수를 처리한다
-            if(selfDis == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
-//                    Log.d("Bluetooth", "ACTION_ACL_DISCONNECTED");
+            if(btChk == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
                 startLocationService();     // 좌표값 가져오는 메소드
                 btButton.setImageResource(R.drawable.disconumbrella);
-                selfDis = 0;
+                btChk = 0;
 
             }
 
@@ -385,7 +386,6 @@ public class DirectionFragment extends Fragment {
             public void onClick(DialogInterface dialog, int item) {
                 if(item == mPairedDeviceCount) {
                     // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
-//                    finish();
                 }
                 else {
                     // 연결할 장치를 선택한 경우
@@ -411,7 +411,6 @@ public class DirectionFragment extends Fragment {
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         asyncDialog.setMessage(selectedDeviceName+"블루투스 연결중..");
         asyncDialog.show();
-//        asyncDialog.setCancelable(false);
 
 
                 try {
@@ -437,10 +436,8 @@ public class DirectionFragment extends Fragment {
                             asyncDialog.dismiss();
                         }
                     });
-                    //mThreadConnectedBluetooth = new sendData(mOutputStream, mInputStream);
-                    //mBluetoothHandler.obtainMessage(BT_CONNECTING_STATUS, 1, -1).sendToTarget();
 
-                    selfDis = 1;
+                    btChk = 1;
                     onBT = true;
 
 
@@ -510,7 +507,6 @@ public class DirectionFragment extends Fragment {
                             byte b = packetBytes[i];
                             if (b == mCharDelimiter) {
                                 Log.d("b", "b if : " + (int) b);
-//                                readBuffer[readBufferPosition++] = b;
                                 byte[] encodedBytes = new byte[readBufferPosition];
                                 //  System.arraycopy(복사할 배열, 복사시작점, 복사된 배열, 붙이기 시작점, 복사할 개수)
                                 //  readBuffer 배열을 처음 부터 끝까지 encodedBytes 배열로 복사.
@@ -518,38 +514,15 @@ public class DirectionFragment extends Fragment {
 
                                 data = new String(encodedBytes, "US-ASCII");
 
-                                //                                   Log.d("data", data + "\n");
-
                                 readBufferPosition = 0;
 
                                 handler.post(new Runnable() {
                                     // 수신된 문자열 데이터에 대한 처리.
                                     @Override
                                     public void run() {
-                                        // mStrDelimiter = '\n';
-//                                            receiveHeart.setText(data.substring(0, 3));
-//                                            receiveTemperature.setText(data.substring(3, 8));
                                         Log.d("run", "문자 처리");
                                         Log.d("ACAC", "" + data.length());
-
-
-                                        receiveData2.setText(data);
                                         Log.d("받은데이터",data);
-
-                                        //String tempData =  data.substring(0, 1);
-                                        //Log.d("tempData", tempData);
-
-//                                            if(tempData.equals("c")){
-//                                                Log.d("Main"," 거실에 등 상태는 켜진상태입니다");
-//                                            }else if(tempData.equals("b")){
-//                                                Log.d("Main"," 거실에 등 상태는 꺼진상태입니다");
-//                                            }
-//
-//                                            if(tempData.equals("e")){
-//                                                Log.d("Main","가스렌지 상태는 꺼진상태입니다");
-//                                            }else if(tempData.equals("f")){
-//                                                Log.d("Main","가스렌지  상태는 켜진상태입니다");
-//                                            }
                                     }
 
                                 });
@@ -562,10 +535,7 @@ public class DirectionFragment extends Fragment {
 
                 } catch (Exception e) {    // 데이터 수신 중 오류 발생.
                     Log.d("Error ", e.getMessage());
-                    //                       Toast.makeText(getApplicationContext(), "데이터 수신 중 오류가 발생 했습니다.", Toast.LENGTH_LONG).show();
-//                        finish();            // App 종료.
                 }
-                //               } //while문 종료
             }
 
         });
@@ -577,51 +547,5 @@ public class DirectionFragment extends Fragment {
         }
 
     }
-
-
-
-
-    private void checkDangerousPermissions() {
-        String[] permissions = {
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        };
-
-        int permissionCheck = PackageManager.PERMISSION_GRANTED;
-        for (int i = 0; i < permissions.length; i++) {
-            permissionCheck = ContextCompat.checkSelfPermission(getActivity(), permissions[i]);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
-                break;
-            }
-        }
-
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getActivity(), "권한 있음", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getActivity(), "권한 없음", Toast.LENGTH_LONG).show();
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissions[0])) {
-                Toast.makeText(getActivity(), "권한 설명 필요함.", Toast.LENGTH_LONG).show();
-            } else {
-                ActivityCompat.requestPermissions(getActivity(), permissions, 1);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 1) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getActivity(), permissions[i] + " 권한이 승인됨.", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity(), permissions[i] + " 권한이 승인되지 않음.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
 
 }

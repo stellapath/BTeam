@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bteam.project.R;
+import com.bteam.project.alarm.AlarmActivity;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,11 +51,13 @@ public class DirectionFragment extends Fragment {
     public boolean onBT = false;
     public ProgressDialog asyncDialog;
     private static final int REQUEST_ENABLE_BT = 1;
-    private ImageButton btButton, checkBattery, redLed, forwardLed;
+    private ImageButton btButton, checkBattery, redLed, forwardLed, show_map;
     private TextView batteryText;
     private int btChk, ledChk = 0;                        // 블루투스, LED on or off 체크
     private String data;
     private double battery;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     IntentFilter stateFilter;
     //////////////////////////////////////////////////
@@ -77,7 +81,12 @@ public class DirectionFragment extends Fragment {
         checkBattery = root.findViewById(R.id.checkBattery);    // 배터리 확인 하기 위한 버튼
         redLed = root.findViewById(R.id.redLed);                // 상단 LED 조절 imgBtn
         forwardLed = root.findViewById(R.id.forwardLed);        // 전방 LED 조절 imgBtn
+        show_map = root.findViewById(R.id.show_map);            // 분실위치 보여주는 버튼
 
+        show_map.setVisibility(View.GONE);
+
+        preferences = getActivity().getSharedPreferences("iot", Context.MODE_PRIVATE);
+        editor = preferences.edit();
 
         // 리시버 등록
         regiserRec();
@@ -105,6 +114,7 @@ public class DirectionFragment extends Fragment {
                                 // 페어링 된 장치가 있는 경우.
                                 selectDevice();
                                 Toast.makeText(getActivity(), "연결된 장치가 있습니다.", Toast.LENGTH_SHORT).show();
+                                show_map.setVisibility(View.GONE);
                             } else {
                                 // 페어링 된 장치가 없는 경우.
                                 // 검색된 목록을 다이얼로그로 표시
@@ -123,6 +133,7 @@ public class DirectionFragment extends Fragment {
                         bSocket.close();
                         onBT = false;
                         Toast.makeText(getActivity(),"연결을 해제합니다.",Toast.LENGTH_SHORT).show();
+                        show_map.setVisibility(View.GONE);
                         btButton.setImageResource(R.drawable.grayumbrella);
                     } catch (Exception e) {
                         Log.d(TAG, "onClick: disconnect " + e.getMessage());
@@ -328,7 +339,9 @@ public class DirectionFragment extends Fragment {
             if(btChk == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
                 startLocationService();     // 좌표값 가져오는 메소드
+                startAlarm();
                 btButton.setImageResource(R.drawable.disconumbrella);
+                show_map.setVisibility(View.VISIBLE);
                 btChk = 0;
 
             }
@@ -345,6 +358,9 @@ public class DirectionFragment extends Fragment {
                 Double latitude = lastLocation.getLatitude(); // 위도
                 Double longitude = lastLocation.getLongitude(); // 경도
 
+                editor.putString( "latitude", latitude + "" ).apply();
+                editor.putString( "longitude", longitude + "" ).apply();
+
                 String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
                 Log.d("main:location", msg);
 
@@ -354,11 +370,12 @@ public class DirectionFragment extends Fragment {
         }catch (SecurityException e){
             Log.d("main:sException", e.getMessage());
         }
-
-
     }
 
-
+    private void startAlarm() {
+        Intent intent = new Intent(getActivity(), AlarmActivity.class);
+        startActivity(intent);
+    }
 
     public void selectDevice() {
         mDevices = mBluetoothAdapter.getBondedDevices();

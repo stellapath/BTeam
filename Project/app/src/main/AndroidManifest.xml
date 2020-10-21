@@ -27,7 +27,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".alarm.MemoActivity"></activity>
+        <receiver
+            android:name=".direction.receiver.BluetoothReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <activity android:name=".alarm.MemoActivity" />
         <activity android:name=".alarm.ArrivalAlarmActivity" />
         <activity android:name=".user.ForgotPasswordActivity" />
         <activity android:name=".user.EmailVerifyActivity" />

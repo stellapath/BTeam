@@ -5,5 +5,6 @@
         <domain includeSubdomains="true">192.168.0.165</domain>
         <domain includeSubdomains="true">192.168.29.100</domain>
         <domain includeSubdomains="true">www.gjtic.go.kr</domain>
+        <domain includeSubdomains="true">112.164.58.7</domain>
     </domain-config>
 </network-security-config>

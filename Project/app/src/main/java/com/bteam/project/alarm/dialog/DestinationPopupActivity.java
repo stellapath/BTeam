@@ -78,6 +78,8 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         getSupportActionBar().setTitle("목적지 설정");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        getMyLocation();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.destination_map);
         mapFragment.getMapAsync(this);
@@ -86,8 +88,6 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         PlacesClient placesClient = Places.createClient(this);
 
         initView();
-
-        getMyLocation();
 
         // 주소 자동완성
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -194,6 +194,7 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
         }
 
         // 내 위치 구하기
+
         fusedLocationProviderClient.getLastLocation()
                 .addOnSuccessListener(DestinationPopupActivity.this, new OnSuccessListener<Location>() {
                     @Override
@@ -224,16 +225,9 @@ public class DestinationPopupActivity extends AppCompatActivity implements OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        if (sharPrefHelper.getLatitude() == 0 || sharPrefHelper.getLongitude() == 0) {
-            LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-            map.addMarker(new MarkerOptions().position(latLng).title("내 위치")
-                    .snippet(myLocation.getProvider())).showInfoWindow();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        } else {
-            LatLng latLng = new LatLng(sharPrefHelper.getLatitude(), sharPrefHelper.getLongitude());
-            map.addMarker(new MarkerOptions().position(latLng).title("저장된 위치")).showInfoWindow();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        }
+        LatLng latLng = new LatLng(sharPrefHelper.getLatitude(), sharPrefHelper.getLongitude());
+        map.addMarker(new MarkerOptions().position(latLng).title("저장된 위치")).showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     private void showSelectedPlace(LatLng latLng, String title, String addr) {

@@ -79,8 +79,8 @@ public class BoardFragment extends Fragment {
     }
 
     private void getPopular() {
-        final String url = Common.SERVER_URL + "andPopular";
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        final String url = Common.SERVER_URL + "andPopular?begin=1&end=20";
+        StringRequest request = new StringRequest(Request.Method.GET, url,
            new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

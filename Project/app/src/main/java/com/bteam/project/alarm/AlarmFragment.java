@@ -1,11 +1,8 @@
 package com.bteam.project.alarm;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -17,7 +14,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -28,7 +24,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -362,7 +357,7 @@ public class AlarmFragment extends Fragment {
             timeTaken = (long) ((sharPrefHelper.getDistance() / 4) * 60 * 60);
         else if (sharPrefHelper.getTransportation().equals("car"))
             timeTaken = (long) ((sharPrefHelper.getDistance() / 30) * 60 * 60);
-        arrivalLeft.setText("목적지 까지 " + transportation + TimeUnit.MILLISECONDS.toMinutes(timeTaken)
+        arrivalLeft.setText("현재 위치에서 목적지 까지 " + transportation + TimeUnit.MILLISECONDS.toMinutes(timeTaken)
                 + "분 거리입니다.");
     }
 
@@ -370,6 +365,12 @@ public class AlarmFragment extends Fragment {
     private void startAlarm() {
         long newWakeUp = timeCalc.isBefore(sharPrefHelper.getWakeUpMillis());
         long newArrival = timeCalc.isBefore(sharPrefHelper.getArrivalMillis());
+        if (newArrival - getTimeTaken() <= System.currentTimeMillis()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(newArrival);
+            calendar.add(Calendar.DATE, 1);
+            newArrival = calendar.getTimeInMillis();
+        }
         sharPrefHelper.setWakeUpMillis(newWakeUp);
         sharPrefHelper.setArrivalMillis(newArrival);
         alarmManager.start(newWakeUp, Common.REQUEST_WAKEUP_ALARM);
@@ -388,6 +389,12 @@ public class AlarmFragment extends Fragment {
         if ( !sharPrefHelper.isTurnedOn() ) return;
         long newWakeUp = timeCalc.isBefore(sharPrefHelper.getWakeUpMillis());
         long newArrival = timeCalc.isBefore(sharPrefHelper.getArrivalMillis());
+        if (newArrival - getTimeTaken() <= System.currentTimeMillis()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(newArrival);
+            calendar.add(Calendar.DATE, 1);
+            newArrival = calendar.getTimeInMillis();
+        }
         alarmManager.reset(newWakeUp, Common.REQUEST_WAKEUP_ALARM);
         alarmManager.reset(newArrival - getTimeTaken(), Common.REQUEST_ARRIVAL_ALARM);
     }
@@ -397,9 +404,9 @@ public class AlarmFragment extends Fragment {
         long timeTaken = 0;
         // distance / transportation
         if (sharPrefHelper.getTransportation().equals("walk"))
-            timeTaken = (long) ((sharPrefHelper.getDistance() / 4) * 60 * 60);
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 3) * 60 * 60);
         else if (sharPrefHelper.getTransportation().equals("car"))
-            timeTaken = (long) ((sharPrefHelper.getDistance() / 30) * 60 * 60);
+            timeTaken = (long) ((sharPrefHelper.getDistance() / 20) * 60 * 60);
         return timeTaken;
     }
 
@@ -439,12 +446,7 @@ public class AlarmFragment extends Fragment {
         @Override
         public void onTimeSet(TimePicker timePicker, int i, int i1) {
             long arrivalMillis = timeCalc.getMillis(i, i1);
-            if (arrivalMillis <= sharPrefHelper.getWakeUpMillis()) {
-                Toast.makeText(getActivity(), "도착시간은 기상시간보다 더 늦은 시간으로 설정해야 합니다.",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            sharPrefHelper.setArrivalMillis(arrivalMillis);
+            sharPrefHelper.setArrivalMillis( timeCalc.isBefore(arrivalMillis) );
             sharPrefHelper.setTurnedOn(true);
             Toast.makeText(getActivity(), "도착시간이 설정되었습니다.", Toast.LENGTH_SHORT).show();
             initAlarm();

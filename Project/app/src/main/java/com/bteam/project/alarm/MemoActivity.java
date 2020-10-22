@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +42,7 @@ public class MemoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("저장된 메모");
 
         initView();
+        showOnLockedScreen();
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -47,15 +53,16 @@ public class MemoActivity extends AppCompatActivity {
                         Toast.makeText(MemoActivity.this, "한글 언어팩이 존재하지 않습니다.",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        tts.setPitch(0.7f);
-                        tts.setSpeechRate(1.2f);
+                        tts.setPitch(1f);
+                        tts.setSpeechRate(1f);
+                        tts.speak(textView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, "ttsEnd");
+
                     }
                 }
             }
         });
 
         textView.setText(sharPrefHelper.getMemo());
-        tts.speak(sharPrefHelper.getMemo(), TextToSpeech.QUEUE_FLUSH, null, "ttsEnd");
 
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +75,9 @@ public class MemoActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        tts.stop();
+        if (hasWindowFocus()) {
+            tts.stop();
+        }
     }
 
     private void initView() {
@@ -84,5 +93,13 @@ public class MemoActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showOnLockedScreen() {
+        final Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 }

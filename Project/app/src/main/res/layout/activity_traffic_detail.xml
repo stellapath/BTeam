@@ -124,16 +124,7 @@
                 android:textColor="#000"
                 android:textSize="18sp" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/traffic_detail_like"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="24dp"
-                android:hint="댓글을 입력하세요" />
-            
-<!--            <Button-->
+            <!--            <Button-->
 <!--                android:layout_width=""-->
 <!--                android:layout_height=""-->
                 

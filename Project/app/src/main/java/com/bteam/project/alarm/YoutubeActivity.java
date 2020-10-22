@@ -3,6 +3,8 @@ package com.bteam.project.alarm;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
             }
         });
 
+        showOnLockedScreen();
         getRecentWeatherYoutube();
     }
 
@@ -145,5 +148,13 @@ public class YoutubeActivity extends YouTubeBaseActivity {
                 finish();
             }
         });
+    }
+
+    private void showOnLockedScreen() {
+        final Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 }

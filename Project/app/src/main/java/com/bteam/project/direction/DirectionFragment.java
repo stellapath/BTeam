@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -40,7 +41,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class DirectionFragment extends Fragment {
+public class DirectionFragment extends Fragment implements LocationListener {
+
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
 
     public BluetoothAdapter mBluetoothAdapter;
     public Set<BluetoothDevice> mDevices;
@@ -58,6 +62,7 @@ public class DirectionFragment extends Fragment {
     private double battery;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
+    private GpsTracker gpsTracker;
 
     IntentFilter stateFilter;
     //////////////////////////////////////////////////
@@ -120,11 +125,8 @@ public class DirectionFragment extends Fragment {
                                 // 검색된 목록을 다이얼로그로 표시
                                 Toast.makeText(getActivity(), "먼저 Bluetooth 설정에 들어가 페어링을 진행해 주세요.", Toast.LENGTH_SHORT).show();
                             }
-
                         }
-
                     }
-
                 } else { //DisConnect
                     try {
                         btChk = 0;
@@ -138,7 +140,6 @@ public class DirectionFragment extends Fragment {
                     } catch (Exception e) {
                         Log.d(TAG, "onClick: disconnect " + e.getMessage());
                     }
-
                 }
             }
         });
@@ -146,7 +147,6 @@ public class DirectionFragment extends Fragment {
         checkBattery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (btChk == 1) {
                     if(ledChk == 0) {
                         sendData("i");         // 상태 확인문자 우노보드로 보내기
@@ -182,11 +182,6 @@ public class DirectionFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "먼저 블루투스를 연결해 주세요.", Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
-
             }
         });
 
@@ -212,8 +207,6 @@ public class DirectionFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"먼저 블루투스를 연결해 주세요.",Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
 
@@ -230,8 +223,13 @@ public class DirectionFragment extends Fragment {
 //                }
 //            }
 //        };
-
-
+        show_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), LostMapActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return root;
     }
@@ -338,7 +336,13 @@ public class DirectionFragment extends Fragment {
             //입력된 action에 따라서 함수를 처리한다
             if(btChk == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
                 Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
-                startLocationService();     // 좌표값 가져오는 메소드
+                //startLocationService();     // 좌표값 가져오는 메소드
+
+                gpsTracker = new GpsTracker(getActivity());
+
+                editor.putString( "latitude", gpsTracker.getLatitude() + "" ).apply();
+                editor.putString( "longitude", gpsTracker.getLongitude() + "" ).apply();
+
                 startAlarm();
                 btButton.setImageResource(R.drawable.disconumbrella);
                 show_map.setVisibility(View.VISIBLE);
@@ -352,6 +356,8 @@ public class DirectionFragment extends Fragment {
         // 위치관리자 객체 참조
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         try {
+            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             Location lastLocation =
                     manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(lastLocation != null){
@@ -373,7 +379,7 @@ public class DirectionFragment extends Fragment {
     }
 
     private void startAlarm() {
-        Intent intent = new Intent(getActivity(), AlarmActivity.class);
+        Intent intent = new Intent(getActivity(), LostAlarmActivity.class);
         startActivity(intent);
     }
 
@@ -565,4 +571,8 @@ public class DirectionFragment extends Fragment {
 
     }
 
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+    }
 }

@@ -98,14 +98,16 @@ public class AlarmActivity extends AppCompatActivity implements RingtonePlayer.O
     @Override
     protected void onPause() {
         super.onPause();
-        if (hasWindowFocus()) ringtonePlayer.stop();
+        if (hasWindowFocus()) {
+            ringtonePlayer.stop();
 
-        // 반복이 끝나고
-        if (numberOfAlarms <= alreadyRangAlarms) {
-            // 날씨 예보가 켜져있을 때
-            if (sharPrefHelper.isWeather()) {
-                Intent intent = new Intent(this, YoutubeActivity.class);
-                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            // 반복이 끝나고
+            if (numberOfAlarms <= alreadyRangAlarms) {
+                // 날씨 예보가 켜져있을 때
+                if (sharPrefHelper.isWeather()) {
+                    Intent intent = new Intent(this, YoutubeActivity.class);
+                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
             }
         }
     }

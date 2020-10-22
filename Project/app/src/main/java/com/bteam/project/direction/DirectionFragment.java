@@ -118,7 +118,7 @@ public class DirectionFragment extends Fragment implements LocationListener {
                             if (pairedDevices.size() > 0) {
                                 // 페어링 된 장치가 있는 경우.
                                 selectDevice();
-                                Toast.makeText(getActivity(), "연결된 장치가 있습니다.", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity(), "페어링된 장치가 있습니다.", Toast.LENGTH_SHORT).show();
                                 show_map.setVisibility(View.GONE);
                             } else {
                                 // 페어링 된 장치가 없는 경우.
@@ -177,7 +177,7 @@ public class DirectionFragment extends Fragment implements LocationListener {
                             batteryText.setText("배터리 교체가 필요합니다.");
                         }
                     }else{
-                        Toast.makeText(getActivity(), "LED를 끄고 배터리를 체크해주세요.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "LED를 끄고 배터리를 체크해 주세요.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getActivity(), "먼저 블루투스를 연결해 주세요.", Toast.LENGTH_SHORT).show();
@@ -335,7 +335,7 @@ public class DirectionFragment extends Fragment implements LocationListener {
             final String action = intent.getAction();   //입력된 action
             //입력된 action에 따라서 함수를 처리한다
             if(btChk == 1 && action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {   //블루투스 기기 끊어짐
-                Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"연결 끊어짐",Toast.LENGTH_SHORT).show();
                 //startLocationService();     // 좌표값 가져오는 메소드
 
                 gpsTracker = new GpsTracker(getActivity());
